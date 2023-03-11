@@ -2,6 +2,7 @@ package com.githukudenis.coroutinesindustrialbuild.data.repo
 
 import android.util.Log
 import com.githukudenis.coroutinesindustrialbuild.data.api.ProductsApiService
+import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategories
 import com.githukudenis.coroutinesindustrialbuild.data.model.ProductsDTOItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -12,6 +13,18 @@ import javax.inject.Inject
 class ProductsDatasource @Inject constructor(
     private val productsApiService: ProductsApiService
 ) : ProductsRepo {
+    override suspend fun getCategories(): Flow<Resource<ProductCategories>> = flow {
+        try {
+            emit(Resource.Loading())
+            val response = productsApiService.getProductCategories()
+            if (response.isSuccessful) {
+                val categories = response.body()
+                emit(Resource.Success(categories))
+            }
+        }catch (e: Exception) {
+            emit(Resource.Error(e.message))
+        }
+    }
 
     override suspend fun getProducts(): Flow<Resource<List<ProductsDTOItem>>> = flow {
         try {

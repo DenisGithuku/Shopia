@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +31,7 @@ class ProductsViewModel @Inject constructor(
                 .collect { connectionStatus ->
                     when (connectionStatus) {
                         NetworkObserver.ConnectionStatus.AVAILABLE -> {
+                            getCategories()
                             getProducts()
                         }
 
@@ -68,6 +68,33 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
+    fun getCategories() {
+        viewModelScope.launch {
+            productsRepo.getCategories().collect { result ->
+                when(result) {
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            error = result.cause,
+                            categoriesLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value.copy(
+                            categoriesLoading = true
+                        )
+                    }
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            categories = result.results,
+                            selectedCategory = result.results?.let { it.first() },
+                            categoriesLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun getProducts() {
         viewModelScope.launch {
             val countries = async {
@@ -80,14 +107,14 @@ class ProductsViewModel @Inject constructor(
                     when (result) {
                         is Resource.Loading -> {
                             _state.update { state ->
-                                state.copy(isLoading = true)
+                                state.copy(productsLoading = true)
                             }
                         }
 
                         is Resource.Success -> {
                             _state.update { state ->
                                 state.copy(
-                                    isLoading = false,
+                                    productsLoading = false,
                                     isRefreshing = false,
                                     products = result.results ?: emptyList()
                                 )
@@ -97,7 +124,7 @@ class ProductsViewModel @Inject constructor(
                         is Resource.Error -> {
                             _state.update { state ->
                                 state.copy(
-                                    isLoading = false,
+                                    productsLoading = false,
                                     error = result.cause
                                 )
                             }

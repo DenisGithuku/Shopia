@@ -11,7 +11,7 @@ const val base_url = "https://fakestoreapi.com/"
 
 interface ProductsApiService {
 
-    @GET("categories")
+    @GET("products/categories")
     suspend fun getProductCategories(): Response<ProductCategories>
 
     @GET("products")
