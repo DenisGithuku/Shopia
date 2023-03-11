@@ -7,8 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import retrofit2.Response
 import timber.log.Timber
+import javax.inject.Inject
 
-class ProductsDatasource(
+class ProductsDatasource @Inject constructor(
     private val productsApiService: ProductsApiService
 ) : ProductsRepo {
 

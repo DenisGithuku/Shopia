@@ -32,7 +32,7 @@ class ProductsViewModel @Inject constructor(
                 .collect { connectionStatus ->
                     when (connectionStatus) {
                         NetworkObserver.ConnectionStatus.AVAILABLE -> {
-                            getCountries()
+                            getProducts()
                         }
 
                         NetworkObserver.ConnectionStatus.UNAVAILABLE -> {
@@ -72,12 +72,12 @@ class ProductsViewModel @Inject constructor(
                 _state.update { state ->
                     state.copy(isRefreshing = true)
                 }
-                getCountries()
+                getProducts()
             }
         }
     }
 
-    private fun getCountries() {
+    fun getProducts() {
         viewModelScope.launch {
             val countries = async {
                 productsRepo.getProducts()
