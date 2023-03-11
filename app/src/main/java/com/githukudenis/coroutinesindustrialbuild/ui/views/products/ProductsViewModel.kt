@@ -59,20 +59,11 @@ class ProductsViewModel @Inject constructor(
 
     fun onEvent(event: ProductsScreenEvent) {
         when (event) {
-            is ProductsScreenEvent.OpenProductDetails -> {
-                _state.update { state ->
-                    state.copy(
-                        selectedProduct = _state.value.products.find { it.id == event.id }
-                    )
-                }
-                Timber.d("${event.id}")
-            }
-
-            ProductsScreenEvent.RefreshProducts -> {
-                _state.update { state ->
-                    state.copy(isRefreshing = true)
-                }
+            is ProductsScreenEvent.RefreshProducts -> {
                 getProducts()
+            }
+            is ProductsScreenEvent.ChangeCategory -> {
+
             }
         }
     }
@@ -114,5 +105,9 @@ class ProductsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun changeSelectedCategory(category: String) {
+
     }
 }

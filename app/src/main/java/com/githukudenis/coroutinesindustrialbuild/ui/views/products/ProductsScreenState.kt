@@ -7,5 +7,5 @@ data class ProductsScreenState(
     val isRefreshing: Boolean = false,
     val products: List<ProductsDTOItem> = emptyList(),
     val error: String? = null,
-    val selectedProduct: ProductsDTOItem? = null
+    val selectedCategory: String? = null
 )

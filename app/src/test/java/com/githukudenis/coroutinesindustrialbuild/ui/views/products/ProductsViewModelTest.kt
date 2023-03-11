@@ -8,6 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
 
 @MediumTest
 class ProductsViewModelTest {
@@ -27,5 +28,12 @@ class ProductsViewModelTest {
         productsViewModel.getProducts()
         val productList = productsViewModel.state.value.products
         assertTrue(productList.isNotEmpty())
+    }
+
+    @Test
+    fun changeCategory() = runTest(UnconfinedTestDispatcher()) {
+        productsViewModel.changeSelectedCategory("jewelery")
+        val selectedCategory = productsViewModel.state.value.selectedCategory
+        assertEquals("jewelery", selectedCategory)
     }
 }

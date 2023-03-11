@@ -1,6 +1,6 @@
 package com.githukudenis.coroutinesindustrialbuild.ui.views.products
 
 sealed class ProductsScreenEvent {
-    class OpenProductDetails(val id: Int): ProductsScreenEvent()
+    class ChangeCategory(category: String): ProductsScreenEvent()
     object RefreshProducts: ProductsScreenEvent()
 }

@@ -50,16 +50,7 @@ fun ProductsScreen(
         sheetElevation = 16.dp,
         scrimColor = Color.LightGray.copy(alpha = 0.1f),
         sheetContent = {
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                val title = state.selectedProduct?.title ?: ""
-                Text(
-                    text = title
-                )
-            }
+
         }) {
         Box(modifier = Modifier
             .fillMaxSize()
