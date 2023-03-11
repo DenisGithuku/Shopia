@@ -63,7 +63,7 @@ class ProductsViewModel @Inject constructor(
                 getProducts()
             }
             is ProductsScreenEvent.ChangeCategory -> {
-
+                changeSelectedCategory(event.category)
             }
         }
     }
@@ -108,6 +108,8 @@ class ProductsViewModel @Inject constructor(
     }
 
     fun changeSelectedCategory(category: String) {
-
+        _state.value = _state.value.copy(
+            selectedCategory = category
+        )
     }
 }
