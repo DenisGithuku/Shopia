@@ -7,8 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
 import com.githukudenis.coroutinesindustrialbuild.domain.ProductDBO
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -72,7 +74,43 @@ class ProductsDaoTest {
             )
         )
         productsDao.insertAll(*products.toTypedArray())
-        val productsFromDb = productsDao.getAllProducts().first()
-        assert(productsFromDb.size == 3)
+        val productsFromDb = productsDao.getProductsCount()
+        assert(productsFromDb == 3)
+    }
+
+    @Test
+    fun getAllProductsTest() = runTest(UnconfinedTestDispatcher()) {
+        val products = listOf(
+            ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 1,
+                image = "https::",
+                price = 45.6,
+                rating = Rating(count = 7, rate = 3.4),
+                title = "Gold Chain"
+            ),
+            ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 2,
+                image = "https::",
+                price = 23.6,
+                rating = Rating(count = 4, rate = 12.8),
+                title = "Silver necklace"
+            ),
+            ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 3,
+                image = "https::",
+                price = 23.1,
+                rating = Rating(count = 710, rate = 4.5),
+                title = "Pedant"
+            )
+        )
+        productsDao.insertAll(* products.toTypedArray())
+        val productCount = productsDao.getAllProducts().first().size
+        assertThat(productCount == products.size)
     }
 }

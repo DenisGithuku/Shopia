@@ -12,6 +12,10 @@ interface ProductsDao {
     @Insert(entity = ProductDBO::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg products: ProductDBO)
 
+    // convenience testing method
+    @Query("SELECT COUNT(id) FROM products_table")
+    suspend fun getProductsCount(): Int
+
     @Query("SELECT * FROM products_table")
     fun getAllProducts(): Flow<List<ProductDBO>>
 
