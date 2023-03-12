@@ -2,6 +2,7 @@ package com.githukudenis.coroutinesindustrialbuild.ui.views.products
 
 import androidx.test.filters.MediumTest
 import com.githukudenis.coroutinesindustrialbuild.data.repo.FakeProductsDataSource
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -14,28 +15,35 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 class ProductsViewModelTest {
+
+    private lateinit var productsRepo: ProductsRepo
     private lateinit var productsViewModel: ProductsViewModel
 
     @get:Rule
-    val mainDispatcherRule by lazy {  MainDispatcherRule() }
+    val mainDispatcherRule by lazy { MainDispatcherRule() }
 
     @Before
     fun setUp() {
-        val productsRepo = FakeProductsDataSource()
+        productsRepo = FakeProductsDataSource()
         productsViewModel = ProductsViewModel(productsRepo, FakeNetworkObserver())
     }
 
     @Test
-    fun getProducts() = runTest(UnconfinedTestDispatcher()) {
+    fun getProductsTest() = runTest(UnconfinedTestDispatcher()) {
         productsViewModel.getProducts()
         val productList = productsViewModel.state.value.products
         assertTrue(productList.isNotEmpty())
     }
 
     @Test
-    fun changeCategory() = runTest(UnconfinedTestDispatcher()) {
+    fun changeCategoryTest() = runTest(UnconfinedTestDispatcher()) {
         productsViewModel.changeSelectedCategory("jewelery")
         val selectedCategory = productsViewModel.state.value.selectedCategory
         assertEquals("jewelery", selectedCategory)
+    }
+
+    @Test
+    fun getCategoriesTest() = runTest(UnconfinedTestDispatcher()) {
+
     }
 }

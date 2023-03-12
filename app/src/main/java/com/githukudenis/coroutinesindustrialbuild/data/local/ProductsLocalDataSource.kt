@@ -16,9 +16,9 @@ class ProductsLocalDataSource @Inject constructor(
     private val productsRemoteDatasource: ProductsRemoteDatasource
 ) : ProductsRepo {
 
-
     override suspend fun getCategories(): Flow<List<ProductCategory>> = flow {
         try {
+            refreshCategories()
             val productCategories = productsDao.getAllCategories()
             emit(productCategories)
         } catch (e: Exception) {
@@ -49,5 +49,9 @@ class ProductsLocalDataSource @Inject constructor(
 
     suspend fun refreshProducts() {
         productsRemoteDatasource.refreshProducts()
+    }
+
+    suspend fun refreshCategories() {
+        productsRemoteDatasource.getProductCategories()
     }
 }

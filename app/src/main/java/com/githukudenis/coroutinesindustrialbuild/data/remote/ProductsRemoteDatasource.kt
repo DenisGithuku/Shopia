@@ -1,6 +1,7 @@
 package com.githukudenis.coroutinesindustrialbuild.data.remote
 
 import com.githukudenis.coroutinesindustrialbuild.data.local.ProductsDao
+import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
 import com.githukudenis.coroutinesindustrialbuild.data.model.toProducts
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,7 +17,9 @@ class ProductsRemoteDatasource @Inject constructor(
             if (response.isSuccessful) {
                 val productCategories = response.body()
                 productCategories?.let { categories ->
-                    productsDao.insertAllCategories(*categories.toTypedArray())
+                    productsDao.insertAllCategories(*categories.map {
+                        ProductCategory(value = it)
+                    }.toTypedArray())
                 }
             }
         } catch (e: Exception) {
