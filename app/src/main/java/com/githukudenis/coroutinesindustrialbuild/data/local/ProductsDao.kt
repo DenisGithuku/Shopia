@@ -18,7 +18,7 @@ interface ProductsDao {
     @Query("SELECT COUNT(id) FROM products_table")
     suspend fun getProductsCount(): Int
 
-    @Query("SELECT COUNT(id) FROM product_categories")
+    @Query("SELECT COUNT(value) FROM product_categories")
     suspend fun getCategoriesCount(): Int
 
     @Query("SELECT * FROM products_table")

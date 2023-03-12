@@ -150,8 +150,10 @@ fun ProductsScreen(
                                 text = productItem.title,
                                 style = TextStyle(
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp
-                                )
+                                    fontSize = 18.sp,
+                                ),
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = productItem.description,
