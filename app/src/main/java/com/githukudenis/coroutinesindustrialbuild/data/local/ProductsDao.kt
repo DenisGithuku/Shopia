@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductsDao {
     @Insert(entity = ProductDBO::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg productDBO: ProductDBO)
+    suspend fun insertAll(vararg products: ProductDBO)
 
     @Query("SELECT * FROM products_table")
-    fun getAllProducts(): Flow<ProductDBO>
+    fun getAllProducts(): Flow<List<ProductDBO>>
 
     @Query("SELECT * FROM products_table WHERE id like :id")
     fun getProductById(id: Int): Flow<ProductDBO>
