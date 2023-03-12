@@ -2,7 +2,7 @@ package com.githukudenis.coroutinesindustrialbuild.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.githukudenis.coroutinesindustrialbuild.domain.ProductDBO
+import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
 
 @Database(entities = [ProductDBO::class], version = 1, exportSchema = false)
 abstract class ProductsDatabase: RoomDatabase() {

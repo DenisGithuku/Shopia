@@ -2,6 +2,8 @@ package com.githukudenis.coroutinesindustrialbuild.data.repo
 
 import com.githukudenis.coroutinesindustrialbuild.data.model.ProductsDTOItem
 import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

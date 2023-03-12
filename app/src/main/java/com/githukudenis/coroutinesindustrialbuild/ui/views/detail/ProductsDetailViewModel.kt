@@ -6,8 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.coroutinesindustrialbuild.data.repo.ProductsRepo
-import com.githukudenis.coroutinesindustrialbuild.data.repo.Resource
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,36 +30,20 @@ class ProductsDetailViewModel @Inject constructor(
     private fun getProductDetails(productId: Int) {
         viewModelScope.launch {
             val productJob = launch {
-                productsRepo.getProductDetails(productId)
-                    .collect { result ->
-                        when(result) {
-                            is Resource.Error -> {
-                                _state.value = _state.value.copy(
-                                    error = result.cause
-                                )
-                            }
-                            is Resource.Loading -> {
-                                _state.value = _state.value.copy(
-                                    isLoading = true
-                                )
-                            }
-                            is Resource.Success -> {
-                                val (category, description, id, image, price, rating, title ) = result.data ?: return@collect
-                                val productDetailState = ProductDetailState(
-                                    title =  title,
-                                    description = description,
-                                    price = "$price",
-                                    image = image,
-                                    rating = rating.rate
-                                )
-                                _state.value = _state.value.copy(
-                                    product = productDetailState
-                                )
-                            }
-                        }
+                productsRepo.getProductDetails(productId).collect { result ->
+                        val (category, description, id, image, price, rating, title) = result
+                        val productDetailState = ProductDetailState(
+                            title = title,
+                            description = description,
+                            price = "$price",
+                            image = image,
+                            rating = rating.rate
+                        )
+                        _state.value = _state.value.copy(
+                            product = productDetailState
+                        )
                     }
             }
-
             productJob.invokeOnCompletion {
                 _state.value = _state.value.copy(
                     isLoading = false

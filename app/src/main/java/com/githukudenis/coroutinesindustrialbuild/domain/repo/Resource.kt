@@ -1,4 +1,4 @@
-package com.githukudenis.coroutinesindustrialbuild.data.repo
+package com.githukudenis.coroutinesindustrialbuild.domain.repo
 
 sealed class Resource<T>(val data: T? = null, val message: String? = null) {
     class Loading<T>: Resource<T>()

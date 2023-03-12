@@ -1,4 +1,4 @@
-package com.githukudenis.coroutinesindustrialbuild.domain
+package com.githukudenis.coroutinesindustrialbuild.domain.model
 
 import androidx.room.Embedded
 import androidx.room.Entity

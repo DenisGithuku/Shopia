@@ -1,6 +1,6 @@
 package com.githukudenis.coroutinesindustrialbuild.data.model
 
-import com.githukudenis.coroutinesindustrialbuild.domain.ProductDBO
+import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
 
 data class ProductsDTOItem(
     val category: String,
