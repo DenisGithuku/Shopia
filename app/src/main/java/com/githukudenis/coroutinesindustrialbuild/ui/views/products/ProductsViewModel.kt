@@ -2,6 +2,7 @@ package com.githukudenis.coroutinesindustrialbuild.ui.views.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkObserver
 import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,9 +72,11 @@ class ProductsViewModel @Inject constructor(
     fun getCategories() {
         viewModelScope.launch {
             productsRepo.getCategories().collect { result ->
+                val category = ProductCategory(value = "all")
+                val categories = result.toMutableList().apply { add(index = 0, category)}
                 _state.value = _state.value.copy(
-                    categories = result,
-                    selectedCategory = result.first().value,
+                    categories = categories,
+                    selectedCategory = categories.first().value,
                     categoriesLoading = false
                 )
             }

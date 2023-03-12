@@ -1,4 +1,4 @@
-package com.githukudenis.coroutinesindustrialbuild
+package com.githukudenis.coroutinesindustrialbuild.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkObserver
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkStateObserver
-import com.githukudenis.coroutinesindustrialbuild.ui.AppNavigator
 import com.githukudenis.coroutinesindustrialbuild.ui.theme.CoroutinesIndustrialBuildTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,22 +61,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun ConnectionStatusScreen(
-    context: Context,
-    modifier: Modifier = Modifier
-) {
-    val connectionState = NetworkStateObserver(context)
-    val connectionStatus = connectionState.observe()
-        .collectAsState(initial = NetworkObserver.ConnectionStatus.UNAVAILABLE)
-
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Network status: ${connectionStatus.value}"
-        )
-    }
-
-}
