@@ -39,11 +39,12 @@ class ProductsDaoTest {
 
     @After
     fun tearDown() {
+        productsDatabase.clearAllTables()
         productsDatabase.close()
     }
 
     @Test
-    fun testInsertAllProducts() = runTest {
+    fun insertAllProductsTest() = runTest {
         val products = listOf(
             ProductDBO(
                 category = "jewelery",
@@ -53,8 +54,7 @@ class ProductsDaoTest {
                 price = 45.6,
                 rating = Rating(count = 7, rate = 3.4),
                 title = "Gold Chain"
-            ),
-            ProductDBO(
+            ), ProductDBO(
                 category = "jewelery",
                 description = "Fashion",
                 id = 2,
@@ -62,8 +62,7 @@ class ProductsDaoTest {
                 price = 23.6,
                 rating = Rating(count = 4, rate = 12.8),
                 title = "Silver necklace"
-            ),
-            ProductDBO(
+            ), ProductDBO(
                 category = "jewelery",
                 description = "Fashion",
                 id = 3,
@@ -89,8 +88,7 @@ class ProductsDaoTest {
                 price = 45.6,
                 rating = Rating(count = 7, rate = 3.4),
                 title = "Gold Chain"
-            ),
-            ProductDBO(
+            ), ProductDBO(
                 category = "jewelery",
                 description = "Fashion",
                 id = 2,
@@ -98,8 +96,7 @@ class ProductsDaoTest {
                 price = 23.6,
                 rating = Rating(count = 4, rate = 12.8),
                 title = "Silver necklace"
-            ),
-            ProductDBO(
+            ), ProductDBO(
                 category = "jewelery",
                 description = "Fashion",
                 id = 3,
@@ -112,5 +109,31 @@ class ProductsDaoTest {
         productsDao.insertAll(* products.toTypedArray())
         val productCount = productsDao.getAllProducts().first().size
         assertThat(productCount == products.size)
+    }
+
+    @Test
+    fun getProductByIdTest() = runTest(UnconfinedTestDispatcher()) {
+        val products = listOf(
+            ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 1,
+                image = "https::",
+                price = 45.6,
+                rating = Rating(count = 7, rate = 3.4),
+                title = "Gold Chain"
+            ), ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 2,
+                image = "https::",
+                price = 23.6,
+                rating = Rating(count = 4, rate = 12.8),
+                title = "Silver necklace"
+            )
+        )
+        productsDao.insertAll(* products.toTypedArray())
+        val secondProductId = productsDao.getProductById(2).first().id
+        assertThat(secondProductId).isEqualTo(2)
     }
 }
