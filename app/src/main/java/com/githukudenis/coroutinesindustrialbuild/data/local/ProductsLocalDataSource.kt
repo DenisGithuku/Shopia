@@ -19,7 +19,8 @@ class ProductsLocalDataSource @Inject constructor(
 
     override suspend fun getCategories(): Flow<List<ProductCategory>> = flow {
         try {
-
+            val productCategories = productsDao.getAllCategories()
+            emit(productCategories)
         } catch (e: Exception) {
             Timber.e(e)
         }

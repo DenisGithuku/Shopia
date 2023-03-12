@@ -5,11 +5,11 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
 import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
 import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -72,7 +72,7 @@ class ProductsDaoTest {
                 title = "Pedant"
             )
         )
-        productsDao.insertAll(*products.toTypedArray())
+        productsDao.insertAllProducts(*products.toTypedArray())
         val productsFromDb = productsDao.getProductsCount()
         assert(productsFromDb == 3)
     }
@@ -106,7 +106,7 @@ class ProductsDaoTest {
                 title = "Pedant"
             )
         )
-        productsDao.insertAll(* products.toTypedArray())
+        productsDao.insertAllProducts(* products.toTypedArray())
         val productCount = productsDao.getAllProducts().size
         assertThat(productCount == products.size)
     }
@@ -132,8 +132,33 @@ class ProductsDaoTest {
                 title = "Silver necklace"
             )
         )
-        productsDao.insertAll(* products.toTypedArray())
+        productsDao.insertAllProducts(* products.toTypedArray())
         val secondProductId = productsDao.getProductById(2).id
         assertThat(secondProductId).isEqualTo(2)
+    }
+
+    @Test
+    fun insertProductCategoriesTest() = runTest {
+        val categories = listOf(
+            ProductCategory(
+                id = 1,
+                value = "bags"
+            ),
+            ProductCategory(
+                id = 2,
+                value = "shoes"
+            ),
+            ProductCategory(
+                id = 3,
+                value = "women's clothing"
+            ),
+            ProductCategory(
+                id = 4,
+                value = "jewelery"
+            )
+        )
+        productsDao.insertAllCategories(*categories.toTypedArray())
+        val categoryCount = productsDao.getCategoriesCount()
+        assertThat(categoryCount).isEqualTo(4)
     }
 }
