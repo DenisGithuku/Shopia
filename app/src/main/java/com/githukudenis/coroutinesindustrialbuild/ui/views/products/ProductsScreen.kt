@@ -54,14 +54,13 @@ fun ProductsScreen(
 ) {
     val productsViewModel: ProductsViewModel = hiltViewModel()
     val state by productsViewModel.state.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
     val isRefreshing = state.isRefreshing
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts)
     })
-    val categories = state.categories?.toList() ?: emptyList()
+    val categories = state.categories.toList()
 
-    var modalBottomSheetState = remember {
+    val modalBottomSheetState = remember {
         ModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden
         )
@@ -81,7 +80,7 @@ fun ProductsScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp)
+                .padding(top = 12.dp)
                 .pullRefresh(pullRefreshState)
         ) {
 
@@ -97,7 +96,8 @@ fun ProductsScreen(
                         items(
                             items = categories
                         ) { category ->
-                            CategoryItem(category = category.value,
+                            CategoryItem(
+                                category = category.value.replaceFirstChar { char -> char.uppercase() },
                                 selected = state.selectedCategory == category.value,
                                 onSelect = {
                                     productsViewModel.onEvent(
