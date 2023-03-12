@@ -37,9 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -94,12 +97,12 @@ fun ProductsScreen(
                         items(
                             items = categories
                         ) { category ->
-                            CategoryItem(category = category,
-                                selected = state.selectedCategory == category,
+                            CategoryItem(category = category.value,
+                                selected = state.selectedCategory == category.value,
                                 onSelect = {
                                     productsViewModel.onEvent(
                                         ProductsScreenEvent.ChangeCategory(
-                                            category
+                                            category.value
                                         )
                                     )
                                 })
@@ -137,14 +140,18 @@ fun ProductsScreen(
                             model = productItem.image,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
-                            modifier = modifier.requiredSize(150.dp)
+                            modifier = modifier.requiredSize(120.dp)
                         )
 
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
-                                text = productItem.title
+                                text = productItem.title,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
                             )
                             Text(
                                 text = productItem.description,

@@ -1,10 +1,12 @@
 package com.githukudenis.coroutinesindustrialbuild.di
 
 import android.content.Context
-import com.githukudenis.coroutinesindustrialbuild.data.api.ProductsApiService
-import com.githukudenis.coroutinesindustrialbuild.data.api.base_url
-import com.githukudenis.coroutinesindustrialbuild.data.repo.ProductsDatasource
-import com.githukudenis.coroutinesindustrialbuild.data.repo.ProductsRepo
+import com.githukudenis.coroutinesindustrialbuild.data.local.ProductsDao
+import com.githukudenis.coroutinesindustrialbuild.data.local.ProductsLocalDataSource
+import com.githukudenis.coroutinesindustrialbuild.data.remote.ProductsApiService
+import com.githukudenis.coroutinesindustrialbuild.data.remote.base_url
+import com.githukudenis.coroutinesindustrialbuild.data.remote.ProductsRemoteDatasource
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkObserver
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkStateObserver
 import dagger.Module
@@ -20,7 +22,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+object NetworkModule {
 
     @Provides
     @Singleton
@@ -49,9 +51,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideProductsRepository(
-        productsApiService: ProductsApiService
+        productsDao: ProductsDao,
+        productsRemoteDatasource: ProductsRemoteDatasource
     ): ProductsRepo {
-        return ProductsDatasource(productsApiService = productsApiService)
+        return ProductsLocalDataSource(productsDao = productsDao, productsRemoteDatasource = productsRemoteDatasource)
     }
 
     @Provides

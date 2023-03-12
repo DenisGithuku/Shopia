@@ -2,9 +2,8 @@ package com.githukudenis.coroutinesindustrialbuild.ui.views.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.coroutinesindustrialbuild.data.repo.ProductsRepo
-import com.githukudenis.coroutinesindustrialbuild.data.repo.Resource
 import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkObserver
+import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -62,6 +61,7 @@ class ProductsViewModel @Inject constructor(
             is ProductsScreenEvent.RefreshProducts -> {
                 getProducts()
             }
+
             is ProductsScreenEvent.ChangeCategory -> {
                 changeSelectedCategory(event.category)
             }
@@ -71,32 +71,20 @@ class ProductsViewModel @Inject constructor(
     fun getCategories() {
         viewModelScope.launch {
             productsRepo.getCategories().collect { result ->
-                when(result) {
-                    is Resource.Error -> {
-                        _state.value = _state.value.copy(
-                            error = result.cause,
-                            categoriesLoading = false
-                        )
-                    }
-                    is Resource.Loading -> {
-                        _state.value.copy(
-                            categoriesLoading = true
-                        )
-                    }
-                    is Resource.Success -> {
-                        _state.value = _state.value.copy(
-                            categories = result.results,
-                            selectedCategory = result.results?.let { it.first() },
-                            categoriesLoading = false
-                        )
-                    }
-                }
+                _state.value = _state.value.copy(
+                    categories = result,
+                    selectedCategory = result.first().value,
+                    categoriesLoading = false
+                )
             }
         }
     }
 
     fun getProducts() {
         viewModelScope.launch {
+            _state.value = _state.value.copy(
+                isRefreshing = true
+            )
             val countries = async {
                 productsRepo.getProducts()
             }
@@ -104,31 +92,12 @@ class ProductsViewModel @Inject constructor(
             countries.await()
                 .buffer(capacity = 20)
                 .collect { result ->
-                    when (result) {
-                        is Resource.Loading -> {
-                            _state.update { state ->
-                                state.copy(productsLoading = true)
-                            }
-                        }
-
-                        is Resource.Success -> {
-                            _state.update { state ->
-                                state.copy(
-                                    productsLoading = false,
-                                    isRefreshing = false,
-                                    products = result.results ?: emptyList()
-                                )
-                            }
-                        }
-
-                        is Resource.Error -> {
-                            _state.update { state ->
-                                state.copy(
-                                    productsLoading = false,
-                                    error = result.cause
-                                )
-                            }
-                        }
+                    _state.update { state ->
+                        state.copy(
+                            productsLoading = false,
+                            isRefreshing = false,
+                            products = result
+                        )
                     }
                 }
         }
