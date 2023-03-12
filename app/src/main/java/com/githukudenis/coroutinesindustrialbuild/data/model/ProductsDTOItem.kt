@@ -1,5 +1,7 @@
 package com.githukudenis.coroutinesindustrialbuild.data.model
 
+import com.githukudenis.coroutinesindustrialbuild.domain.ProductDBO
+
 data class ProductsDTOItem(
     val category: String,
     val description: String,
@@ -9,3 +11,9 @@ data class ProductsDTOItem(
     val rating: Rating,
     val title: String
 )
+
+fun ProductsDTOItem.toProducts(): ProductDBO {
+    return ProductDBO(
+        category, description, id, image, price, rating, title
+    )
+}

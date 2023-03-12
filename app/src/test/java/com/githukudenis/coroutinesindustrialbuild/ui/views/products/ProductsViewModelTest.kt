@@ -2,6 +2,7 @@ package com.githukudenis.coroutinesindustrialbuild.ui.views.products
 
 import androidx.test.filters.MediumTest
 import com.githukudenis.coroutinesindustrialbuild.data.repo.FakeProductsDataSource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
@@ -10,6 +11,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 class ProductsViewModelTest {
     private lateinit var productsViewModel: ProductsViewModel
