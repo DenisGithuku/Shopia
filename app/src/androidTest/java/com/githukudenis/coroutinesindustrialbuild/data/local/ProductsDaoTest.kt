@@ -141,19 +141,15 @@ class ProductsDaoTest {
     fun insertProductCategoriesTest() = runTest {
         val categories = listOf(
             ProductCategory(
-                id = 1,
                 value = "bags"
             ),
             ProductCategory(
-                id = 2,
                 value = "shoes"
             ),
             ProductCategory(
-                id = 3,
                 value = "women's clothing"
             ),
             ProductCategory(
-                id = 4,
                 value = "jewelery"
             )
         )
