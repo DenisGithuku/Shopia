@@ -10,9 +10,12 @@ import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
 @Dao
 interface ProductsDao {
     @Insert(entity = ProductCategory::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllCategories(vararg categories: ProductCategory)
+    suspend fun insertAllCategories(categories: List<ProductCategory>)
     @Insert(entity = ProductDBO::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllProducts(vararg products: ProductDBO)
+    suspend fun insertAllProducts(products: List<ProductDBO>)
+
+    @Query("SELECT * FROM products_table WHERE category like :category")
+    suspend fun getProductsInCategory(category: String): List<ProductDBO>
 
     // convenience testing method
     @Query("SELECT COUNT(id) FROM products_table")

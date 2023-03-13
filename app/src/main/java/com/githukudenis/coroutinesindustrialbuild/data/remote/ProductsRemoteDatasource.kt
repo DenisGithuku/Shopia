@@ -17,9 +17,9 @@ class ProductsRemoteDatasource @Inject constructor(
             if (response.isSuccessful) {
                 val productCategories = response.body()
                 productCategories?.let { categories ->
-                    productsDao.insertAllCategories(*categories.map {
+                    productsDao.insertAllCategories(categories.map {
                         ProductCategory(value = it)
-                    }.toTypedArray())
+                    })
                 }
             }
         } catch (e: Exception) {
@@ -33,8 +33,8 @@ class ProductsRemoteDatasource @Inject constructor(
             if (response.isSuccessful) {
                 val products = response.body()
                 products?.let { productsDTO ->
-                    productsDao.insertAllProducts(*productsDTO.map { it.toProducts() }
-                        .toTypedArray())
+                    productsDao.insertAllProducts(productsDTO.map { it.toProducts() }
+                        )
                 }
             }
         } catch (e: Exception) {
