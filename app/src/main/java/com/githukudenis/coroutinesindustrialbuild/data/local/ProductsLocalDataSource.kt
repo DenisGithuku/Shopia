@@ -26,6 +26,16 @@ class ProductsLocalDataSource @Inject constructor(
         }
     }
 
+    override suspend fun getProductsInCategory(category: String): Flow<List<ProductDBO>> = flow {
+        try {
+            refreshProducts()
+            val productsInCategory = productsDao.getProductsInCategory(category)
+            emit(productsInCategory)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     override suspend fun getProducts(): Flow<List<ProductDBO>> = flow<List<ProductDBO>> {
         try {
             refreshProducts()

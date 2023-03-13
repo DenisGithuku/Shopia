@@ -72,7 +72,7 @@ class ProductsDaoTest {
                 title = "Pedant"
             )
         )
-        productsDao.insertAllProducts(*products.toTypedArray())
+        productsDao.insertAllProducts(products)
         val productsFromDb = productsDao.getProductsCount()
         assert(productsFromDb == 3)
     }
@@ -106,7 +106,7 @@ class ProductsDaoTest {
                 title = "Pedant"
             )
         )
-        productsDao.insertAllProducts(* products.toTypedArray())
+        productsDao.insertAllProducts(products)
         val productCount = productsDao.getAllProducts().size
         assertThat(productCount == products.size)
     }
@@ -132,7 +132,7 @@ class ProductsDaoTest {
                 title = "Silver necklace"
             )
         )
-        productsDao.insertAllProducts(* products.toTypedArray())
+        productsDao.insertAllProducts(products)
         val secondProductId = productsDao.getProductById(2).id
         assertThat(secondProductId).isEqualTo(2)
     }
@@ -153,7 +153,7 @@ class ProductsDaoTest {
                 value = "jewelery"
             )
         )
-        productsDao.insertAllCategories(*categories.toTypedArray())
+        productsDao.insertAllCategories(categories)
         val categoryCount = productsDao.getCategoriesCount()
         assertThat(categoryCount).isEqualTo(4)
     }
