@@ -138,6 +138,49 @@ class ProductsDaoTest {
     }
 
     @Test
+    fun getProductsInCategory() = runTest(UnconfinedTestDispatcher()) {
+        val products = listOf(
+            ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 1,
+                image = "https::",
+                price = 45.6,
+                rating = Rating(count = 7, rate = 3.4),
+                title = "Gold Chain"
+            ), ProductDBO(
+                category = "jewelery",
+                description = "Fashion",
+                id = 2,
+                image = "https::",
+                price = 23.6,
+                rating = Rating(count = 4, rate = 12.8),
+                title = "Silver necklace"
+            ),
+            ProductDBO(
+                category = "electronics",
+                description = "TV Bracket",
+                id = 3,
+                image = "https::",
+                price = 23.6,
+                rating = Rating(count = 4, rate = 12.8),
+                title = "Silver necklace"
+            ),ProductDBO(
+                category = "men's clothing",
+                description = "Bomber jacket",
+                id = 4,
+                image = "https::",
+                price = 23.6,
+                rating = Rating(count = 4, rate = 12.8),
+                title = "Silver necklace"
+            )
+        )
+        productsDao.insertAllProducts(products)
+        val jeweleryProducts = productsDao.getProductsInCategory("jewelery")
+        assertThat(jeweleryProducts.size).isEqualTo(2)
+    }
+
+    @Test
     fun insertProductCategoriesTest() = runTest {
         val categories = listOf(
             ProductCategory(
