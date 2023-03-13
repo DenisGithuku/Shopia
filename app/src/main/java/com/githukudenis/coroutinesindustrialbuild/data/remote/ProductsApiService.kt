@@ -13,6 +13,9 @@ interface ProductsApiService {
     @GET("products/categories")
     suspend fun getProductCategories(): Response<List<String>>
 
+    @GET("products/categories/{category}")
+    suspend fun getProductsInCategory(): Response<ProductsDTO>
+
     @GET("products")
     suspend fun getAllProducts(): Response<ProductsDTO>
 

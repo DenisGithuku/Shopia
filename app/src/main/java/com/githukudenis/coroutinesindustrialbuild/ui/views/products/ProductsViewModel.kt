@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class ProductsViewModel @Inject constructor(
                     when (connectionStatus) {
                         NetworkObserver.ConnectionStatus.AVAILABLE -> {
                             getCategories()
-                            getProducts()
+                            getAllProducts()
                         }
 
                         NetworkObserver.ConnectionStatus.UNAVAILABLE -> {
@@ -60,7 +61,7 @@ class ProductsViewModel @Inject constructor(
     fun onEvent(event: ProductsScreenEvent) {
         when (event) {
             is ProductsScreenEvent.RefreshProducts -> {
-                getProducts()
+                getAllProducts()
             }
 
             is ProductsScreenEvent.ChangeCategory -> {
@@ -83,7 +84,7 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    fun getProducts() {
+    fun getAllProducts() {
         viewModelScope.launch {
             _state.value = _state.value.copy(
                 isRefreshing = true
@@ -104,6 +105,20 @@ class ProductsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun getProductsInCategory(category: String) = viewModelScope.launch {
+        val productCategoryDeferred = async {
+            val productsInCategory = productsRepo.getProductsInCategory(category)
+            return@async productsInCategory
+        }
+
+        productCategoryDeferred.await().collect() { productsInCategory ->
+            _state.value = _state.value.copy(
+                products = productsInCategory
+            )
+        }
+
     }
 
     fun changeSelectedCategory(category: String) {

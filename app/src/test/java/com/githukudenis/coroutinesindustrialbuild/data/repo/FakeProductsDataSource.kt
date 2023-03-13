@@ -1,15 +1,18 @@
 package com.githukudenis.coroutinesindustrialbuild.data.repo
 
+import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
 import com.githukudenis.coroutinesindustrialbuild.data.model.ProductsDTOItem
 import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
+import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
 import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
 import com.githukudenis.coroutinesindustrialbuild.domain.repo.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeProductsDataSource: ProductsRepo {
+
     private val products = listOf(
-        ProductsDTOItem(
+        ProductDBO(
             category = "jewelery",
             description = "To be worn by women",
             id = 1,
@@ -18,7 +21,7 @@ class FakeProductsDataSource: ProductsRepo {
             rating = Rating(count = 3, rate = 5.6),
             title = "Louis Vutton"
         ),
-        ProductsDTOItem(
+        ProductDBO(
             category = "jewelery",
             description = "To be worn by women",
             id = 1,
@@ -27,8 +30,8 @@ class FakeProductsDataSource: ProductsRepo {
             rating = Rating(count = 3, rate = 5.6),
             title = "Louis Vutton"
         ),
-        ProductsDTOItem(
-            category = "jewelery",
+        ProductDBO(
+            category = "women's clothing",
             description = "To be worn by women",
             id = 1,
             image = "https://sourceofimage.com",
@@ -38,18 +41,36 @@ class FakeProductsDataSource: ProductsRepo {
         )
     )
 
-    override suspend fun getProducts(): Flow<Resource<List<ProductsDTOItem>>> {
+    override suspend fun getCategories(): Flow<List<ProductCategory>> {
         return flow {
-            emit(Resource.Success(products))
+            emit(listOf(
+                ProductCategory("men's clothing"),
+                ProductCategory("jewelery"),
+                ProductCategory("electronics"),
+                ProductCategory("women's clothing")
+            ))
         }
     }
 
-    override suspend fun getProductDetails(productId: Int): Flow<Resource<ProductsDTOItem>> {
+    override suspend fun getProductsInCategory(category: String): Flow<List<ProductDBO>> {
+        return flow {
+            val productsInCategory = products.filter { product -> product.category == category }
+            emit(productsInCategory)
+        }
+    }
+
+    override suspend fun getProducts(): Flow<List<ProductDBO>> {
+        return flow {
+            emit(products)
+        }
+    }
+
+    override suspend fun getProductDetails(productId: Int): Flow<ProductDBO> {
         return flow {
             val product = products.find {
                 it.id == productId
             } ?: return@flow
-            emit(Resource.Success(product))
+            emit(product)
         }
     }
 }
