@@ -33,7 +33,6 @@ object NetworkModule {
                     level = HttpLoggingInterceptor.Level.BASIC
                 }
             )
-//            .callTimeout(timeout = 10000L, TimeUnit.MILLISECONDS)
             .build()
     }
 
