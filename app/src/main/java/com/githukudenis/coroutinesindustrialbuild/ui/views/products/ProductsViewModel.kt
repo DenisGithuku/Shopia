@@ -65,7 +65,12 @@ class ProductsViewModel @Inject constructor(
             }
 
             is ProductsScreenEvent.ChangeCategory -> {
-                changeSelectedCategory(event.category)
+                changeSelectedCategory(event.category).also {
+                    when (event.category.lowercase()) {
+                        "all" -> getAllProducts()
+                        else -> getProductsInCategory(event.category)
+                    }
+                }
             }
         }
     }
@@ -89,11 +94,11 @@ class ProductsViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isRefreshing = true
             )
-            val countries = async {
+            val countriesDeferred = async {
                 productsRepo.getProducts()
             }
 
-            countries.await()
+            countriesDeferred.await()
                 .buffer(capacity = 20)
                 .collect { result ->
                     _state.update { state ->
@@ -108,14 +113,17 @@ class ProductsViewModel @Inject constructor(
     }
 
     fun getProductsInCategory(category: String) = viewModelScope.launch {
+        _state.value = _state.value.copy(
+            isRefreshing = true
+        )
         val productCategoryDeferred = async {
-            val productsInCategory = productsRepo.getProductsInCategory(category)
-            return@async productsInCategory
+            return@async productsRepo.getProductsInCategory(category)
         }
 
-        productCategoryDeferred.await().collect() { productsInCategory ->
+        productCategoryDeferred.await().collect { productsInCategory ->
             _state.value = _state.value.copy(
-                products = productsInCategory
+                products = productsInCategory,
+                isRefreshing = false
             )
         }
 

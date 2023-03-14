@@ -114,21 +114,6 @@ fun ProductsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-//                            productsViewModel
-//                                .onEvent(
-//                                    ProductsScreenEvent.OpenProductDetails(
-//                                        productItem.id
-//                                    )
-//                                )
-//                                .also {
-//                                    coroutineScope.launch {
-//                                        if (!modalBottomSheetState.isVisible) {
-//                                            modalBottomSheetState.show()
-//                                        } else {
-//                                            modalBottomSheetState.hide()
-//                                        }
-//                                    }
-//                                }
                                 onOpenProductDetails(productItem.id)
                             }
                             .padding(12.dp),
