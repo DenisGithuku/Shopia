@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.githukudenis.auth"
+    namespace = "com.githukudenis.common"
     compileSdk = 33
 
     defaultConfig {
@@ -13,12 +13,16 @@ android {
         targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -28,17 +32,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
-    }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 kapt {
@@ -46,6 +39,7 @@ kapt {
 }
 
 dependencies {
+
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
@@ -89,11 +83,4 @@ dependencies {
     debugImplementation(Dependencies.composeUiTestManifest)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.gson)
-
-    implementation(Dependencies.androidCore)
-    implementation(Dependencies.appCompat)
-    implementation(Dependencies.composeMaterial)
-    testImplementation(Dependencies.junitTest)
-    androidTestImplementation(Dependencies.junitAndroidTest)
-    androidTestImplementation(Dependencies.espressoAndroidTest)
 }
