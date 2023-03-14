@@ -1,27 +1,18 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
-
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.githukudenis.coroutinesindustrialbuild"
+    namespace = "com.githukudenis.auth"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.githukudenis.coroutinesindustrialbuild"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -57,8 +48,6 @@ kapt {
 dependencies {
     implementation(project(":core_design"))
     implementation(project(":common"))
-    implementation(project(":feature_auth"))
-    implementation(project(":feature_product"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
@@ -70,9 +59,6 @@ dependencies {
     implementation(Dependencies.activityCompose)
     implementation(Dependencies.navigationCompose)
     implementation(Dependencies.hiltNavigationCompose)
-    implementation(Dependencies.roomRuntime)
-    kapt(Dependencies.roomCompiler)
-    implementation(Dependencies.roomKtx)
     implementation(Dependencies.viewModelSavedState)
     implementation(Dependencies.composeUi)
     implementation(Dependencies.composeTooling)
@@ -84,7 +70,6 @@ dependencies {
     implementation(Dependencies.gson)
     implementation(Dependencies.systemUiController)
     implementation(Dependencies.glide)
-    implementation(Dependencies.accompanistImage)
     implementation(Dependencies.systemUiController)
 
     testImplementation(Dependencies.junitTest)
@@ -104,4 +89,13 @@ dependencies {
     androidTestImplementation(Dependencies.composeJunitTest)
     debugImplementation(Dependencies.composeUiDebugTooling)
     debugImplementation(Dependencies.composeUiTestManifest)
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.gson)
+
+    implementation(Dependencies.androidCore)
+    implementation(Dependencies.appCompat)
+    implementation(Dependencies.composeMaterial)
+    testImplementation(Dependencies.junitTest)
+    androidTestImplementation(Dependencies.junitAndroidTest)
+    androidTestImplementation(Dependencies.espressoAndroidTest)
 }
