@@ -1,6 +1,6 @@
-package com.githukudenis.coroutinesindustrialbuild.ui.views.products
+package com.githukudenis.feature_product.ui.views.products
 
-import com.githukudenis.coroutinesindustrialbuild.data.util.NetworkObserver
+import com.githukudenis.feature_product.data.util.NetworkObserver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 

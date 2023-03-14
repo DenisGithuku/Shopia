@@ -1,13 +1,13 @@
-package com.githukudenis.coroutinesindustrialbuild.data.local
+package com.githukudenis.feature_product.data.local
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
-import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
-import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
+import com.githukudenis.feature_product.data.model.ProductCategory
+import com.githukudenis.feature_product.data.model.Rating
+import com.githukudenis.feature_product.domain.model.ProductDBO
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -165,7 +165,7 @@ class ProductsDaoTest {
                 price = 23.6,
                 rating = Rating(count = 4, rate = 12.8),
                 title = "Silver necklace"
-            ),ProductDBO(
+            ), ProductDBO(
                 category = "men's clothing",
                 description = "Bomber jacket",
                 id = 4,

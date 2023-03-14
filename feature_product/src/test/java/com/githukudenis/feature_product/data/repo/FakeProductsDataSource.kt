@@ -1,11 +1,9 @@
-package com.githukudenis.coroutinesindustrialbuild.data.repo
+package com.githukudenis.feature_product.data.repo
 
-import com.githukudenis.coroutinesindustrialbuild.data.model.ProductCategory
-import com.githukudenis.coroutinesindustrialbuild.data.model.ProductsDTOItem
-import com.githukudenis.coroutinesindustrialbuild.data.model.Rating
-import com.githukudenis.coroutinesindustrialbuild.domain.model.ProductDBO
-import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
-import com.githukudenis.coroutinesindustrialbuild.domain.repo.Resource
+import com.githukudenis.feature_product.data.model.ProductCategory
+import com.githukudenis.feature_product.data.model.Rating
+import com.githukudenis.feature_product.domain.model.ProductDBO
+import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

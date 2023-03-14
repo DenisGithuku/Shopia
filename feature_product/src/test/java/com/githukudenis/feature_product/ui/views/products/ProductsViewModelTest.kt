@@ -1,18 +1,15 @@
-package com.githukudenis.coroutinesindustrialbuild.ui.views.products
+package com.githukudenis.feature_product.ui.views.products
 
 import androidx.test.filters.MediumTest
-import com.githukudenis.coroutinesindustrialbuild.data.repo.FakeProductsDataSource
-import com.githukudenis.coroutinesindustrialbuild.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.data.repo.FakeProductsDataSource
+import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
@@ -41,7 +38,7 @@ class ProductsViewModelTest {
     fun changeCategoryTest() = runTest(UnconfinedTestDispatcher()) {
         productsViewModel.changeSelectedCategory("jewelery")
         val selectedCategory = productsViewModel.state.value.selectedCategory
-        assertEquals("jewelery", selectedCategory)
+        assertThat(selectedCategory).isEqualTo("jewelery")
     }
 
     @Test

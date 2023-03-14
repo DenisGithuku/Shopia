@@ -1,4 +1,4 @@
-package com.githukudenis.coroutinesindustrialbuild.ui.views.products
+package com.githukudenis.feature_product.ui.views.products
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
