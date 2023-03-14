@@ -14,5 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CoroutinesIndustrialBuild"
 include ':app'
-include ':auth'
+include ':feature_auth'
 include ':common'
+include ':feature_product'
+include ':core_design'

@@ -1,33 +1,28 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
-
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.githukudenis.coroutinesindustrialbuild"
+    namespace = "com.githukudenis.feature_product"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.githukudenis.coroutinesindustrialbuild"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -43,11 +38,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
     }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 kapt {
@@ -57,8 +47,6 @@ kapt {
 dependencies {
     implementation(project(":core_design"))
     implementation(project(":common"))
-    implementation(project(":feature_auth"))
-    implementation(project(":feature_product"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
