@@ -169,7 +169,7 @@ fun LoginScreen(
 
 @Composable
 private fun ShowDialog(
-    message: String, modifier: Modifier = Modifier
+    modifier: Modifier = Modifier, message: String, icon: Int? = null
 ) {
     val properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     Dialog(properties = properties, onDismissRequest = {}) {
@@ -183,6 +183,11 @@ private fun ShowDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                icon?.let {
+                    Icon(
+                        painter = painterResource(id = icon), contentDescription = "Dialog icon"
+                    )
+                }
                 CircularProgressIndicator()
                 Text(text = message, color = Color.Black.copy(alpha = .8f))
             }
