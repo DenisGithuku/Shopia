@@ -1,4 +1,4 @@
-package com.githukudenis.auth.login
+package com.githukudenis.auth.api
 
 data class User(
     val username: String,

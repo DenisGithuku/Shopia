@@ -9,6 +9,7 @@ sealed class AppDestination(
     val icon: ImageVector? = null
 ) {
     object Splash: AppDestination(route = "splash")
+    object Login: AppDestination("login")
     object Products: AppDestination(route = "products", icon = Icons.Default.List)
     object ProductDetail: AppDestination(route ="details")
 }
