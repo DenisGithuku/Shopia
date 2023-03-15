@@ -69,8 +69,7 @@ fun LoginScreen(
     }
 
     if (uiState.isLoading) {
-        showDialog(message = "Please wait...",
-            onDismissDialog = { loginViewModel.onEvent(LoginUiEvent.OnShowLoadingDialog(false)) })
+        ShowDialog(message = "Please wait...")
     }
 
     Column(
@@ -121,7 +120,8 @@ fun LoginScreen(
                         targetState = if (passwordIsVisible) R.drawable.ic_close else R.drawable.ic_eye,
                     ) { icon ->
                         Icon(
-                            painter = painterResource(id = icon), contentDescription = "Toggle password visibility"
+                            painter = painterResource(id = icon),
+                            contentDescription = "Toggle password visibility"
                         )
                     }
                 }
@@ -133,12 +133,10 @@ fun LoginScreen(
                 if (uiState.formIsValid) {
                     val (username, password) = uiState.formState
                     val user = User(username, password)
-                    loginViewModel.onEvent(LoginUiEvent.OnShowLoadingDialog(true))
-                    loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
-
-                    if (uiState.loginSuccess) {
-                        loginViewModel.onEvent(LoginUiEvent.OnShowLoadingDialog(false))
-                        onLoggedIn()
+                    loginViewModel.onEvent(LoginUiEvent.OnLogin(user)).also {
+                        if (uiState.loginSuccess) {
+                            onLoggedIn()
+                        }
                     }
                 } else {
                     val userMessage = UserMessage(id = 0, message = "Invalid details")
@@ -152,11 +150,9 @@ fun LoginScreen(
             if (uiState.formIsValid) {
                 val (username, password) = uiState.formState
                 val user = User(username, password)
-                loginViewModel.onEvent(LoginUiEvent.OnShowLoadingDialog(true))
                 loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
 
                 if (uiState.loginSuccess) {
-                    loginViewModel.onEvent(LoginUiEvent.OnShowLoadingDialog(false))
                     onLoggedIn()
                 }
             } else {
@@ -172,13 +168,11 @@ fun LoginScreen(
 }
 
 @Composable
-private fun showDialog(
-    message: String, modifier: Modifier = Modifier, onDismissDialog: () -> Unit
+private fun ShowDialog(
+    message: String, modifier: Modifier = Modifier
 ) {
     val properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-    Dialog(properties = properties, onDismissRequest = {
-        onDismissDialog()
-    }) {
+    Dialog(properties = properties, onDismissRequest = {}) {
         Box(
             modifier = modifier
                 .requiredSize(DpSize(200.dp, 200.dp))
