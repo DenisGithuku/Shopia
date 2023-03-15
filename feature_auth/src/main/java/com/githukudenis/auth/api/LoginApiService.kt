@@ -1,4 +1,4 @@
-package com.githukudenis.auth.login
+package com.githukudenis.auth.api
 
 import retrofit2.Response
 import retrofit2.http.Body
