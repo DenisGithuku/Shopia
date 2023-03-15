@@ -1,6 +1,6 @@
-package com.githukudenis.data
+package com.githukudenis.auth.data
 
-import com.githukudenis.auth.login.User
+import com.githukudenis.auth.api.User
 
 interface AuthRepository {
     suspend fun login(user: User): String?

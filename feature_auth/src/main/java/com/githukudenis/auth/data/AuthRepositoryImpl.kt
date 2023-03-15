@@ -1,7 +1,7 @@
-package com.githukudenis.data
+package com.githukudenis.auth.data
 
-import com.githukudenis.auth.login.LoginApiService
-import com.githukudenis.auth.login.User
+import com.githukudenis.auth.api.LoginApiService
+import com.githukudenis.auth.api.User
 import timber.log.Timber
 import javax.inject.Inject
 
