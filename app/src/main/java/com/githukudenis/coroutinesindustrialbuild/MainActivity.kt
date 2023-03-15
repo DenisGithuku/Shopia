@@ -7,6 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.runtime.DisposableEffect
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
             }
             CoroutinesIndustrialBuildTheme {
                 Scaffold(
+                    snackbarHost =  { SnackbarHost(hostState = snackbarHostState) }
                 ) { paddingValues ->
                     Surface(
                         modifier = Modifier

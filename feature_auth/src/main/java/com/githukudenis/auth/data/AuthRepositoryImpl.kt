@@ -12,9 +12,11 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = loginApiService.login(user)
             if (response.isSuccessful) {
-                val token = response.body()
+                val token = response.body()?.token
                 token
-            } else null
+            } else {
+                null
+            }
         } catch (e: Exception) {
             Timber.e(e)
             null

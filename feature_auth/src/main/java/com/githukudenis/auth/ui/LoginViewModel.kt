@@ -38,10 +38,6 @@ class LoginViewModel @Inject constructor(
                 changeUsername(event.username)
             }
 
-            is LoginUiEvent.OnShowLoadingDialog -> {
-                toggleLoadingStatus(event.showDialog)
-            }
-
             is LoginUiEvent.OnShowUserMessage -> {
                 refreshUserMessages(event.userMessage)
             }
@@ -62,17 +58,11 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun refreshUserMessages(userMessage: UserMessage){
+    private fun refreshUserMessages(userMessage: UserMessage) {
         val userMessages = mutableListOf<UserMessage>()
         userMessages.add(userMessage)
         _state.value = _state.value.copy(
             userMessages = userMessages
-        )
-    }
-
-    private fun toggleLoadingStatus(isLoading: Boolean) {
-        _state.value = _state.value.copy(
-            isLoading = isLoading
         )
     }
 
@@ -99,13 +89,25 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun login(user: User) = viewModelScope.launch {
+        _state.value = _state.value.copy(
+            isLoading = true
+        )
         val loginDeferred = async {
             return@async authRepository.login(user)
         }
         val loginResult = loginDeferred.await()
-        _state.value = _state.value.copy(
-            loginSuccess = !loginResult.isNullOrEmpty()
-        )
+        if (!loginResult.isNullOrEmpty()) {
+            _state.value = _state.value.copy(
+                isLoading = false, loginSuccess = true
+            )
+        } else {
+            val userMessage = UserMessage(id = 0, message = "Could not login. Please check details")
+            val userMessages = mutableListOf<UserMessage>()
+            userMessages.add(userMessage)
+            _state.value = _state.value.copy(
+                isLoading = false, userMessages = userMessages
+            )
+        }
 
     }
 }
