@@ -7,8 +7,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +24,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val snackbarHostState = remember {
+                SnackbarHostState()
+            }
+
             // Remember a SystemUiController
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = !isSystemInDarkTheme()
@@ -39,13 +45,14 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             CoroutinesIndustrialBuildTheme {
-                Scaffold { paddingValues ->
+                Scaffold(
+                ) { paddingValues ->
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
                     ) {
-                        AppNavigator(navController = navController)
+                        AppNavigator(navController = navController, snackbarHostState = snackbarHostState)
                     }
                 }
             }

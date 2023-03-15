@@ -1,11 +1,13 @@
 package com.githukudenis.coroutinesindustrialbuild
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.githukudenis.auth.ui.LoginScreen
 import com.githukudenis.feature_product.ui.util.AppDestination
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
@@ -13,7 +15,8 @@ import com.githukudenis.feature_product.ui.views.products.ProductsScreen
 
 @Composable
 fun AppNavigator(
-    navController: NavHostController
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState
 ) {
     NavHost(
         navController = navController, startDestination = AppDestination.Splash.route
@@ -22,8 +25,17 @@ fun AppNavigator(
             route = AppDestination.Splash.route
         ) {
             SplashScreen {
-                navController.navigate(AppDestination.Products.route) {
+                navController.navigate(AppDestination.Login.route) {
                     popUpTo(AppDestination.Splash.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+        composable(route = AppDestination.Login.route) {
+            LoginScreen(snackbarHostState = snackbarHostState) {
+                navController.navigate(AppDestination.Products.route) {
+                    popUpTo(AppDestination.Login.route) {
                         inclusive = true
                     }
                 }
