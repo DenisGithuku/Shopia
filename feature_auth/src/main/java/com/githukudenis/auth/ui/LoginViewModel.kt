@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun togglePasswordVisibility() {
+    fun togglePasswordVisibility() {
         val passWordVisible = _state.value.formState.passwordIsVisible
         val formState = _state.value.formState.copy(
             passwordIsVisible = !passWordVisible
@@ -58,7 +58,7 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun refreshUserMessages(userMessage: UserMessage) {
+    fun refreshUserMessages(userMessage: UserMessage) {
         val userMessages = mutableListOf<UserMessage>()
         userMessages.add(userMessage)
         _state.value = _state.value.copy(
@@ -66,21 +66,21 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun changeUsername(value: String) {
+    fun changeUsername(value: String) {
         val formState = _state.value.formState.copy(username = value)
         _state.value = _state.value.copy(
             formState = formState
         )
     }
 
-    private fun changePassword(value: String) {
+    fun changePassword(value: String) {
         val formState = _state.value.formState.copy(password = value)
         _state.value = _state.value.copy(
             formState = formState
         )
     }
 
-    private fun updateUserMessages(messageId: Int) {
+    fun updateUserMessages(messageId: Int) {
         val userMessages =
             _state.value.userMessages.filterNot { userMessage -> userMessage.id == messageId }
         _state.value = _state.value.copy(
@@ -88,7 +88,7 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    private fun login(user: User) = viewModelScope.launch {
+    fun login(user: User) = viewModelScope.launch {
         _state.value = _state.value.copy(
             isLoading = true
         )
