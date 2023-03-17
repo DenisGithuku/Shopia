@@ -7,6 +7,8 @@ data class ProductDetailScreenState(
 )
 
 data class ProductDetailState(
+    val id: Int? = null,
+    val category: String? = null,
     val title: String? = null,
     val description: String? = null,
     val price: String? = null,

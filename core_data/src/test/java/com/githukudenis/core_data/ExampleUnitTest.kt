@@ -1,4 +1,4 @@
-package com.githukudenis.common
+package com.githukudenis.core_data
 
 import org.junit.Test
 

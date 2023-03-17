@@ -39,6 +39,11 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1,gradle/incremental.annotation.processors}"
+        }
+    }
 }
 
 kapt {
@@ -47,7 +52,7 @@ kapt {
 
 dependencies {
     implementation(project(":core_design"))
-    implementation(project(":common"))
+    implementation(project(":core_data"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
