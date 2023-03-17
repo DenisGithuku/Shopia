@@ -75,7 +75,7 @@ fun ProductDetailScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        val (title, description, price, image, rating) = state.product
+        val (id, category, title, description, price, image, rating) = state.product
 
         GlideImage(
             model = image,

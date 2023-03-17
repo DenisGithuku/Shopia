@@ -19,7 +19,7 @@ class ProductsViewModelTest {
     private lateinit var productsViewModel: ProductsViewModel
 
     @get:Rule
-    val mainDispatcherRule by lazy { MainDispatcherRule() }
+    val mainCoroutineRule by lazy { MainCoroutineRule() }
 
     @Before
     fun setUp() {

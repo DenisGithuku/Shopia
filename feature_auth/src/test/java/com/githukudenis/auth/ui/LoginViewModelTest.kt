@@ -4,6 +4,7 @@ import androidx.test.filters.MediumTest
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.auth.data.FakeAuthRepositoryImpl
+import com.githukudenis.core_data.MainCoroutineRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

@@ -27,12 +27,14 @@ class ProductsDetailViewModel @Inject constructor(
     }
 
 
-    private fun getProductDetails(productId: Int) {
+    fun getProductDetails(productId: Int) {
         viewModelScope.launch {
             val productJob = launch {
                 productsRepo.getProductDetails(productId).collect { result ->
                     val (category, description, id, image, price, rating, title) = result
                     val productDetailState = ProductDetailState(
+                        id = id,
+                        category = category,
                         title = title,
                         description = description,
                         price = "$price",

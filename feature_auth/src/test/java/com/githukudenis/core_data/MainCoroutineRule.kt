@@ -1,4 +1,4 @@
-package com.githukudenis.auth.ui
+package com.githukudenis.core_data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestDispatcher
