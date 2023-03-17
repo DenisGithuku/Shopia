@@ -18,11 +18,13 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,9 +58,10 @@ fun LoginScreen(
     val uiState by loginViewModel.state
     val passwordIsVisible = uiState.formState.passwordIsVisible
 
+    val userOnLogin by rememberUpdatedState(onLoggedIn)
 
-    if (uiState.userMessages.isNotEmpty()) {
-        LaunchedEffect(key1 = uiState.userMessages) {
+    LaunchedEffect(uiState) {
+        if (uiState.userMessages.isNotEmpty()) {
             val userMessage = uiState.userMessages[0]
             snackbarHostState.showSnackbar(
                 message = userMessage.message ?: "An error occurred"
@@ -66,11 +69,20 @@ fun LoginScreen(
             userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
                 ?.let { loginViewModel.onEvent(it) }
         }
+
+        if (uiState.loginSuccess) {
+            userOnLogin()
+            snackbarHostState.showSnackbar(
+                message = "Logged in successfully",
+                duration = SnackbarDuration.Long
+            )
+        }
     }
 
     if (uiState.isLoading) {
-        ShowDialog(message = "Please wait...")
+        LoadingDialog(message = "Please wait...")
     }
+
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -168,7 +180,7 @@ fun LoginScreen(
 }
 
 @Composable
-private fun ShowDialog(
+private fun LoadingDialog(
     modifier: Modifier = Modifier, message: String, icon: Int? = null
 ) {
     val properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
