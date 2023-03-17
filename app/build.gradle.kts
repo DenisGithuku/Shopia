@@ -1,5 +1,3 @@
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.include
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -45,7 +43,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/{AL2.0,LGPL2.1,gradle/incremental.annotation.processors}"
         }
     }
 }
@@ -56,7 +54,7 @@ kapt {
 
 dependencies {
     implementation(project(":core_design"))
-    implementation(project(":common"))
+    implementation(project(":core_data"))
     implementation(project(":feature_auth"))
     implementation(project(":feature_product"))
     implementation(Dependencies.appCompat)

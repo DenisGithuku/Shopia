@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.githukudenis.common"
+    namespace = "com.githukudenis.core_data"
     compileSdk = 33
 
     defaultConfig {
@@ -31,6 +31,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1,gradle/incremental.annotation.processors}"
+        }
     }
 }
 
