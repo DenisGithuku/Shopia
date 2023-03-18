@@ -22,7 +22,7 @@ class FakeProductsDataSource: ProductsRepo {
         ProductDBO(
             category = "jewelery",
             description = "To be worn by women",
-            id = 1,
+            id = 2,
             image = "https://sourceofimage.com",
             price = 45.0,
             rating = Rating(count = 3, rate = 5.6),
@@ -31,7 +31,25 @@ class FakeProductsDataSource: ProductsRepo {
         ProductDBO(
             category = "women's clothing",
             description = "To be worn by women",
-            id = 1,
+            id = 3,
+            image = "https://sourceofimage.com",
+            price = 45.0,
+            rating = Rating(count = 3, rate = 5.6),
+            title = "Louis Vutton"
+        ),
+        ProductDBO(
+            category = "women's clothing",
+            description = "To be worn by women",
+            id = 4,
+            image = "https://sourceofimage.com",
+            price = 45.0,
+            rating = Rating(count = 3, rate = 5.6),
+            title = "Louis Vutton"
+        ),
+        ProductDBO(
+            category = "men's clothing",
+            description = "To be worn by men",
+            id = 5,
             image = "https://sourceofimage.com",
             price = 45.0,
             rating = Rating(count = 3, rate = 5.6),
@@ -48,6 +66,10 @@ class FakeProductsDataSource: ProductsRepo {
                 ProductCategory("women's clothing")
             ))
         }
+    }
+
+    override suspend fun refreshProducts() {
+
     }
 
     override suspend fun getProductsInCategory(category: String): Flow<List<ProductDBO>> {
