@@ -27,47 +27,20 @@ class ProductsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            networkStateObserver.observe().collect { connectionStatus ->
-                    when (connectionStatus) {
-                        NetworkObserver.ConnectionStatus.AVAILABLE -> {
-                            getCategories()
-                            getAllProducts()
-                        }
-
-                        NetworkObserver.ConnectionStatus.UNAVAILABLE -> {
-                            _state.update { state ->
-                                state.copy(error = "Connection unavailable")
-                            }
-                        }
-
-                        NetworkObserver.ConnectionStatus.LOSING -> {
-                            _state.update { state ->
-                                state.copy(error = "Poor connection")
-                            }
-                        }
-
-                        NetworkObserver.ConnectionStatus.LOST -> {
-                            _state.update { state ->
-                                state.copy(error = "Connection lost. Try again later")
-                            }
-                        }
-                    }
-                }
+            getCategories()
+            getAllProducts()
         }
     }
 
     fun onEvent(event: ProductsScreenEvent) {
         when (event) {
             is ProductsScreenEvent.RefreshProducts -> {
-                getAllProducts()
+                refreshProducts()
             }
 
             is ProductsScreenEvent.ChangeCategory -> {
                 changeSelectedCategory(event.category).also {
-                    when (event.category.lowercase()) {
-                        "all" -> getAllProducts()
-                        else -> getProductsInCategory(event.category)
-                    }
+                    refreshProducts()
                 }
             }
         }
@@ -97,12 +70,12 @@ class ProductsViewModel @Inject constructor(
             }
 
             countriesDeferred.await().buffer(capacity = 20).collect { result ->
-                    _state.update { state ->
-                        state.copy(
-                            productsLoading = false, isRefreshing = false, products = result
-                        )
-                    }
+                _state.update { state ->
+                    state.copy(
+                        productsLoading = false, isRefreshing = false, products = result
+                    )
                 }
+            }
         }
     }
 
@@ -126,5 +99,19 @@ class ProductsViewModel @Inject constructor(
         _state.value = _state.value.copy(
             selectedCategory = category
         )
+    }
+
+    fun refreshProducts() = viewModelScope.launch {
+        _state.value.selectedCategory?.let { category ->
+            when (category.lowercase()) {
+                "all" -> {
+                    getAllProducts()
+                }
+                else -> {
+                    getProductsInCategory(category.lowercase())
+                }
+
+            }
+        }
     }
 }
