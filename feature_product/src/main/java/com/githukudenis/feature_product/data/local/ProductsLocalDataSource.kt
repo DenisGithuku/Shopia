@@ -38,10 +38,11 @@ class ProductsLocalDataSource @Inject constructor(
 
     override suspend fun getProducts(): Flow<List<ProductDBO>> = flow<List<ProductDBO>> {
         try {
-            refreshProducts()
+            if (productsDao.getAllProducts().isEmpty()) {
+                refreshProducts()
+            }
             val products = productsDao.getAllProducts()
             emit(products)
-
         } catch (e: Exception) {
             Timber.e(e)
         }
@@ -57,7 +58,7 @@ class ProductsLocalDataSource @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    suspend fun refreshProducts() {
+    override suspend fun refreshProducts() {
         productsRemoteDatasource.refreshProducts()
     }
 
