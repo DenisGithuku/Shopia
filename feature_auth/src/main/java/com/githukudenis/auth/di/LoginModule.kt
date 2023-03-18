@@ -3,6 +3,7 @@ package com.githukudenis.auth.di
 import com.githukudenis.auth.api.LoginApiService
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.auth.data.AuthRepositoryImpl
+import com.githukudenis.core_data.data.UserPreferencesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +32,7 @@ object LoginModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(loginApiService: LoginApiService): AuthRepository {
-        return AuthRepositoryImpl(loginApiService)
+    fun provideAuthRepository(loginApiService: LoginApiService, userPreferencesRepository: UserPreferencesRepository): AuthRepository {
+        return AuthRepositoryImpl(loginApiService, userPreferencesRepository)
     }
 }

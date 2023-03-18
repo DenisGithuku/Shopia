@@ -1,10 +1,12 @@
 package com.githukudenis.core_data.data
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
 
-    suspend fun getAppStartStatus(scope: CoroutineScope): Boolean
+    val userPreferencesFlow: Flow<UserPreferences>
 
-    suspend fun updateAppStatusPreference(value: Boolean)
+    suspend fun updateAppInitialization(appInitialized: Boolean)
+
+    suspend fun updateUserLoggedIn(loggedIn: Boolean)
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
+import com.githukudenis.core_data.data.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -14,11 +15,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private val _state: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
     val state: State<LoginUiState> get() = _state
+
+    init {
+        checkLoginStatus()
+    }
 
     fun onEvent(event: LoginUiEvent) {
         when (event) {
@@ -108,6 +114,16 @@ class LoginViewModel @Inject constructor(
                 isLoading = false, userMessages = userMessages
             )
         }
+    }
 
+    private fun checkLoginStatus() {
+        viewModelScope.launch {
+            userPreferencesRepository.userPreferencesFlow.collect { userPrefs ->
+                val isLoggedIn = userPrefs.userLoggedIn
+                _state.value = _state.value.copy(
+                    loginSuccess = isLoggedIn
+                )
+            }
+        }
     }
 }
