@@ -10,7 +10,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object CommonModule {
+object NetworkModule {
+
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): OkHttpClient {
