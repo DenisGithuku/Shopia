@@ -7,9 +7,14 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.githukudenis.core_data.util.Constants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+
+private object PreferenceKeys {
+    val APP_INITIALIZED = booleanPreferencesKey("app_initialized")
+    val USER_LOGGED_IN = booleanPreferencesKey("user_logged_in")
+}
 
 class UserPreferencesRepositoryImpl @Inject constructor(
     private val context: Context
@@ -17,15 +22,22 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = Constants.userPreferences)
 
-    override suspend fun getAppStartStatus(scope: CoroutineScope): Boolean {
-        val appStatusPref = booleanPreferencesKey(Constants.appStatusKey)
-        return context.datastore.data.first()[appStatusPref] ?: false
+    override val userPreferencesFlow: Flow<UserPreferences>
+        get() = context.datastore.data.map { prefs ->
+            val appInitialized = prefs[PreferenceKeys.APP_INITIALIZED] ?: false
+            val userLoggedIn = prefs[PreferenceKeys.USER_LOGGED_IN] ?: false
+            UserPreferences(appInitialized, userLoggedIn)
+        }
+
+    override suspend fun updateAppInitialization(appInitialized: Boolean) {
+        context.datastore.edit { prefs ->
+            prefs[PreferenceKeys.APP_INITIALIZED] = appInitialized
+        }
     }
 
-    override suspend fun updateAppStatusPreference(value: Boolean) {
-        val appStatusPref = booleanPreferencesKey(Constants.appStatusKey)
+    override suspend fun updateUserLoggedIn(loggedIn: Boolean) {
         context.datastore.edit { prefs ->
-            prefs[appStatusPref] = value
+            prefs[PreferenceKeys.USER_LOGGED_IN] = loggedIn
         }
     }
 }
