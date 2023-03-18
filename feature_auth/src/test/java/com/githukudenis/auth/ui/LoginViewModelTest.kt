@@ -4,7 +4,9 @@ import androidx.test.filters.MediumTest
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.auth.data.FakeAuthRepositoryImpl
+import com.githukudenis.auth.data.FakeUserPreferencesRepositoryImpl
 import com.githukudenis.core_data.MainCoroutineRule
+import com.githukudenis.core_data.data.UserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -17,6 +19,7 @@ import org.junit.Test
 class LoginViewModelTest {
 
     private lateinit var authRepository: AuthRepository
+    private lateinit var userPreferencesRepository: UserPreferencesRepository
     private lateinit var loginViewModel: LoginViewModel
 
     @get:Rule
@@ -25,7 +28,11 @@ class LoginViewModelTest {
     @Before
     fun setUp() {
         authRepository = FakeAuthRepositoryImpl()
-        loginViewModel = LoginViewModel(authRepository)
+        userPreferencesRepository = FakeUserPreferencesRepositoryImpl()
+        loginViewModel = LoginViewModel(
+            authRepository = authRepository,
+            userPreferencesRepository = userPreferencesRepository
+        )
     }
 
     @Test
@@ -92,5 +99,11 @@ class LoginViewModelTest {
         loginViewModel.login(user).join()
         val loginSuccess = loginViewModel.state.value.loginSuccess
         assertThat(loginSuccess).isFalse()
+    }
+
+    @Test
+    fun `initial login status returns false`() = runTest {
+        val loginStatus = loginViewModel.state.value.loginSuccess
+        assertThat(loginStatus).isFalse()
     }
 }

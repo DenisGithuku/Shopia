@@ -1,4 +1,4 @@
-package com.githukudenis.auth.data.di
+package com.githukudenis.auth.di
 
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.auth.data.FakeAuthRepositoryImpl
