@@ -31,7 +31,7 @@ class ProductsViewModelTest {
     fun getProductsTest() = runTest(UnconfinedTestDispatcher()) {
         productsViewModel.getAllProducts()
         val productList = productsViewModel.state.value.products
-        assertThat(productList.size).isEqualTo(3)
+        assertThat(productList.size).isEqualTo(5)
     }
 
     @Test
@@ -53,5 +53,18 @@ class ProductsViewModelTest {
         productsViewModel.getProductsInCategory("jewelery")
         val products = productsViewModel.state.value.products
         assertThat(products.size).isEqualTo(2)
+    }
+
+    @Test
+    fun refreshProductsTest() = runTest {
+        productsViewModel.getCategories()
+        val categories = productsViewModel.state.value.categories
+        productsViewModel.changeSelectedCategory(categories.last().value)
+        productsViewModel.refreshProducts()
+        val productCount = productsViewModel.state.value.products.count {
+            it.category == categories.last().value
+        }
+
+        assertThat(productCount).isEqualTo(2)
     }
 }
