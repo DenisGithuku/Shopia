@@ -3,6 +3,7 @@ object Versions {
     val lifecycle = "2.6.0"
     val compose_ui = "1.3.3"
     val accompanist = "0.28.0"
+    val datastore = "1.0.0"
 }
 object Dependencies {
 
@@ -13,6 +14,7 @@ object Dependencies {
     val jupiterUnitTest = "org.junit.jupiter:junit-jupiter:5.8.1"
     val hiltCompiler = "com.google.dagger:hilt-compiler:2.44"
     val androidCore = "androidx.core:core-ktx:1.9.0"
+    val datastorePrefs = "androidx.datastore:datastore-preferences:${Versions.datastore}"
     val okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
     val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:4.10.0"
     val lifcycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"

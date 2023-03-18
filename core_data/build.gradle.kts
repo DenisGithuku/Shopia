@@ -68,6 +68,7 @@ dependencies {
     implementation(Dependencies.systemUiController)
     implementation(Dependencies.glide)
     implementation(Dependencies.systemUiController)
+    implementation(Dependencies.datastorePrefs)
 
     testImplementation(Dependencies.junitTest)
     testImplementation(Dependencies.jupiterUnitTest)
