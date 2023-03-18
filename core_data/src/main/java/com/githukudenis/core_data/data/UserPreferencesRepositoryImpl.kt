@@ -7,13 +7,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.githukudenis.core_data.util.Constants
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class UserPreferencesRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    private val context: Context
 ) : UserPreferencesRepository {
 
     private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = Constants.userPreferences)

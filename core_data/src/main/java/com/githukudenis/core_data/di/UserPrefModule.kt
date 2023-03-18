@@ -1,18 +1,24 @@
 package com.githukudenis.core_data.di
 
+import android.content.Context
 import com.githukudenis.core_data.data.UserPreferencesRepository
 import com.githukudenis.core_data.data.UserPreferencesRepositoryImpl
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
-abstract class UserPrefModule {
+@InstallIn(SingletonComponent::class)
+object UserPrefModule {
 
-    @Binds
-    abstract fun bindUserPreferencesRepository(
-        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
-    ): UserPreferencesRepository
+    @Provides
+    @Singleton
+    fun provideUserPreferencesRepository(
+        @ApplicationContext context: Context
+    ): UserPreferencesRepository {
+        return UserPreferencesRepositoryImpl(context)
+    }
 }
