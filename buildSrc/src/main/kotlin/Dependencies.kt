@@ -1,9 +1,12 @@
+import Versions.work_version
+
 object Versions {
     val room = "2.5.0"
     val lifecycle = "2.6.0"
     val compose_ui = "1.3.3"
     val accompanist = "0.28.0"
     val datastore = "1.0.0"
+    val work_version = "2.8.0"
 }
 object Dependencies {
 
@@ -23,6 +26,9 @@ object Dependencies {
     val navigationCompose =  "androidx.navigation:navigation-compose:2.5.3"
     val roomRuntime =  "androidx.room:room-runtime:${Versions.room}"
     val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
+    val work = "androidx.work:work-runtime-ktx:${Versions.work_version}"
+    val androidTestWork = "androidx.work:work-testing:${Versions.work_version}"
+
 
     // optional - Kotlin Extensions and Coroutines support for Room
     val roomKtx = "androidx.room:room-ktx:${Versions.room}"

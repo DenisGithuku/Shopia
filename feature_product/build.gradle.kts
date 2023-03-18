@@ -79,6 +79,7 @@ dependencies {
     implementation(Dependencies.glide)
     implementation(Dependencies.accompanistImage)
     implementation(Dependencies.systemUiController)
+    implementation(Dependencies.work)
 
     testImplementation(Dependencies.junitTest)
     testImplementation(Dependencies.jupiterUnitTest)
@@ -92,6 +93,7 @@ dependencies {
     androidTestImplementation(Dependencies.junitAndroidTest)
     androidTestImplementation(Dependencies.hiltAndroidTest)
     kaptAndroidTest(Dependencies.hiltAndroidCompilerTest)
+    androidTestImplementation(Dependencies.androidTestWork)
 
     androidTestImplementation(Dependencies.espressoAndroidTest)
     androidTestImplementation(Dependencies.composeJunitTest)
