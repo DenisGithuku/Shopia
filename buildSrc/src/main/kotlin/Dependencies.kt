@@ -7,6 +7,7 @@ object Versions {
     val accompanist = "0.28.0"
     val datastore = "1.0.0"
     val work_version = "2.8.0"
+    val material_version = "1.3.1"
 }
 object Dependencies {
 
@@ -35,7 +36,8 @@ object Dependencies {
     val viewModelSavedState = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycle}"
     val composeUi = "androidx.compose.ui:ui:${Versions.compose_ui}"
     val composeTooling = "androidx.compose.ui:ui-tooling-preview:${Versions.compose_ui}"
-    val composeMaterial = "androidx.compose.material:material:1.3.1"
+    val composeMaterial = "androidx.compose.material:material:${Versions.material_version}"
+    val materialExtendedIcons = "androidx.compose.material:material-icons-extended:${Versions.material_version}"
     val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
     val timber =  "com.jakewharton.timber:timber:5.0.1"
     val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
