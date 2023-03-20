@@ -2,6 +2,7 @@ package com.githukudenis.auth.ui
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,13 +19,20 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,36 +59,40 @@ import com.githukudenis.auth.api.User
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LoginScreen(
-    snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier, onLoggedIn: () -> Unit
+    snackBarHostState: SnackbarHostState, modifier: Modifier = Modifier, onLoggedIn: () -> Unit
 ) {
 
     val loginViewModel: LoginViewModel = hiltViewModel()
     val uiState by loginViewModel.state
     val passwordIsVisible = uiState.formState.passwordIsVisible
+    val coroutineScope = rememberCoroutineScope()
 
     val userOnLogin by rememberUpdatedState(onLoggedIn)
 
     LaunchedEffect(uiState) {
         if (uiState.userMessages.isNotEmpty()) {
             val userMessage = uiState.userMessages[0]
-            snackbarHostState.showSnackbar(
+            snackBarHostState.showSnackbar(
                 message = userMessage.message ?: "An error occurred"
             )
             userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
                 ?.let { loginViewModel.onEvent(it) }
         }
+    }
 
-        if (uiState.loginSuccess) {
+    if (uiState.loginSuccess) {
+        if (uiState.userMessages.isNotEmpty()) {
+            val userMessage = uiState.userMessages[0]
+            UserDialog(dialogState = DialogState.SUCCESS, message = userMessage.message ?: "An error occurred")
+            userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
+                ?.let { loginViewModel.onEvent(it) }
             userOnLogin()
-            snackbarHostState.showSnackbar(
-                message = "Logged in successfully",
-                duration = SnackbarDuration.Long
-            )
         }
     }
 
+
     if (uiState.isLoading) {
-        LoadingDialog(message = "Please wait...")
+        UserDialog(dialogState = DialogState.LOADING, message = "Please wait...")
     }
 
 
@@ -179,11 +191,19 @@ fun LoginScreen(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun LoadingDialog(
-    modifier: Modifier = Modifier, message: String, icon: Int? = null
+private fun UserDialog(
+    modifier: Modifier = Modifier,
+    dialogState: DialogState,
+    message: String,
 ) {
     val properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+    var currentDialogState by remember {
+        mutableStateOf(dialogState)
+    }
+
+    val transition = updateTransition(targetState = currentDialogState, label = "dialog state")
     Dialog(properties = properties, onDismissRequest = {}) {
         Box(
             modifier = modifier
@@ -191,26 +211,62 @@ private fun LoadingDialog(
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White), contentAlignment = Alignment.Center
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                icon?.let {
-                    Icon(
-                        painter = painterResource(id = icon), contentDescription = "Dialog icon"
-                    )
+            transition.AnimatedContent { targetState ->
+                when (targetState) {
+                    DialogState.LOADING -> {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator()
+                            Text(text = message, color = Color.Black.copy(alpha = .8f))
+                        }
+                    }
+
+                    DialogState.SUCCESS -> {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = "Dialog icon",
+                                tint = Color.Green
+                            )
+                            Text(text = message, color = Color.Black.copy(alpha = .8f))
+                        }
+                    }
+
+                    DialogState.ERROR -> {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Dialog icon",
+                                tint = Color.Red
+                            )
+                            Text(text = message, color = Color.Black.copy(alpha = .8f))
+                        }
+                    }
                 }
-                CircularProgressIndicator()
-                Text(text = message, color = Color.Black.copy(alpha = .8f))
+
             }
         }
     }
 }
 
+@Stable
+enum class DialogState {
+    LOADING, SUCCESS, ERROR
+}
+
+
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(snackbarHostState = SnackbarHostState()) {
+    LoginScreen(snackBarHostState = SnackbarHostState()) {
 
     }
 }

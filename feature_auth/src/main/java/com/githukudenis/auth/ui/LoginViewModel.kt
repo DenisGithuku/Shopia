@@ -103,15 +103,16 @@ class LoginViewModel @Inject constructor(
         }
         val loginResult = loginDeferred.await()
         if (!loginResult.isNullOrEmpty()) {
+            val message = UserMessage(id = 0, message = "Logged in successfully")
+            refreshUserMessages(message)
             _state.value = _state.value.copy(
                 isLoading = false, loginSuccess = true
             )
         } else {
             val userMessage = UserMessage(id = 0, message = "Could not login. Please check details")
-            val userMessages = mutableListOf<UserMessage>()
-            userMessages.add(userMessage)
+            refreshUserMessages(userMessage)
             _state.value = _state.value.copy(
-                isLoading = false, userMessages = userMessages
+                isLoading = false,
             )
         }
     }
