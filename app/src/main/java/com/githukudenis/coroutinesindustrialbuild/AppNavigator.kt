@@ -33,7 +33,7 @@ fun AppNavigator(
             }
         }
         composable(route = AppDestination.Login.route) {
-            LoginScreen(snackbarHostState = snackbarHostState) {
+            LoginScreen(snackBarHostState = snackbarHostState) {
                 navController.navigate(AppDestination.Products.route) {
                     popUpTo(AppDestination.Login.route) {
                         inclusive = true

@@ -68,6 +68,7 @@ dependencies {
     implementation(Dependencies.composeUi)
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeMaterial)
+    implementation(Dependencies.materialExtendedIcons)
     implementation(Dependencies.retrofit)
     implementation(Dependencies.timber)
     implementation(Dependencies.lifecycleViewModelKtx)
