@@ -1,4 +1,4 @@
-package com.githukudenis.core_data.data
+package com.githukudenis.core_data.data.local
 
 import kotlinx.coroutines.flow.Flow
 

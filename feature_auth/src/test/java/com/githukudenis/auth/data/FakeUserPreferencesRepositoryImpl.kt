@@ -1,7 +1,5 @@
 package com.githukudenis.auth.data
 
-import com.githukudenis.core_data.data.UserPreferences
-import com.githukudenis.core_data.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

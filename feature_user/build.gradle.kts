@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.githukudenis.feature_product"
+    namespace = "com.githukudenis.feature_user"
     compileSdk = 33
 
     defaultConfig {
@@ -32,27 +32,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
-    }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1,gradle/incremental.annotation.processors}"
-        }
-    }
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 dependencies {
+
     implementation(project(":core_design"))
     implementation(project(":core_data"))
-    implementation(project(":feature_user"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
@@ -64,9 +49,6 @@ dependencies {
     implementation(Dependencies.activityCompose)
     implementation(Dependencies.navigationCompose)
     implementation(Dependencies.hiltNavigationCompose)
-    implementation(Dependencies.roomRuntime)
-    kapt(Dependencies.roomCompiler)
-    implementation(Dependencies.roomKtx)
     implementation(Dependencies.viewModelSavedState)
     implementation(Dependencies.composeUi)
     implementation(Dependencies.composeTooling)
@@ -79,9 +61,7 @@ dependencies {
     implementation(Dependencies.gson)
     implementation(Dependencies.systemUiController)
     implementation(Dependencies.glide)
-    implementation(Dependencies.accompanistImage)
     implementation(Dependencies.systemUiController)
-    implementation(Dependencies.work)
 
     testImplementation(Dependencies.junitTest)
     testImplementation(Dependencies.jupiterUnitTest)
@@ -95,10 +75,19 @@ dependencies {
     androidTestImplementation(Dependencies.junitAndroidTest)
     androidTestImplementation(Dependencies.hiltAndroidTest)
     kaptAndroidTest(Dependencies.hiltAndroidCompilerTest)
-    androidTestImplementation(Dependencies.androidTestWork)
 
     androidTestImplementation(Dependencies.espressoAndroidTest)
     androidTestImplementation(Dependencies.composeJunitTest)
     debugImplementation(Dependencies.composeUiDebugTooling)
     debugImplementation(Dependencies.composeUiTestManifest)
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.gson)
+
+    implementation(Dependencies.androidCore)
+    implementation(Dependencies.appCompat)
+    implementation(Dependencies.composeMaterial)
+    testImplementation(Dependencies.junitTest)
+    androidTestImplementation(Dependencies.junitAndroidTest)
+    androidTestImplementation(Dependencies.espressoAndroidTest)
+
 }
