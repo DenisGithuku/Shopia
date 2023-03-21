@@ -3,8 +3,8 @@ package com.githukudenis.feature_product.ui.views.products
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.feature_product.data.model.ProductCategory
-import com.githukudenis.feature_product.data.util.NetworkObserver
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
     private val productsRepo: ProductsRepo,
-    private val networkStateObserver: NetworkObserver,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private var _state: MutableStateFlow<ProductsScreenState> = MutableStateFlow(
@@ -101,25 +101,48 @@ class ProductsViewModel @Inject constructor(
         )
     }
 
-    fun refreshProducts() = viewModelScope.launch {
-        _state.value.selectedCategory?.let { category ->
-            when (category.lowercase()) {
-                "all" -> {
-                    getAllProducts()
-                }
-                else -> {
-                    getProductsInCategory(category.lowercase())
-                }
+    fun refreshProducts() {
+        viewModelScope.launch {
+            _state.value.selectedCategory?.let { category ->
+                when (category.lowercase()) {
+                    "all" -> {
+                        getAllProducts()
+                    }
 
+                    else -> {
+                        getProductsInCategory(category.lowercase())
+                    }
+
+                }
             }
         }
     }
 
-    fun getAllUsers() = viewModelScope.launch {
-
+    fun getAllUsers() {
+        viewModelScope.launch {
+            userRepository.users.collect { users ->
+                users?.let { userList ->
+                    val userState = _state.value.userState?.copy(
+                        users = userList
+                    )
+                    _state.value = _state.value.copy(
+                        userState = userState
+                    )
+                }
+            }
+        }
     }
 
-    fun getUserById(userId: Int) = viewModelScope.launch {
-
+    fun getUserById(userId: Int) {
+        viewModelScope.launch {
+            userRepository.getUserById(userId).collect { user ->
+                val userState = _state.value.userState?.copy(
+                    currentUser = user
+                )
+                _state.value = _state.value.copy(
+                    userState = userState
+                )
+            }
+        }
     }
 }

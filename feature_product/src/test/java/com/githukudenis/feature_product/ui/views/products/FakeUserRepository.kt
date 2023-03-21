@@ -1,4 +1,4 @@
-package com.githukudenis.feature_user.data.remote
+package com.githukudenis.feature_product.ui.views.products
 
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.remote.model.Address
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class FakeUserRepository : UserRepository {
 
-    val userDTOItems = arrayListOf(
+    private val userDTOItems = listOf(
         UsersDTOItem(
             address = Address(
                 city = "",
@@ -75,7 +75,11 @@ class FakeUserRepository : UserRepository {
             username = ""
         )
     )
-    private val usersDTO = UsersDTO().apply { addAll(userDTOItems) }
+
+    private val usersDTO = UsersDTO().apply {
+        addAll(userDTOItems)
+    }
+
     override val users: Flow<UsersDTO?>
         get() = flowOf(
             value = usersDTO
