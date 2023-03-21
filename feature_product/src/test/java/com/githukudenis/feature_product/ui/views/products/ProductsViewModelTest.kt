@@ -1,5 +1,6 @@
 package com.githukudenis.feature_product.ui.views.products
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.filters.MediumTest
 import com.githukudenis.feature_product.data.repo.FakeProductsDataSource
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
@@ -26,7 +27,11 @@ class ProductsViewModelTest {
     fun setUp() {
         productsRepo = FakeProductsDataSource()
         userRepository = FakeUserRepository()
-        productsViewModel = ProductsViewModel(productsRepo, userRepository)
+        val savedStateHandle = SavedStateHandle(initialState = mapOf("username" to "allan"))
+
+        productsViewModel = ProductsViewModel(
+            productsRepo, userRepository, savedStateHandle
+        )
     }
 
     @Test
@@ -71,16 +76,8 @@ class ProductsViewModelTest {
     }
 
     @Test
-    fun `get all users`() = runTest {
-        productsViewModel.getAllUsers()
-        productsViewModel.state.value.userState?.users?.let { userList ->
-            assertThat(userList).hasSize(4)
-        }
-    }
-
-    @Test
     fun `get user by id`() = runTest {
-        productsViewModel.getUserById(1)
+        productsViewModel.getCurrentUserInfo("")
         productsViewModel.state.value.userState?.currentUser?.let { currentUser ->
             assertThat(currentUser.id).isEqualTo(1)
         }

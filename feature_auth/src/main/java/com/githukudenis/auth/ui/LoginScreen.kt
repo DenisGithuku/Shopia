@@ -59,7 +59,7 @@ import com.githukudenis.auth.api.User
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LoginScreen(
-    snackBarHostState: SnackbarHostState, modifier: Modifier = Modifier, onLoggedIn: () -> Unit
+    snackBarHostState: SnackbarHostState, modifier: Modifier = Modifier, onLoggedIn: (String) -> Unit
 ) {
 
     val loginViewModel: LoginViewModel = hiltViewModel()
@@ -86,7 +86,7 @@ fun LoginScreen(
             UserDialog(dialogState = DialogState.SUCCESS, message = userMessage.message ?: "An error occurred")
             userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
                 ?.let { loginViewModel.onEvent(it) }
-            userOnLogin()
+            userOnLogin(uiState.formState.username)
         }
     }
 
@@ -159,7 +159,7 @@ fun LoginScreen(
                     val user = User(username, password)
                     loginViewModel.onEvent(LoginUiEvent.OnLogin(user)).also {
                         if (uiState.loginSuccess) {
-                            onLoggedIn()
+                            onLoggedIn(uiState.formState.username)
                         }
                     }
                 } else {
@@ -177,7 +177,7 @@ fun LoginScreen(
                 loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
 
                 if (uiState.loginSuccess) {
-                    onLoggedIn()
+                    onLoggedIn(uiState.formState.username)
                 }
             } else {
                 val userMessage = UserMessage(id = 0, message = "Invalid details")

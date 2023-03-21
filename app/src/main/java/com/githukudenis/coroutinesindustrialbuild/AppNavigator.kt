@@ -33,8 +33,8 @@ fun AppNavigator(
             }
         }
         composable(route = AppDestination.Login.route) {
-            LoginScreen(snackBarHostState = snackbarHostState) {
-                navController.navigate(AppDestination.Products.route) {
+            LoginScreen(snackBarHostState = snackbarHostState) { username ->
+                navController.navigate(AppDestination.Products.route + "/$username") {
                     popUpTo(AppDestination.Login.route) {
                         inclusive = true
                     }
@@ -42,7 +42,12 @@ fun AppNavigator(
             }
         }
         composable(
-            route = AppDestination.Products.route
+            route = AppDestination.Products.route + "/{username}",
+            arguments = listOf(
+                navArgument(name = "username") {
+                    type = NavType.StringType
+                }
+            )
         ) {
             ProductsScreen { productId ->
                 navController.navigate(

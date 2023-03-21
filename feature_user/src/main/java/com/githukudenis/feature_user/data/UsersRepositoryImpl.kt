@@ -27,13 +27,13 @@ class UsersRepositoryImpl @Inject constructor(
             }
         }.flowOn(Dispatchers.IO)
 
-    override suspend fun getUserById(userId: Int): Flow<UsersDTOItem?> {
+    override suspend fun getUserByUserName(username: String): Flow<UsersDTOItem?> {
         return flow {
             try {
-                val response = usersApiService.getUserById(userId)
+                val response = usersApiService.getAllUsers()
                 if (response.isSuccessful) {
-                    val user = response.body()
-                    emit(user)
+                    val currentUser = response.body()
+                    emit(currentUser?.find { user -> user.username == username })
                 }
             } catch (e: Exception) {
                 Timber.e(e)
