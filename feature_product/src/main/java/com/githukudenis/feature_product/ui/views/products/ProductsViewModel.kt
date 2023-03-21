@@ -114,4 +114,12 @@ class ProductsViewModel @Inject constructor(
             }
         }
     }
+
+    fun getAllUsers() = viewModelScope.launch {
+
+    }
+
+    fun getUserById(userId: Int) = viewModelScope.launch {
+
+    }
 }
