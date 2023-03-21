@@ -6,7 +6,6 @@ import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.auth.data.FakeAuthRepositoryImpl
 import com.githukudenis.auth.data.FakeUserPreferencesRepositoryImpl
 import com.githukudenis.core_data.MainCoroutineRule
-import com.githukudenis.core_data.data.UserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

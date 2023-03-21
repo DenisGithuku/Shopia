@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/core_design" />
             <option value="$PROJECT_DIR$/feature_auth" />
             <option value="$PROJECT_DIR$/feature_product" />
+            <option value="$PROJECT_DIR$/feature_user" />
           </set>
         </option>
       </GradleProjectSettings>
