@@ -2,6 +2,7 @@ package com.githukudenis.feature_product.ui.views.products
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,31 +15,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,12 +56,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.githukudenis.feature_product.R
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductsScreen(
     modifier: Modifier = Modifier, onOpenProductDetails: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     val productsViewModel: ProductsViewModel = hiltViewModel()
     val state by productsViewModel.state.collectAsState()
     val isRefreshing = state.isRefreshing
@@ -78,16 +90,34 @@ fun ProductsScreen(
             }
         }) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 12.dp)
-                .pullRefresh(pullRefreshState)
+            modifier = Modifier.fillMaxSize().padding(top = 12.dp).pullRefresh(pullRefreshState)
         ) {
 
             LazyColumn(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Let's shop"
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(
+                                    imageVector = Icons.Outlined.ShoppingCart,
+                                    contentDescription = context.getString(R.string.cart)
+                                )
+                            }
+
+                            ProfileAvatar(username = "${state.userState?.currentUser?.username}",
+                                onClick = {})
+
+                        }
+                    }
+                }
                 item {
                     LazyRow(
                         modifier = modifier.padding(horizontal = 12.dp),
@@ -96,8 +126,7 @@ fun ProductsScreen(
                         items(
                             items = categories
                         ) { category ->
-                            CategoryItem(
-                                category = category.value.replaceFirstChar { char -> char.uppercase() },
+                            CategoryItem(category = category.value.replaceFirstChar { char -> char.uppercase() },
                                 selected = state.selectedCategory == category.value,
                                 onSelect = {
                                     productsViewModel.onEvent(
@@ -111,12 +140,9 @@ fun ProductsScreen(
                 }
                 items(items = state.products) { productItem ->
                     Row(verticalAlignment = Alignment.Top,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
+                        modifier = Modifier.fillMaxWidth().clickable {
                                 onOpenProductDetails(productItem.id)
-                            }
-                            .padding(12.dp),
+                            }.padding(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
 
                     ) {
@@ -132,13 +158,10 @@ fun ProductsScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
-                                text = productItem.title,
-                                style = TextStyle(
+                                text = productItem.title, style = TextStyle(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
-                                ),
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis
+                                ), maxLines = 3, overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = productItem.description,
@@ -179,14 +202,11 @@ fun CategoryItem(
         animateColorAsState(targetValue = if (!selected) MaterialTheme.colors.primary else Color.Transparent)
     val animateBgColor =
         animateColorAsState(targetValue = if (selected) MaterialTheme.colors.primary else Color.Transparent)
-    Box(modifier = modifier
-        .background(
+    Box(modifier = modifier.background(
             color = animateBgColor.value, shape = RoundedCornerShape(16.dp)
-        )
-        .border(
+        ).border(
             width = 1.dp, color = animateBorderColor.value, shape = RoundedCornerShape(24.dp)
-        )
-        .clickable(indication = null, interactionSource = interactionSource) {
+        ).clickable(indication = null, interactionSource = interactionSource) {
             onSelect(category)
         }) {
         Text(
@@ -195,6 +215,32 @@ fun CategoryItem(
             color = if (selected) Color.White else Color.Black
         )
     }
+}
+
+@Composable
+fun ProfileAvatar(
+    modifier: Modifier = Modifier, username: String, onClick: (String) -> Unit
+) {
+    val initial by remember {
+        mutableStateOf(username.first().uppercase())
+    }
+    Box(
+        modifier = modifier.size(30.dp).border(
+                border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primary),
+                CircleShape
+            ).padding(4.dp).clip(CircleShape).background(color = MaterialTheme.colors.primary)
+            .clickable { onClick(username) }, contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "$initial", textAlign = TextAlign.Center, color = Color.White
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ProfileAvatarPreview() {
+    ProfileAvatar(username = "Allan", onClick = {})
 }
 
 @Preview(showBackground = true)
