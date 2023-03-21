@@ -3,8 +3,10 @@ package com.githukudenis.feature_user.data
 import com.githukudenis.feature_user.data.remote.UserApiService
 import com.githukudenis.feature_user.data.remote.model.UsersDTO
 import com.githukudenis.feature_user.data.remote.model.UsersDTOItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,7 +25,7 @@ class UsersRepositoryImpl @Inject constructor(
                 Timber.e(e)
                 null
             }
-        }
+        }.flowOn(Dispatchers.IO)
 
     override suspend fun getUserById(userId: Int): Flow<UsersDTOItem?> {
         return flow {
@@ -37,6 +39,6 @@ class UsersRepositoryImpl @Inject constructor(
                 Timber.e(e)
                 null
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 }
