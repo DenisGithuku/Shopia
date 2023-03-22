@@ -33,7 +33,9 @@ class UsersRepositoryImpl @Inject constructor(
                 val response = usersApiService.getAllUsers()
                 if (response.isSuccessful) {
                     val currentUser = response.body()
-                    emit(currentUser?.find { user -> user.username == username })
+                    currentUser?.let { usersDTO ->
+                        emit(usersDTO?.find { user -> user.username == username })
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e)

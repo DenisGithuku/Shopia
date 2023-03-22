@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -123,12 +124,13 @@ class ProductsViewModel @Inject constructor(
     fun getCurrentUserInfo(username: String) {
         viewModelScope.launch {
             userRepository.getUserByUserName(username).collect { user ->
-                val userState = _state.value.userState?.copy(
-                    currentUser = user
-                )
+                val userState = _state.value.userState?.copy(currentUser = user)
+
                 _state.value = _state.value.copy(
                     userState = userState
                 )
+
+                Timber.e(user.toString())
             }
         }
     }
