@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface ProductsRepo {
 
     suspend fun getCategories(): Flow<List<ProductCategory>>
-
+    suspend fun refreshCategories()
     suspend fun refreshProducts()
     suspend fun getProductsInCategory(category: String): Flow<List<ProductDBO>>
     suspend fun getProducts(): Flow<List<ProductDBO>>

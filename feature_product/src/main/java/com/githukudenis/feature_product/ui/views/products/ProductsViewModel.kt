@@ -124,7 +124,9 @@ class ProductsViewModel @Inject constructor(
     fun getCurrentUserInfo(username: String) {
         viewModelScope.launch {
             userRepository.getUserByUserName(username).collect { user ->
-                val userState = _state.value.userState?.copy(currentUser = user)
+                val userState = UserState(
+                    currentUser = user
+                )
 
                 _state.value = _state.value.copy(
                     userState = userState

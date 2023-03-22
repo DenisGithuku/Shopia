@@ -98,6 +98,8 @@ fun ProductsScreen(
             ) {
                 item {
                     Row(
+                        modifier = modifier.fillMaxWidth()
+                            .padding(horizontal = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
