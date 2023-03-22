@@ -1,5 +1,6 @@
 package com.githukudenis.feature_product.ui.views.products
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.feature_product.data.model.ProductCategory
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
     private val productsRepo: ProductsRepo,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var _state: MutableStateFlow<ProductsScreenState> = MutableStateFlow(
@@ -26,10 +28,10 @@ class ProductsViewModel @Inject constructor(
     val state: StateFlow<ProductsScreenState> get() = _state
 
     init {
-        viewModelScope.launch {
-            getCategories()
-            getAllProducts()
-        }
+        val username: String = checkNotNull(savedStateHandle["username"])
+        getCurrentUserInfo(username)
+        getCategories()
+        getAllProducts()
     }
 
     fun onEvent(event: ProductsScreenEvent) {
@@ -118,24 +120,9 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    fun getAllUsers() {
+    fun getCurrentUserInfo(username: String) {
         viewModelScope.launch {
-            userRepository.users.collect { users ->
-                users?.let { userList ->
-                    val userState = _state.value.userState?.copy(
-                        users = userList
-                    )
-                    _state.value = _state.value.copy(
-                        userState = userState
-                    )
-                }
-            }
-        }
-    }
-
-    fun getUserById(userId: Int) {
-        viewModelScope.launch {
-            userRepository.getUserById(userId).collect { user ->
+            userRepository.getUserByUserName(username).collect { user ->
                 val userState = _state.value.userState?.copy(
                     currentUser = user
                 )

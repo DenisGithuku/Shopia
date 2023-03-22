@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     val users: Flow<UsersDTO?>
 
-    suspend fun getUserById(userId: Int): Flow<UsersDTOItem?>
+    suspend fun getUserByUserName(username: String): Flow<UsersDTOItem?>
 }

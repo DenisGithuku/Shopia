@@ -85,7 +85,7 @@ class FakeUserRepository : UserRepository {
             value = usersDTO
         )
 
-    override suspend fun getUserById(userId: Int): Flow<UsersDTOItem?> = flow {
-        userDTOItems.find { it.id == userId }
+    override suspend fun getUserByUserName(username: String): Flow<UsersDTOItem?> = flow {
+        userDTOItems.find { it.username == username }
     }
 }
