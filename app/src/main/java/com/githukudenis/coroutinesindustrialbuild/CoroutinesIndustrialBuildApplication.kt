@@ -18,8 +18,7 @@ class CoroutinesIndustrialBuildApp : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-
-
+        setUpWork()
     }
 
     private fun setUpWork() {
