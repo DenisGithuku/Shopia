@@ -1,11 +1,11 @@
-package com.githukudenis.feature_product.data.local
+package com.githukudenis.core_data.data.local.db.model
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.githukudenis.feature_product.data.model.ProductCategory
-import com.githukudenis.feature_product.domain.model.ProductDBO
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 
 @Dao
 interface ProductsDao {

@@ -2,7 +2,7 @@ package com.githukudenis.auth.data
 
 import com.githukudenis.auth.api.LoginApiService
 import com.githukudenis.auth.api.User
-import com.githukudenis.core_data.data.local.UserPreferencesRepository
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -1,7 +1,7 @@
 package com.githukudenis.feature_product.data.remote
 
-import com.githukudenis.feature_product.data.model.ProductsDTO
-import com.githukudenis.feature_product.data.model.ProductsDTOItem
+import com.githukudenis.core_data.data.local.db.model.product.ProductsDTO
+import com.githukudenis.core_data.data.local.db.model.product.ProductsDTOItem
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

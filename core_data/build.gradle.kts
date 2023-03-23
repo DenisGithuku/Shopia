@@ -9,7 +9,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -65,6 +65,9 @@ dependencies {
     implementation(Dependencies.lifecycleViewModelKtx)
     implementation(Dependencies.lifecycleViewModelCompose)
     implementation(Dependencies.gson)
+    implementation(Dependencies.roomRuntime)
+    kapt(Dependencies.roomCompiler)
+    implementation(Dependencies.roomKtx)
     implementation(Dependencies.systemUiController)
     implementation(Dependencies.glide)
     implementation(Dependencies.systemUiController)

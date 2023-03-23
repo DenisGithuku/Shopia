@@ -1,8 +1,9 @@
 package com.githukudenis.feature_product.data.local
 
-import com.githukudenis.feature_product.data.model.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.ProductsDao
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.feature_product.data.remote.ProductsRemoteDatasource
-import com.githukudenis.feature_product.domain.model.ProductDBO
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

@@ -1,7 +1,7 @@
 package com.githukudenis.feature_product.domain.repo
 
-import com.githukudenis.feature_product.data.model.ProductCategory
-import com.githukudenis.feature_product.domain.model.ProductDBO
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import kotlinx.coroutines.flow.Flow
 
 interface ProductsRepo {

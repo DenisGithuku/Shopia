@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.ui.UserMessage
-import com.githukudenis.feature_product.data.model.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
