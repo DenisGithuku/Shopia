@@ -8,8 +8,11 @@ import com.githukudenis.core_data.data.local.db.model.cart.Product
 
 @Dao
 interface CartDao {
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProducts(products: List<Product>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProduct(product: Product)
 
     @Query("SELECT * FROM cart ORDER BY productId")
     suspend fun getAllProducts(): List<Product>

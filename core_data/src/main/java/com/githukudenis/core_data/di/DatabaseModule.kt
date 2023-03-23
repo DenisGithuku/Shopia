@@ -2,6 +2,7 @@ package com.githukudenis.core_data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.ShopiaDatabase
 import com.githukudenis.core_data.data.local.db.model.ProductsDao
 import dagger.Module
@@ -28,5 +29,11 @@ object DatabaseModule {
     @Singleton
     fun provideProductsDao(productsDatabase: ShopiaDatabase): ProductsDao {
         return productsDatabase.productsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartDao(shopiaDatabase: ShopiaDatabase): CartDao {
+        return shopiaDatabase.cartDao()
     }
 }
