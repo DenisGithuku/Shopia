@@ -1,6 +1,8 @@
 package com.githukudenis.feature_product.ui.views.products
 
 import android.content.res.Configuration
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -22,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -29,6 +32,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ShoppingCart
@@ -36,6 +41,7 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +64,15 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.githukudenis.feature_product.R
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalAnimationApi::class
+)
 @Composable
 fun ProductsScreen(
-    modifier: Modifier = Modifier, onOpenProductDetails: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
+    onOpenProductDetails: (Int) -> Unit
 ) {
     val context = LocalContext.current
     val productsViewModel: ProductsViewModel = hiltViewModel()
@@ -78,6 +89,18 @@ fun ProductsScreen(
         )
     }
 
+    LaunchedEffect(key1 = state.userMessages) {
+        if (state.userMessages.isNotEmpty()) {
+            val message = state.userMessages[0]
+            snackbarHostState.showSnackbar(
+                message = message.message ?: "An error occurred",
+                duration = SnackbarDuration.Long
+            )
+            message.id?.let { ProductsScreenEvent.DismissUserMessage(it) }
+                ?.let { productsViewModel.onEvent(it) }
+        }
+    }
+
     ModalBottomSheetLayout(sheetShape = MaterialTheme.shapes.large.copy(
         CornerSize(16.dp)
     ),
@@ -90,7 +113,10 @@ fun ProductsScreen(
             }
         }) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(top = 12.dp).pullRefresh(pullRefreshState)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 12.dp)
+                .pullRefresh(pullRefreshState)
         ) {
 
             LazyColumn(
@@ -98,13 +124,18 @@ fun ProductsScreen(
             ) {
                 item {
                     Row(
-                        modifier = modifier.fillMaxWidth()
+                        modifier = modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Let's shop"
+                            text = "Shopia",
+                            style = TextStyle(
+                                fontSize = 30.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = { /*TODO*/ }) {
@@ -114,9 +145,23 @@ fun ProductsScreen(
                                 )
                             }
 
-                            ProfileAvatar(username = "${state.userState?.currentUser?.username}",
-                                onClick = {})
+                            Crossfade(
+                                targetState = state.userState?.userLoading
+                            ) { userLoading ->
+                                userLoading?.let { loading ->
+                                    when (loading) {
+                                        true -> {
+                                            CircularProgressIndicator()
+                                        }
 
+                                        false -> {
+                                            ProfileAvatar(username = "${state.userState?.currentUser?.username}",
+                                                onClick = {})
+                                        }
+                                    }
+
+                                }
+                            }
                         }
                     }
                 }
@@ -142,9 +187,12 @@ fun ProductsScreen(
                 }
                 items(items = state.products) { productItem ->
                     Row(verticalAlignment = Alignment.Top,
-                        modifier = Modifier.fillMaxWidth().clickable {
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
                                 onOpenProductDetails(productItem.id)
-                            }.padding(12.dp),
+                            }
+                            .padding(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
 
                     ) {
@@ -204,11 +252,14 @@ fun CategoryItem(
         animateColorAsState(targetValue = if (!selected) MaterialTheme.colors.primary else Color.Transparent)
     val animateBgColor =
         animateColorAsState(targetValue = if (selected) MaterialTheme.colors.primary else Color.Transparent)
-    Box(modifier = modifier.background(
+    Box(modifier = modifier
+        .background(
             color = animateBgColor.value, shape = RoundedCornerShape(16.dp)
-        ).border(
+        )
+        .border(
             width = 1.dp, color = animateBorderColor.value, shape = RoundedCornerShape(24.dp)
-        ).clickable(indication = null, interactionSource = interactionSource) {
+        )
+        .clickable(indication = null, interactionSource = interactionSource) {
             onSelect(category)
         }) {
         Text(
@@ -227,10 +278,15 @@ fun ProfileAvatar(
         mutableStateOf(username.first().uppercase())
     }
     Box(
-        modifier = modifier.size(30.dp).border(
+        modifier = modifier
+            .size(30.dp)
+            .border(
                 border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primary),
                 CircleShape
-            ).padding(4.dp).clip(CircleShape).background(color = MaterialTheme.colors.primary)
+            )
+            .padding(4.dp)
+            .clip(CircleShape)
+            .background(color = MaterialTheme.colors.primary)
             .clickable { onClick(username) }, contentAlignment = Alignment.Center
     ) {
         Text(

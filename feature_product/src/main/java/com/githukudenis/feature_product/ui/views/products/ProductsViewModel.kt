@@ -3,6 +3,7 @@ package com.githukudenis.feature_product.ui.views.products
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.githukudenis.auth.ui.UserMessage
 import com.githukudenis.feature_product.data.model.ProductCategory
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.githukudenis.feature_user.data.UserRepository
@@ -11,9 +12,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,6 +46,15 @@ class ProductsViewModel @Inject constructor(
                 changeSelectedCategory(event.category).also {
                     refreshProducts()
                 }
+            }
+
+            is ProductsScreenEvent.DismissUserMessage -> {
+                val userMessages = _state.value.userMessages.filterNot { userMessage ->
+                    userMessage.id == event.messageId
+                }
+                _state.value = _state.value.copy(
+                    userMessages = userMessages
+                )
             }
         }
     }
@@ -123,16 +133,26 @@ class ProductsViewModel @Inject constructor(
 
     fun getCurrentUserInfo(username: String) {
         viewModelScope.launch {
-            userRepository.getUserByUserName(username).collect { user ->
-                val userState = UserState(
-                    currentUser = user
-                )
-
+            val userState = UserState(
+                userLoading = true
+            )
+            userRepository.getUserByUserName(username)
+                .catch {
+                    val userMessage = UserMessage(id = 0, message = it.message)
+                    val userMessages = mutableListOf<UserMessage>()
+                    userMessages.add(userMessage)
+                    _state.value = _state.value.copy(
+                        userMessages = userMessages,
+                        userState = userState.copy(userLoading = false)
+                    )
+                }
+                .collect { user ->
                 _state.value = _state.value.copy(
-                    userState = userState
+                    userState = userState.copy(
+                        currentUser = user,
+                        userLoading = false
+                    ),
                 )
-
-                Timber.e(user.toString())
             }
         }
     }

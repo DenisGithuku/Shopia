@@ -19,9 +19,3 @@ data class FormState(
     val password: String = "",
     val passwordIsVisible: Boolean = false
 )
-
-@Immutable
-data class UserMessage(
-    val id: Int? = null,
-    val message: String? = null
-)
