@@ -25,7 +25,7 @@ class CartLocalDataSource @Inject constructor(
             val products = cartDao.getAllProducts()
             emit(products)
         } catch (e: Exception) {
-            Timber.e(e.message)
+            throw e
         }
     }.flowOn(Dispatchers.IO)
 
