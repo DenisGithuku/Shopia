@@ -49,7 +49,9 @@ fun AppNavigator(
                 }
             )
         ) {
-            ProductsScreen { productId ->
+            ProductsScreen(
+                snackbarHostState = snackbarHostState
+            ) { productId ->
                 navController.navigate(
                     route = AppDestination.ProductDetail.route + "/$productId"
                 ) {
