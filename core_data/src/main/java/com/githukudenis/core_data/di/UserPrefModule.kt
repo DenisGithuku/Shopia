@@ -1,8 +1,8 @@
 package com.githukudenis.core_data.di
 
 import android.content.Context
-import com.githukudenis.core_data.data.local.UserPreferencesRepository
-import com.githukudenis.core_data.data.local.UserPreferencesRepositoryImpl
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

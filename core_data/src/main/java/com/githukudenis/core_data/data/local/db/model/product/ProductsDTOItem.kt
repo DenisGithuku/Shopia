@@ -1,6 +1,5 @@
-package com.githukudenis.feature_product.data.model
+package com.githukudenis.core_data.data.local.db.model.product
 
-import com.githukudenis.feature_product.domain.model.ProductDBO
 
 data class ProductsDTOItem(
     val category: String,

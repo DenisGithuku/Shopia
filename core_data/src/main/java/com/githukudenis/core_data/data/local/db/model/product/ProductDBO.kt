@@ -1,6 +1,5 @@
-package com.githukudenis.feature_product.data.model
+package com.githukudenis.core_data.data.local.db.model.product
 
-import android.media.Rating
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,9 +1,9 @@
-package com.githukudenis.feature_product.di
+package com.githukudenis.core_data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.githukudenis.feature_product.data.local.ProductsDao
-import com.githukudenis.feature_product.data.local.ProductsDatabase
+import com.githukudenis.core_data.data.local.db.ShopiaDatabase
+import com.githukudenis.core_data.data.local.db.model.ProductsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,16 +17,16 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideProductsDatabase(@ApplicationContext context: Context): ProductsDatabase {
+    fun provideProductsDatabase(@ApplicationContext context: Context): ShopiaDatabase {
         return Room.databaseBuilder(
-            context, ProductsDatabase::class.java, "products_db"
+            context, ShopiaDatabase::class.java, "products_db"
         ).fallbackToDestructiveMigration().build()
 
     }
 
     @Provides
     @Singleton
-    fun provideProductsDao(productsDatabase: ProductsDatabase): ProductsDao {
+    fun provideProductsDao(productsDatabase: ShopiaDatabase): ProductsDao {
         return productsDatabase.productsDao()
     }
 }

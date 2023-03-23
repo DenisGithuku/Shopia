@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
-import com.githukudenis.core_data.data.local.UserPreferencesRepository
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

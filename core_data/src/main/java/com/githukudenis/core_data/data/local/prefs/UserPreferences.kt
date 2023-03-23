@@ -1,4 +1,4 @@
-package com.githukudenis.core_data.data.local
+package com.githukudenis.core_data.data.local.prefs
 
 data class UserPreferences(
     val appInitialized: Boolean = false,

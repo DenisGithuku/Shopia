@@ -1,8 +1,8 @@
 package com.githukudenis.feature_product.data.remote
 
-import com.githukudenis.feature_product.data.local.ProductsDao
-import com.githukudenis.feature_product.data.model.ProductCategory
-import com.githukudenis.feature_product.data.model.toProducts
+import com.githukudenis.core_data.data.local.db.model.ProductsDao
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.toProducts
 import timber.log.Timber
 import javax.inject.Inject
 

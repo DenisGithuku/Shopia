@@ -1,7 +1,7 @@
 package com.githukudenis.feature_product.di
 
 import android.content.Context
-import com.githukudenis.feature_product.data.local.ProductsDao
+import com.githukudenis.core_data.data.local.db.model.ProductsDao
 import com.githukudenis.feature_product.data.local.ProductsLocalDataSource
 import com.githukudenis.feature_product.data.remote.ProductsApiService
 import com.githukudenis.feature_product.data.remote.ProductsRemoteDatasource

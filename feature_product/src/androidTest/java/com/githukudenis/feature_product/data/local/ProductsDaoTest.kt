@@ -5,9 +5,11 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.githukudenis.feature_product.data.model.ProductCategory
-import com.githukudenis.feature_product.data.model.Rating
-import com.githukudenis.feature_product.domain.model.ProductDBO
+import com.githukudenis.core_data.data.local.db.ShopiaDatabase
+import com.githukudenis.core_data.data.local.db.model.ProductsDao
+import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
+import com.githukudenis.core_data.data.local.db.model.product.Rating
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -22,7 +24,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class ProductsDaoTest {
-    private lateinit var productsDatabase: ProductsDatabase
+    private lateinit var productsDatabase: ShopiaDatabase
     private lateinit var productsDao: ProductsDao
 
     @get:Rule
@@ -31,7 +33,7 @@ class ProductsDaoTest {
     @Before
     fun setUp() {
         productsDatabase = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(), ProductsDatabase::class.java
+            ApplicationProvider.getApplicationContext(), ShopiaDatabase::class.java
         ).allowMainThreadQueries().build()
 
         productsDao = productsDatabase.productsDao()
