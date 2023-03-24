@@ -53,6 +53,7 @@ kapt {
 dependencies {
     implementation(project(":core_design"))
     implementation(project(":core_data"))
+    implementation(project(":feature_user"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)
