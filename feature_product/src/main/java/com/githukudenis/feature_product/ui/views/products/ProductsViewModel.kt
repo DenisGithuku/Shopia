@@ -1,10 +1,10 @@
 package com.githukudenis.feature_product.ui.views.products
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.ui.UserMessage
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class ProductsViewModel @Inject constructor(
     private val productsRepo: ProductsRepo,
     private val userRepository: UserRepository,
-    savedStateHandle: SavedStateHandle
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private var _state: MutableStateFlow<ProductsScreenState> = MutableStateFlow(
@@ -30,8 +30,12 @@ class ProductsViewModel @Inject constructor(
     val state: StateFlow<ProductsScreenState> get() = _state
 
     init {
-        val username: String = checkNotNull(savedStateHandle["username"])
-        getCurrentUserInfo(username)
+        viewModelScope.launch {
+            userPreferencesRepository.userPreferencesFlow.collect { prefs ->
+                val username = checkNotNull(prefs.username)
+                getCurrentUserInfo(username)
+            }
+        }
         getCategories()
         getAllProducts()
     }
@@ -136,24 +140,20 @@ class ProductsViewModel @Inject constructor(
             val userState = UserState(
                 userLoading = true
             )
-            userRepository.getUserByUserName(username)
-                .catch {
+            userRepository.getUserByUserName(username).catch {
                     val userMessage = UserMessage(id = 0, message = it.message)
                     val userMessages = mutableListOf<UserMessage>()
                     userMessages.add(userMessage)
                     _state.value = _state.value.copy(
-                        userMessages = userMessages,
-                        userState = userState.copy(userLoading = false)
+                        userMessages = userMessages, userState = userState.copy(userLoading = false)
+                    )
+                }.collect { user ->
+                    _state.value = _state.value.copy(
+                        userState = userState.copy(
+                            currentUser = user, userLoading = false
+                        ),
                     )
                 }
-                .collect { user ->
-                _state.value = _state.value.copy(
-                    userState = userState.copy(
-                        currentUser = user,
-                        userLoading = false
-                    ),
-                )
-            }
         }
     }
 }
