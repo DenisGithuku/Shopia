@@ -8,16 +8,20 @@ import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
-) : ViewModel() {
+    private val userRepository: UserRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+
+    ) : ViewModel() {
 
     private val _state: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
     val state: State<LoginUiState> get() = _state
@@ -103,6 +107,14 @@ class LoginViewModel @Inject constructor(
         }
         val loginResult = loginDeferred.await()
         if (!loginResult.isNullOrEmpty()) {
+            userRepository.getUserByUserName(_state.value.formState.username).collect { userDTO ->
+                userDTO?.let { usersDTOItem ->
+                    userPreferencesRepository.storeUserId(usersDTOItem.id)
+                    userPreferencesRepository.storeUserName(usersDTOItem.username)
+                    Timber.i(usersDTOItem.toString())
+                }
+            }
+            userPreferencesRepository.updateUserLoggedIn(true)
             val message = UserMessage(id = 0, message = "Logged in successfully")
             refreshUserMessages(message)
             _state.value = _state.value.copy(
