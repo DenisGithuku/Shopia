@@ -15,14 +15,17 @@ class MainViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    var appStarted = MutableStateFlow(false)
+    var uiState = MutableStateFlow(MainActivityUiState())
         private set
 
     init {
         viewModelScope.launch {
             userPreferencesRepository.userPreferencesFlow.collectLatest { prefs ->
-                appStarted.update {
-                    prefs.appInitialized
+                uiState.update { state ->
+                    state.copy(
+                        userLoggedIn = prefs.userLoggedIn,
+                        appStarted = prefs.appInitialized
+                    )
                 }
             }
         }

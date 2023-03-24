@@ -1,7 +1,7 @@
 package com.githukudenis.feature_product.ui.views.products
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.test.filters.MediumTest
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_product.data.repo.FakeProductsDataSource
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.githukudenis.feature_user.data.UserRepository
@@ -19,6 +19,7 @@ class ProductsViewModelTest {
     private lateinit var productsRepo: ProductsRepo
     private lateinit var productsViewModel: ProductsViewModel
     private lateinit var userRepository: UserRepository
+    private lateinit var userPrefsRepository: UserPreferencesRepository
 
     @get:Rule
     val mainCoroutineRule by lazy { MainCoroutineRule() }
@@ -27,10 +28,10 @@ class ProductsViewModelTest {
     fun setUp() {
         productsRepo = FakeProductsDataSource()
         userRepository = FakeUserRepository()
-        val savedStateHandle = SavedStateHandle(initialState = mapOf("username" to "allan"))
-
+        userPrefsRepository = FakeUserPrefsRepository()
         productsViewModel = ProductsViewModel(
-            productsRepo, userRepository, savedStateHandle
+            productsRepo, userRepository,
+            userPreferencesRepository = userPrefsRepository
         )
     }
 

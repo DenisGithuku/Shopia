@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.githukudenis.core_design.theme.CoroutinesIndustrialBuildTheme
+import com.githukudenis.feature_product.ui.util.AppDestination
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
+    private var userLoggedIn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,8 @@ class MainActivity : ComponentActivity() {
                 SnackbarHostState()
             }
 
+            val startDestination = if (!userLoggedIn) AppDestination.Login else AppDestination.Products
+
             // Remember a SystemUiController
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = !isSystemInDarkTheme()
@@ -44,8 +48,7 @@ class MainActivity : ComponentActivity() {
                 // Update all of the system bar colors to be transparent, and use
                 // dark icons if we're in light theme
                 systemUiController.setSystemBarsColor(
-                    color = Color.Transparent,
-                    darkIcons = useDarkIcons
+                    color = Color.Transparent, darkIcons = useDarkIcons
                 )
 
                 // setStatusBarColor() and setNavigationBarColor() also exist
@@ -53,15 +56,17 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             CoroutinesIndustrialBuildTheme {
-                Scaffold(
-                    snackbarHost =  { SnackbarHost(hostState = snackbarHostState) }
-                ) { paddingValues ->
+                Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->
                     Surface(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
                     ) {
-                        AppNavigator(navController = navController, snackbarHostState = snackbarHostState)
+                        AppNavigator(
+                            navController = navController,
+                            snackbarHostState = snackbarHostState,
+                            afterSplashDestination = startDestination
+                        )
                     }
                 }
             }
@@ -71,8 +76,9 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch {
-            mainViewModel.appStarted.collect { appStarted ->
-                if (!appStarted) {
+            mainViewModel.uiState.collect { uiState ->
+                userLoggedIn = uiState.userLoggedIn
+                if (!uiState.appStarted) {
                     mainViewModel.updateAppStartStatus(true)
                 }
             }
@@ -82,8 +88,8 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            mainViewModel.appStarted.collect {
-                Timber.i("$it")
+            mainViewModel.uiState.collect {
+                Timber.i("${it.appStarted}")
             }
         }
     }
