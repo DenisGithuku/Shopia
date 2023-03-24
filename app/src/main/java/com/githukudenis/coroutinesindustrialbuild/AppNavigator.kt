@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.githukudenis.auth.ui.LoginScreen
+import com.githukudenis.feature_cart.ui.views.cart.CartScreen
 import com.githukudenis.feature_product.ui.util.AppDestination
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
@@ -16,7 +17,8 @@ import com.githukudenis.feature_product.ui.views.products.ProductsScreen
 @Composable
 fun AppNavigator(
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    afterSplashDestination: AppDestination
 ) {
     NavHost(
         navController = navController, startDestination = AppDestination.Splash.route
@@ -25,7 +27,7 @@ fun AppNavigator(
             route = AppDestination.Splash.route
         ) {
             SplashScreen {
-                navController.navigate(AppDestination.Login.route) {
+                navController.navigate(afterSplashDestination.route) {
                     popUpTo(AppDestination.Splash.route) {
                         inclusive = true
                     }
@@ -33,8 +35,8 @@ fun AppNavigator(
             }
         }
         composable(route = AppDestination.Login.route) {
-            LoginScreen(snackBarHostState = snackbarHostState) { username ->
-                navController.navigate(AppDestination.Products.route + "/$username") {
+            LoginScreen(snackBarHostState = snackbarHostState) {
+                navController.navigate(AppDestination.Products.route) {
                     popUpTo(AppDestination.Login.route) {
                         inclusive = true
                     }
@@ -42,12 +44,7 @@ fun AppNavigator(
             }
         }
         composable(
-            route = AppDestination.Products.route + "/{username}",
-            arguments = listOf(
-                navArgument(name = "username") {
-                    type = NavType.StringType
-                }
-            )
+            route = AppDestination.Products.route,
         ) {
             ProductsScreen(
                 snackbarHostState = snackbarHostState
@@ -69,5 +66,9 @@ fun AppNavigator(
         ) {
             ProductDetailScreen()
         }
+        composable(route = AppDestination.CartScreen.route) {
+            CartScreen()
+        }
+
     }
 }

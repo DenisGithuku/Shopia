@@ -12,4 +12,6 @@ sealed class AppDestination(
     object Login: AppDestination("login")
     object Products: AppDestination(route = "products", icon = Icons.Default.List)
     object ProductDetail: AppDestination(route ="details")
+
+    object CartScreen: AppDestination(route = "cart")
 }
