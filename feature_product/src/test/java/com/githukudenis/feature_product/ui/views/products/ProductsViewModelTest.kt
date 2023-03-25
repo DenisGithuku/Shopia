@@ -27,7 +27,7 @@ class ProductsViewModelTest {
     @Before
     fun setUp() {
         productsRepo = FakeProductsDataSource()
-        userRepository = FakeUserRepository()
+        userRepository = FakeUserRepositoryImpl()
         userPrefsRepository = FakeUserPrefsRepository()
         productsViewModel = ProductsViewModel(
             productsRepo, userRepository,

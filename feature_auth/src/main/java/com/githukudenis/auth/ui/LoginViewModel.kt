@@ -130,12 +130,14 @@ class LoginViewModel @Inject constructor(
                                 userPreferencesRepository.updateUserLoggedIn(true)
                             }
                     }
-                    val message = UserMessage(id = 0, message = "Logged in successfully")
-                    refreshUserMessages(message)
-                    _state.value = _state.value.copy(
-                        isLoading = false, loginSuccess = true
-                    )
                 }
+                userNameJob.join()
+                val message = UserMessage(id = 0, message = "Logged in successfully")
+                refreshUserMessages(message)
+                _state.value = _state.value.copy(
+                    isLoading = false, loginSuccess = true
+                )
+
                 userNameJob.cancel()
             } else {
                 val userMessage =

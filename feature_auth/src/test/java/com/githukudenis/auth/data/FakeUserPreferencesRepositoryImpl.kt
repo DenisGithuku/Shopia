@@ -1,5 +1,7 @@
 package com.githukudenis.auth.data
 
+import com.githukudenis.core_data.data.local.prefs.UserPreferences
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -19,6 +21,18 @@ class FakeUserPreferencesRepositoryImpl: UserPreferencesRepository {
     override suspend fun updateUserLoggedIn(loggedIn: Boolean) {
         userPrefs.copy(
             userLoggedIn = loggedIn
+        )
+    }
+
+    override suspend fun storeUserId(userId: Int) {
+        userPrefs.copy(
+            userId = userId
+        )
+    }
+
+    override suspend fun storeUserName(username: String) {
+        userPrefs.copy(
+            username = username
         )
     }
 }

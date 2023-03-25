@@ -1,4 +1,4 @@
-package com.githukudenis.feature_product.ui.views.products
+package com.githukudenis.auth.ui
 
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.remote.model.Address
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeUserRepository : UserRepository {
+class FakeUserRepositoryImpl : UserRepository {
 
     private val userDTOItems = listOf(
         UsersDTOItem(
