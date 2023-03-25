@@ -15,23 +15,22 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.githukudenis.core_design.theme.CoroutinesIndustrialBuildTheme
 import com.githukudenis.feature_product.ui.util.AppDestination
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private var userLoggedIn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val userLoggedIn = mainViewModel.uiState.value.userLoggedIn
+
         setContent {
             val navController = rememberNavController()
             val snackbarHostState = remember {
@@ -75,22 +74,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
-            mainViewModel.uiState.collect { uiState ->
-                userLoggedIn = uiState.userLoggedIn
-                if (!uiState.appStarted) {
-                    mainViewModel.updateAppStartStatus(true)
-                }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            mainViewModel.uiState.collect {
-                Timber.i("${it.appStarted}")
-            }
+        val appStarted = mainViewModel.uiState.value.appStarted
+        if (!appStarted) {
+            mainViewModel.updateAppStartStatus(true)
         }
     }
 }

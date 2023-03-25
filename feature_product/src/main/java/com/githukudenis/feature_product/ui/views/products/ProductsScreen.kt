@@ -65,13 +65,15 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.githukudenis.feature_product.R
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalGlideComposeApi::class,
     ExperimentalAnimationApi::class
 )
 @Composable
 fun ProductsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
+    onOpenProfile: () -> Unit,
     onOpenProductDetails: (Int) -> Unit
 ) {
     val context = LocalContext.current
@@ -93,8 +95,7 @@ fun ProductsScreen(
         if (state.userMessages.isNotEmpty()) {
             val message = state.userMessages[0]
             snackbarHostState.showSnackbar(
-                message = message.message ?: "An error occurred",
-                duration = SnackbarDuration.Long
+                message = message.message ?: "An error occurred", duration = SnackbarDuration.Long
             )
             message.id?.let { ProductsScreenEvent.DismissUserMessage(it) }
                 ?.let { productsViewModel.onEvent(it) }
@@ -131,10 +132,8 @@ fun ProductsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Shopia",
-                            style = TextStyle(
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold
+                            text = "Shopia", style = TextStyle(
+                                fontSize = 30.sp, fontWeight = FontWeight.Bold
                             )
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -156,7 +155,7 @@ fun ProductsScreen(
 
                                         false -> {
                                             ProfileAvatar(username = "${state.userState?.currentUser?.username}",
-                                                onClick = {})
+                                                onClick = { onOpenProfile() })
                                         }
                                     }
 

@@ -14,4 +14,6 @@ sealed class AppDestination(
     object ProductDetail: AppDestination(route ="details")
 
     object CartScreen: AppDestination(route = "cart")
+
+    object ProfileScreen: AppDestination(route = "profile")
 }

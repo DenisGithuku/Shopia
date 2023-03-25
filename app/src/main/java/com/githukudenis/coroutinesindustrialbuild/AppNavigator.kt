@@ -13,6 +13,7 @@ import com.githukudenis.feature_product.ui.util.AppDestination
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
 import com.githukudenis.feature_product.ui.views.products.ProductsScreen
+import com.githukudenis.feature_user.ui.profile.ProfileScreen
 
 @Composable
 fun AppNavigator(
@@ -47,7 +48,16 @@ fun AppNavigator(
             route = AppDestination.Products.route,
         ) {
             ProductsScreen(
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                onOpenProfile = {
+                    navController.navigate(AppDestination.ProfileScreen.route) {
+                        popUpTo(AppDestination.ProfileScreen.route) {
+                            saveState = true
+                            inclusive = true
+                        }
+                        restoreState = true
+                    }
+                }
             ) { productId ->
                 navController.navigate(
                     route = AppDestination.ProductDetail.route + "/$productId"
@@ -68,6 +78,10 @@ fun AppNavigator(
         }
         composable(route = AppDestination.CartScreen.route) {
             CartScreen()
+        }
+
+        composable(route = AppDestination.ProfileScreen.route) {
+            ProfileScreen()
         }
 
     }
