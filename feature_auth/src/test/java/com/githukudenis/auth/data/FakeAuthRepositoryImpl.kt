@@ -18,7 +18,7 @@ class FakeAuthRepositoryImpl : AuthRepository {
 
     override suspend fun login(user: User): String? {
         return try {
-            val userInDb = usersDb.any { userInDb -> userInDb == user }
+            val userInDb = usersDb.any { userInDb -> userInDb.hashCode() == user.hashCode() }
             if (userInDb) "Some token" else null
         } catch (e: Exception) {
             Timber.e(e)
