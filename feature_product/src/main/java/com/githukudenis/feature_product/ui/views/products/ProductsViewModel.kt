@@ -8,6 +8,7 @@ import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_product.domain.repo.ProductsRepo
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,9 +34,13 @@ class ProductsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userPreferencesRepository.userPreferencesFlow.collect { prefs ->
-                val username = checkNotNull(prefs.username)
-                getCurrentUserInfo(username)
+            withContext(Dispatchers.IO) {
+                userPreferencesRepository.userPreferencesFlow.collect { prefs ->
+                    Timber.i(prefs.username.toString())
+                    prefs.username?.let { username ->
+                        getCurrentUserInfo(username)
+                    }
+                }
             }
         }
         getCategories()
@@ -140,7 +147,8 @@ class ProductsViewModel @Inject constructor(
             val userState = UserState(
                 userLoading = true
             )
-            userRepository.getUserByUserName(username).catch {
+            userRepository.getUserByUserName(username)
+                .catch {
                     val userMessage = UserMessage(id = 0, message = it.message)
                     val userMessages = mutableListOf<UserMessage>()
                     userMessages.add(userMessage)
@@ -148,6 +156,7 @@ class ProductsViewModel @Inject constructor(
                         userMessages = userMessages, userState = userState.copy(userLoading = false)
                     )
                 }.collect { user ->
+                    Timber.i(user.toString())
                     _state.value = _state.value.copy(
                         userState = userState.copy(
                             currentUser = user, userLoading = false

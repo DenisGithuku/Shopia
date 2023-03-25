@@ -10,8 +10,12 @@ import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -102,30 +106,47 @@ class LoginViewModel @Inject constructor(
         _state.value = _state.value.copy(
             isLoading = true
         )
-        val loginDeferred = async {
+        val loginDeferred = async(context = Dispatchers.IO) {
             return@async authRepository.login(user)
         }
-        val loginResult = loginDeferred.await()
-        if (!loginResult.isNullOrEmpty()) {
-            userRepository.getUserByUserName(_state.value.formState.username).collect { userDTO ->
-                userDTO?.let { usersDTOItem ->
-                    userPreferencesRepository.storeUserId(usersDTOItem.id)
-                    userPreferencesRepository.storeUserName(usersDTOItem.username)
-                    Timber.i(usersDTOItem.toString())
+        try {
+            val loginResult = loginDeferred.await()
+            if (!loginResult.isNullOrEmpty()) {
+                /* create handle for fetching
+                * user details from the server
+                */
+                val userNameJob: Job?
+                userNameJob = viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        userRepository.getUserByUserName(_state.value.formState.username)
+                            .catch {
+                                Timber.e(it)
+                            }
+                            .collect { userDTO ->
+                                userDTO?.let { usersDTOItem ->
+                                    userPreferencesRepository.storeUserId(usersDTOItem.id)
+                                    userPreferencesRepository.storeUserName(usersDTOItem.username)
+                                }
+                                userPreferencesRepository.updateUserLoggedIn(true)
+                            }
+                    }
+                    val message = UserMessage(id = 0, message = "Logged in successfully")
+                    refreshUserMessages(message)
+                    _state.value = _state.value.copy(
+                        isLoading = false, loginSuccess = true
+                    )
                 }
+                userNameJob.cancel()
+            } else {
+                val userMessage =
+                    UserMessage(id = 0, message = "Could not login. Please check details")
+                refreshUserMessages(userMessage)
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                )
             }
-            userPreferencesRepository.updateUserLoggedIn(true)
-            val message = UserMessage(id = 0, message = "Logged in successfully")
-            refreshUserMessages(message)
-            _state.value = _state.value.copy(
-                isLoading = false, loginSuccess = true
-            )
-        } else {
-            val userMessage = UserMessage(id = 0, message = "Could not login. Please check details")
-            refreshUserMessages(userMessage)
-            _state.value = _state.value.copy(
-                isLoading = false,
-            )
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
