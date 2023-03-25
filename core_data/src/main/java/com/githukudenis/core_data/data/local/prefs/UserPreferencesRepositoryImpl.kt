@@ -28,7 +28,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         get() = context.datastore.data.map { prefs ->
             val appInitialized = prefs[PreferenceKeys.APP_INITIALIZED] ?: false
             val userLoggedIn = prefs[PreferenceKeys.USER_LOGGED_IN] ?: false
-            UserPreferences(appInitialized, userLoggedIn)
+            val userId = prefs[PreferenceKeys.USER_ID]
+            val username = prefs[PreferenceKeys.USER_NAME]
+            UserPreferences(appInitialized, userLoggedIn, userId, username)
         }
 
     override suspend fun updateAppInitialization(appInitialized: Boolean) {

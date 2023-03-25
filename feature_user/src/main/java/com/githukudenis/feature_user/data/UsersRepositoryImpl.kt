@@ -23,7 +23,6 @@ class UsersRepositoryImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                null
             }
         }.flowOn(Dispatchers.IO)
 
@@ -32,14 +31,13 @@ class UsersRepositoryImpl @Inject constructor(
             try {
                 val response = usersApiService.getAllUsers()
                 if (response.isSuccessful) {
-                    val currentUser = response.body()
-                    currentUser?.let { usersDTO ->
-                        emit(usersDTO?.find { user -> user.username == username })
+                    val allUsers = response.body()
+                    allUsers?.let { usersDTO ->
+                        emit(usersDTO.find { user -> user.username == username })
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
-                null
             }
         }.flowOn(Dispatchers.IO)
     }
