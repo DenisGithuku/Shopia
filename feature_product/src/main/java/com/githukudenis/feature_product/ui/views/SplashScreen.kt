@@ -6,15 +6,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import com.githukudenis.feature_product.R
 import kotlinx.coroutines.delay
 
@@ -42,11 +40,9 @@ fun SplashScreen(
         }
 
         Image(
-            modifier = modifier.offset {
-                IntOffset(
-                    x = 0.dp.toPx().toInt(),
-                    y = -10.dp.toPx().toInt() * animateSplashImage.value.toInt()
-                )
+            modifier = modifier.graphicsLayer {
+                scaleX = animateSplashImage.value
+                scaleY = animateSplashImage.value
             },
             painter = painterResource(id = R.drawable.shopping_cart),
             contentDescription = null
