@@ -55,8 +55,10 @@ class MainActivity : ComponentActivity() {
             }
             CoroutinesIndustrialBuildTheme {
 
-                val userLoggedIn = mainViewModel.uiState.collectAsStateWithLifecycle().value.userLoggedIn
-                val startDestination = if (!userLoggedIn) AppDestination.Login else AppDestination.Products
+                val userLoggedIn =
+                    mainViewModel.uiState.collectAsStateWithLifecycle().value.userLoggedIn
+                val startDestination =
+                    if (!userLoggedIn) AppDestination.Login else AppDestination.Products
 
 
                 Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->
