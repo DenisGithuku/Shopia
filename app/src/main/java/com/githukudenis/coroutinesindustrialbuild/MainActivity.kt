@@ -15,6 +15,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.githukudenis.core_design.theme.CoroutinesIndustrialBuildTheme
 import com.githukudenis.feature_product.ui.util.AppDestination
@@ -29,7 +30,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val userLoggedIn = mainViewModel.uiState.value.userLoggedIn
 
         setContent {
             val navController = rememberNavController()
@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
                 SnackbarHostState()
             }
 
-            val startDestination = if (!userLoggedIn) AppDestination.Login else AppDestination.Products
 
             // Remember a SystemUiController
             val systemUiController = rememberSystemUiController()
@@ -55,6 +54,11 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             CoroutinesIndustrialBuildTheme {
+
+                val userLoggedIn = mainViewModel.uiState.collectAsStateWithLifecycle().value.userLoggedIn
+                val startDestination = if (!userLoggedIn) AppDestination.Login else AppDestination.Products
+
+
                 Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { paddingValues ->
                     Surface(
                         modifier = Modifier

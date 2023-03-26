@@ -1,8 +1,6 @@
-import Versions.work_version
-
 object Versions {
     val room = "2.5.0"
-    val lifecycle = "2.6.0"
+    val lifecycle = "2.6.1"
     val compose_ui = "1.3.3"
     val accompanist = "0.28.0"
     val datastore = "1.0.0"
@@ -21,7 +19,8 @@ object Dependencies {
     val datastorePrefs = "androidx.datastore:datastore-preferences:${Versions.datastore}"
     val okhttp = "com.squareup.okhttp3:okhttp:4.10.0"
     val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:4.10.0"
-    val lifcycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+    val lifecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+    val lifecycleRuntimeCompose = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.lifecycle}"
     val activityCompose = "androidx.activity:activity-compose:1.6.1"
     val hiltNavigationCompose =  "androidx.hilt:hilt-navigation-compose:1.0.0"
     val navigationCompose =  "androidx.navigation:navigation-compose:2.5.3"
