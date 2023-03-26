@@ -43,11 +43,9 @@ more to come...
 
 <img src ="https://user-images.githubusercontent.com/47632042/226111885-ffc3df97-1be4-407c-a6b6-d2ada433efb2.png" width = "30%" height = "30%">
 
-#### Product list
-
+#### Products
+<p align = "center">
 <img src = "https://user-images.githubusercontent.com/47632042/226111974-d56de010-9ad8-410c-b9f4-b040f747b257.png" width = "30%" height = "30%">
-
-#### Product Details
-
+&nbsp; &nbsp; &nbsp; &nbsp;
 <img src = "https://user-images.githubusercontent.com/47632042/226112108-fec2dfa7-e761-4699-a090-a07da4f6ec94.png" width = "30%" height = "30%">
-
+</p>
