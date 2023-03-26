@@ -13,7 +13,7 @@ import com.githukudenis.feature_product.ui.util.AppDestination
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
 import com.githukudenis.feature_product.ui.views.products.ProductsScreen
-import com.githukudenis.feature_user.ui.profile.ProfileScreen
+import com.githukudenis.feature_user.ui.profile.ProfileRoute
 
 @Composable
 fun AppNavigator(
@@ -81,7 +81,13 @@ fun AppNavigator(
         }
 
         composable(route = AppDestination.ProfileScreen.route) {
-            ProfileScreen()
+            ProfileRoute(onSignOut = {
+                navController.navigate(AppDestination.Login.route) {
+                    popUpTo(AppDestination.Products.route) {
+                        inclusive = true
+                    }
+                }
+            })
         }
 
     }

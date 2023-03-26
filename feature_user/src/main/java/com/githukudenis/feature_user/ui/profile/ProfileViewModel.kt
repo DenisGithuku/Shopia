@@ -29,6 +29,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onEvent(event: ProfileUiEvent) {
+        when(event) {
+            is ProfileUiEvent.Logout -> {
+                logout()
+            }
+        }
+    }
+
     suspend fun getUserProfile(userId: Int) {
         userRepository.users.collectLatest { usersDTO ->
             usersDTO?.let { allUsers ->
@@ -42,4 +50,10 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun logout() = viewModelScope.launch(Dispatchers.IO) {
+        userPreferencesRepository.updateUserLoggedIn(false)
+        uiState.value = uiState.value.copy(
+            signedOut = true
+        )
+    }
 }

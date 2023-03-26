@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="person_avatar">Profile Avatar</string>
+    <string name="phone">Mobile</string>
+    <string name="email">Email</string>
+</resources>

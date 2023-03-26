@@ -30,9 +30,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,7 +63,6 @@ fun LoginScreen(
     val loginViewModel: LoginViewModel = hiltViewModel()
     val uiState by loginViewModel.state
     val passwordIsVisible = uiState.formState.passwordIsVisible
-    val coroutineScope = rememberCoroutineScope()
 
     val userOnLogin by rememberUpdatedState(onLoggedIn)
 
@@ -83,7 +80,10 @@ fun LoginScreen(
     if (uiState.loginSuccess) {
         if (uiState.userMessages.isNotEmpty()) {
             val userMessage = uiState.userMessages[0]
-            UserDialog(dialogState = DialogState.SUCCESS, message = userMessage.message ?: "An error occurred")
+            UserDialog(
+                dialogState = DialogState.SUCCESS,
+                message = userMessage.message ?: "An error occurred"
+            )
             userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
                 ?.let { loginViewModel.onEvent(it) }
             userOnLogin()
@@ -157,11 +157,7 @@ fun LoginScreen(
                 if (uiState.formIsValid) {
                     val (username, password) = uiState.formState
                     val user = User(username, password)
-                    loginViewModel.onEvent(LoginUiEvent.OnLogin(user)).also {
-                        if (uiState.loginSuccess) {
-                            onLoggedIn()
-                        }
-                    }
+                    loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
                 } else {
                     val userMessage = UserMessage(id = 0, message = "Invalid details")
                     loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(userMessage))
@@ -175,10 +171,6 @@ fun LoginScreen(
                 val (username, password) = uiState.formState
                 val user = User(username, password)
                 loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
-
-                if (uiState.loginSuccess) {
-                    onLoggedIn()
-                }
             } else {
                 val userMessage = UserMessage(id = 0, message = "Invalid details")
                 loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(userMessage))
@@ -199,7 +191,7 @@ private fun UserDialog(
     message: String,
 ) {
     val properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-    var currentDialogState by remember {
+    val currentDialogState by remember {
         mutableStateOf(dialogState)
     }
 
