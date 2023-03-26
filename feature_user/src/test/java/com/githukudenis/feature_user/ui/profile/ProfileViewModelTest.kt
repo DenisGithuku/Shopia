@@ -4,11 +4,14 @@ import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.remote.FakeUserRepositoryImpl
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTest {
 
     private lateinit var userRepository: UserRepository
@@ -26,9 +29,23 @@ class ProfileViewModelTest {
     }
 
     @Test
-    fun getUserProfile() = runTest {
+    fun `get user profile returns user object`() = runTest {
         profileViewModel.getUserProfile(1)
         val state = profileViewModel.uiState.value
         assertThat(state).isNotNull()
+    }
+
+    @Test
+    fun `test logout sets logged in pref to false`() = runTest {
+        profileViewModel.onEvent(ProfileUiEvent.Logout)
+        val isLoggedIn = userPrefsRepository.userPreferencesFlow.first().userLoggedIn
+        assertThat(isLoggedIn).isFalse()
+    }
+
+    @Test
+    fun `test on logout updates logout ui state to true`() = runTest {
+        profileViewModel.onEvent(ProfileUiEvent.Logout)
+        val logoutSuccess = profileViewModel.uiState.value.signedOut
+        assertThat(logoutSuccess).isTrue()
     }
 }
