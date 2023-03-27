@@ -1,6 +1,7 @@
 package com.githukudenis.feature_cart.di
 
 import com.githukudenis.core_data.data.local.db.CartDao
+import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.core_data.util.Constants
 import com.githukudenis.feature_cart.data.remote.CartApiService
 import com.githukudenis.feature_cart.data.repo.CartRepository
@@ -29,8 +30,10 @@ object CartModule {
     @Provides
     @Singleton
     fun provideCartRepository(
-        cartApiService: CartApiService, cartDao: CartDao
+        cartApiService: CartApiService,
+        cartDao: CartDao,
+        shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
     ): CartRepository {
-        return CartRepositoryImpl(cartApiService, cartDao = cartDao)
+        return CartRepositoryImpl(cartApiService, cartDao = cartDao, shopiaCoroutineDispatcher)
     }
 }
