@@ -1,6 +1,6 @@
 package com.githukudenis.feature_product.ui.views.products
 
-import com.githukudenis.auth.ui.UserMessage
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.feature_user.data.remote.model.UsersDTOItem

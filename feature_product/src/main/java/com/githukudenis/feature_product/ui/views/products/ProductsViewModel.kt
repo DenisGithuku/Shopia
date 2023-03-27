@@ -2,7 +2,7 @@ package com.githukudenis.feature_product.ui.views.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.auth.ui.UserMessage
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_product.domain.repo.ProductsRepo

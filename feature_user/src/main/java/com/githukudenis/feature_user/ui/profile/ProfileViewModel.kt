@@ -50,7 +50,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun logout() = viewModelScope.launch(Dispatchers.IO) {
+    private fun logout() = viewModelScope.launch {
         userPreferencesRepository.updateUserLoggedIn(false)
         uiState.value = uiState.value.copy(
             signedOut = true

@@ -1,5 +1,6 @@
 package com.githukudenis.feature_user.di
 
+import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.core_data.util.Constants
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.UsersRepositoryImpl
@@ -30,7 +31,7 @@ object UserModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(userApiService: UserApiService): UserRepository {
-        return UsersRepositoryImpl(userApiService)
+    fun provideUserRepository(userApiService: UserApiService, shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher): UserRepository {
+        return UsersRepositoryImpl(userApiService, shopiaCoroutineDispatcher)
     }
 }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.auth.ui.UserMessage
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_product.domain.repo.ProductsRepo

@@ -7,9 +7,11 @@ import com.githukudenis.auth.data.FakeAuthRepositoryImpl
 import com.githukudenis.auth.data.FakeUserPreferencesRepositoryImpl
 import com.githukudenis.core_data.MainCoroutineRule
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_user.data.UserRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -50,7 +52,7 @@ class LoginViewModelTest {
     @Test
     fun `toggle password visibility`() = runTest {
         val passwordBeforeToggle = loginViewModel.state.value.formState.passwordIsVisible
-        loginViewModel.togglePasswordVisibility()
+        loginViewModel.onEvent(LoginUiEvent.OnTogglePasswordVisibility)
         val passwordAfterToggle = loginViewModel.state.value.formState.passwordIsVisible
         assertThat(passwordBeforeToggle).isNotEqualTo(passwordAfterToggle)
     }
@@ -58,21 +60,21 @@ class LoginViewModelTest {
     @Test
     fun `refresh user messages`() = runTest {
         val userMessage = UserMessage(id = 1, message = "Example user message")
-        loginViewModel.refreshUserMessages(userMessage)
+        loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(userMessage))
         val userMessagesState = loginViewModel.state.value.userMessages
         assertThat(userMessagesState).contains(userMessage)
     }
 
     @Test
     fun `change user name`() = runTest {
-        loginViewModel.changeUsername("sam")
+        loginViewModel.onEvent(LoginUiEvent.OnUsernameChange("sam"))
         val username = loginViewModel.state.value.formState.username
         assertThat(username).isEqualTo("sam")
     }
 
     @Test
     fun `change password`() = runTest {
-        loginViewModel.changePassword("12345")
+        loginViewModel.onEvent(LoginUiEvent.OnPasswordChange("12345"))
         val password = loginViewModel.state.value.formState.password
         assertThat(password).isEqualTo("12345")
     }
@@ -80,7 +82,7 @@ class LoginViewModelTest {
     @Test
     fun `update user messages`() = runTest {
         val userMessage = UserMessage(id = 1, message = "Example user message")
-        loginViewModel.updateUserMessages(userMessage.id ?: return@runTest)
+        loginViewModel.onEvent(LoginUiEvent.DismissUserMessage(userMessage.id ?: return@runTest))
         val userMessagesState = loginViewModel.state.value.userMessages
         assertThat(userMessagesState).doesNotContain(userMessage)
     }
@@ -90,7 +92,11 @@ class LoginViewModelTest {
         val user = User(
             username = "Jack", password = "ab29m%*"
         )
-        loginViewModel.login(user).join()
+        /*
+        * wait for coroutines to finish before calling assert
+        * */
+        loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
+        advanceUntilIdle()
         val loginSuccess = loginViewModel.state.value.loginSuccess
         assertThat(loginSuccess).isTrue()
     }
@@ -100,7 +106,12 @@ class LoginViewModelTest {
         val user = User(
             username = "Asma", password = "34rt%*"
         )
-        loginViewModel.login(user).join()
+        loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
+
+        /*
+        * wait for coroutines to finish before calling assert
+        * */
+        advanceUntilIdle()
         val loginSuccess = loginViewModel.state.value.loginSuccess
         assertThat(loginSuccess).isFalse()
     }

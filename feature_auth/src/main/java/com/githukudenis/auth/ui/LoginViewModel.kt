@@ -8,14 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.githukudenis.auth.api.User
 import com.githukudenis.auth.data.AuthRepository
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +34,7 @@ class LoginViewModel @Inject constructor(
 
     fun onEvent(event: LoginUiEvent) {
         when (event) {
-            is LoginUiEvent.OnUserMessageShown -> {
+            is LoginUiEvent.DismissUserMessage -> {
                 updateUserMessages(event.messageId)
             }
 
@@ -62,7 +60,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun togglePasswordVisibility() {
+    private fun togglePasswordVisibility() {
         val passWordVisible = _state.value.formState.passwordIsVisible
         val formState = _state.value.formState.copy(
             passwordIsVisible = !passWordVisible
@@ -72,7 +70,7 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    fun refreshUserMessages(userMessage: UserMessage) {
+    private fun refreshUserMessages(userMessage: UserMessage) {
         val userMessages = mutableListOf<UserMessage>()
         userMessages.add(userMessage)
         _state.value = _state.value.copy(
@@ -80,21 +78,21 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    fun changeUsername(value: String) {
+    private fun changeUsername(value: String) {
         val formState = _state.value.formState.copy(username = value)
         _state.value = _state.value.copy(
             formState = formState
         )
     }
 
-    fun changePassword(value: String) {
+    private fun changePassword(value: String) {
         val formState = _state.value.formState.copy(password = value)
         _state.value = _state.value.copy(
             formState = formState
         )
     }
 
-    fun updateUserMessages(messageId: Int) {
+    private fun updateUserMessages(messageId: Int) {
         val userMessages =
             _state.value.userMessages.filterNot { userMessage -> userMessage.id == messageId }
         _state.value = _state.value.copy(
@@ -102,43 +100,37 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-    fun login(user: User) = viewModelScope.launch {
-        _state.value = _state.value.copy(
-            isLoading = true
-        )
-        val loginDeferred = async(context = Dispatchers.IO) {
-            return@async authRepository.login(user)
-        }
+    private fun login(user: User) = viewModelScope.launch {
         try {
+            _state.value = _state.value.copy(
+                isLoading = true
+            )
+            val loginDeferred = async {
+                return@async authRepository.login(user)
+            }
+
             val loginResult = loginDeferred.await()
-            if (!loginResult.isNullOrEmpty()) {
-                /* create handle for fetching
+            if (!loginResult.isNullOrEmpty()) {/* create handle for fetching
                 * user details from the server
                 */
-                val userNameJob: Job?
-                userNameJob = viewModelScope.launch {
-                    withContext(Dispatchers.IO) {
-                        userRepository.getUserByUserName(_state.value.formState.username)
-                            .catch {
-                                Timber.e(it)
-                            }
-                            .collect { userDTO ->
-                                userDTO?.let { usersDTOItem ->
-                                    userPreferencesRepository.storeUserId(usersDTOItem.id)
-                                    userPreferencesRepository.storeUserName(usersDTOItem.username)
-                                }
-                                userPreferencesRepository.updateUserLoggedIn(true)
-                            }
-                    }
+                val userDeferred = async {
+                    userRepository.getUserByUserName(_state.value.formState.username)
                 }
-                userNameJob.join()
+                userDeferred.await().catch {
+                    Timber.e(it)
+                }.collect { userDTO ->
+                    userDTO?.let { usersDTOItem ->
+                        userPreferencesRepository.storeUserId(usersDTOItem.id)
+                        userPreferencesRepository.storeUserName(usersDTOItem.username)
+                    }
+                    userPreferencesRepository.updateUserLoggedIn(true)
+                }
+
                 val message = UserMessage(id = 0, message = "Logged in successfully")
                 refreshUserMessages(message)
                 _state.value = _state.value.copy(
                     isLoading = false, loginSuccess = true
                 )
-
-                userNameJob.cancel()
             } else {
                 val userMessage =
                     UserMessage(id = 0, message = "Could not login. Please check details")

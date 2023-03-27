@@ -1,6 +1,7 @@
 package com.githukudenis.auth.ui
 
 import androidx.compose.runtime.Immutable
+import com.githukudenis.core_data.util.UserMessage
 
 @Immutable
 data class LoginUiState(
