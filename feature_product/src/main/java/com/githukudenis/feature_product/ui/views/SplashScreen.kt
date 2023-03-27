@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import com.githukudenis.feature_product.R
+import com.githukudenis.core_design.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -44,7 +44,7 @@ fun SplashScreen(
                 scaleX = animateSplashImage.value
                 scaleY = animateSplashImage.value
             },
-            painter = painterResource(id = R.drawable.shopping_cart),
+            painter = painterResource(id = R.drawable.blue_cart),
             contentDescription = null
         )
 
