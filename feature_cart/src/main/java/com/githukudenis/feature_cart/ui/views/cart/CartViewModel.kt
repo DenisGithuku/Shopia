@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.feature_cart.data.repo.CartRepository
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val productsRepo: ProductsRepo,
+    private val productsRepository: ProductsRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -38,7 +38,7 @@ class CartViewModel @Inject constructor(
             isLoading = false
         )
         val productsInCart = combine(
-            cartRepository.getProductsInCart(userId), productsRepo.getProducts()
+            cartRepository.getProductsInCart(userId), productsRepository.getProducts()
         ) { productsInCart, allProducts ->
             productsInCart.map { productInCart ->
                 val productDBO = allProducts.find { dbProductItem ->

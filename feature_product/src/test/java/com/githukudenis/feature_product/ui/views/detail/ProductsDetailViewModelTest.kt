@@ -2,19 +2,21 @@ package com.githukudenis.feature_product.ui.views.detail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.filters.MediumTest
-import com.githukudenis.feature_product.data.repo.FakeProductsDataSource
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.data.repo.FakeProductsRepositoryImpl
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import com.githukudenis.feature_product.ui.views.products.MainCoroutineRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 class ProductsDetailViewModelTest {
 
-    private lateinit var productsRepo: ProductsRepo
+    private lateinit var productsRepository: ProductsRepository
     private lateinit var productsDetailViewModel: ProductsDetailViewModel
 
     @get:Rule
@@ -22,9 +24,9 @@ class ProductsDetailViewModelTest {
 
     @Before
     fun setUp() {
-        productsRepo = FakeProductsDataSource()
+        productsRepository = FakeProductsRepositoryImpl()
         val savedStateHandle = SavedStateHandle(initialState = mapOf("productId" to 1))
-        productsDetailViewModel = ProductsDetailViewModel(productsRepo, savedStateHandle)
+        productsDetailViewModel = ProductsDetailViewModel(productsRepository, savedStateHandle)
     }
 
     @Test

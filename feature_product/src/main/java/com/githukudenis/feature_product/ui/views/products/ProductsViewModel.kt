@@ -2,13 +2,12 @@ package com.githukudenis.feature_product.ui.views.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.core_data.util.UserMessage
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,13 +15,12 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductsViewModel @Inject constructor(
-    private val productsRepo: ProductsRepo,
+    private val productsRepository: ProductsRepository,
     private val userRepository: UserRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
@@ -34,12 +32,9 @@ class ProductsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                userPreferencesRepository.userPreferencesFlow.collect { prefs ->
-                    Timber.i(prefs.username.toString())
-                    prefs.username?.let { username ->
-                        getCurrentUserInfo(username)
-                    }
+            userPreferencesRepository.userPreferencesFlow.collect { prefs ->
+                prefs.username?.let { username ->
+                    getCurrentUserInfo(username)
                 }
             }
         }
@@ -60,19 +55,14 @@ class ProductsViewModel @Inject constructor(
             }
 
             is ProductsScreenEvent.DismissUserMessage -> {
-                val userMessages = _state.value.userMessages.filterNot { userMessage ->
-                    userMessage.id == event.messageId
-                }
-                _state.value = _state.value.copy(
-                    userMessages = userMessages
-                )
+                refreshUserMessages(event.messageId)
             }
         }
     }
 
     fun getCategories() {
         viewModelScope.launch {
-            productsRepo.getCategories().collect { result ->
+            productsRepository.getCategories().collect { result ->
                 val category = ProductCategory(value = "all")
                 val categories = result.toMutableList().apply { add(index = 0, category) }
                 _state.value = _state.value.copy(
@@ -90,10 +80,10 @@ class ProductsViewModel @Inject constructor(
                 isRefreshing = true
             )
             val countriesDeferred = async {
-                productsRepo.getProducts()
+                productsRepository.getProducts()
             }
 
-            countriesDeferred.await().buffer(capacity = 20).collect { result ->
+            countriesDeferred.await().buffer(capacity = 10).collect { result ->
                 _state.update { state ->
                     state.copy(
                         productsLoading = false, isRefreshing = false, products = result
@@ -108,7 +98,7 @@ class ProductsViewModel @Inject constructor(
             isRefreshing = true
         )
         val productCategoryDeferred = async {
-            return@async productsRepo.getProductsInCategory(category)
+            return@async productsRepository.getProductsInCategory(category)
         }
 
         productCategoryDeferred.await().collect { productsInCategory ->
@@ -163,6 +153,15 @@ class ProductsViewModel @Inject constructor(
                         ),
                     )
                 }
+        }
+    }
+
+    private fun refreshUserMessages(messageId: Int) {
+        val userMessages = _state.value.userMessages.filterNot { userMessage ->
+            userMessage.id == messageId
+        }
+        _state.update { currentState ->
+            currentState.copy(userMessages = userMessages)
         }
     }
 }
