@@ -11,7 +11,7 @@ data class ProductsDTOItem(
     val title: String
 )
 
-fun ProductsDTOItem.toProducts(): ProductDBO {
+fun ProductsDTOItem.toProduct(): ProductDBO {
     return ProductDBO(
         category, description, id, image, price, rating, title
     )

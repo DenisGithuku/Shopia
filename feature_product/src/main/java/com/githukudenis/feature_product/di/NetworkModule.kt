@@ -2,13 +2,13 @@ package com.githukudenis.feature_product.di
 
 import android.content.Context
 import com.githukudenis.core_data.data.local.db.model.ProductsDao
-import com.githukudenis.feature_product.data.local.ProductsLocalDataSource
-import com.githukudenis.feature_product.data.remote.ProductsApiService
-import com.githukudenis.feature_product.data.remote.ProductsRemoteDatasource
-import com.githukudenis.feature_product.data.remote.base_url
+import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
+import com.githukudenis.feature_product.data.ProductsApiService
+import com.githukudenis.feature_product.data.base_url
+import com.githukudenis.feature_product.data.repository.ProductsRepositoryImpl
 import com.githukudenis.feature_product.data.util.NetworkObserver
 import com.githukudenis.feature_product.data.util.NetworkStateObserver
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,11 +38,13 @@ object NetworkModule {
     @Singleton
     fun provideProductsRepository(
         productsDao: ProductsDao,
-        productsRemoteDatasource: ProductsRemoteDatasource
-    ): ProductsRepo {
-        return ProductsLocalDataSource(
+        productsApiService: ProductsApiService,
+        shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
+    ): ProductsRepository {
+        return ProductsRepositoryImpl(
             productsDao = productsDao,
-            productsRemoteDatasource = productsRemoteDatasource
+            productsApiService = productsApiService,
+            shopiaCoroutineDispatcher = shopiaCoroutineDispatcher
         )
     }
 

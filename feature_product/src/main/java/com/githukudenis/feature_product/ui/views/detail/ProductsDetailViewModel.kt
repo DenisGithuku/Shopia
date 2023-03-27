@@ -6,14 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductsDetailViewModel @Inject constructor(
-    private val productsRepo: ProductsRepo, savedStateHandle: SavedStateHandle
+    private val productsRepository: ProductsRepository, savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state: MutableState<ProductDetailScreenState> = mutableStateOf(
@@ -30,7 +30,7 @@ class ProductsDetailViewModel @Inject constructor(
     fun getProductDetails(productId: Int) {
         viewModelScope.launch {
             val productJob = launch {
-                productsRepo.getProductDetails(productId).collect { result ->
+                productsRepository.getProductDetails(productId).collect { result ->
                     val (category, description, id, image, price, rating, title) = result
                     val productDetailState = ProductDetailState(
                         id = id,

@@ -1,13 +1,13 @@
 package com.githukudenis.feature_product.data.repo
 
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.core_data.data.local.db.model.product.Rating
-import com.githukudenis.feature_product.domain.model.ProductDBO
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeProductsDataSource: ProductsRepo {
+class FakeProductsRepositoryImpl: ProductsRepository {
 
     private val products = listOf(
         ProductDBO(
@@ -66,6 +66,10 @@ class FakeProductsDataSource: ProductsRepo {
                 ProductCategory("women's clothing")
             ))
         }
+    }
+
+    override suspend fun refreshCategories() {
+
     }
 
     override suspend fun refreshProducts() {
