@@ -4,7 +4,7 @@ import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import kotlinx.coroutines.flow.Flow
 
-interface ProductsRepo {
+interface ProductsRepository {
 
     suspend fun getCategories(): Flow<List<ProductCategory>>
     suspend fun refreshCategories()

@@ -2,8 +2,8 @@ package com.githukudenis.feature_product.ui.views.products
 
 import androidx.test.filters.MediumTest
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
-import com.githukudenis.feature_product.data.repo.FakeProductsDataSource
-import com.githukudenis.feature_product.domain.repo.ProductsRepo
+import com.githukudenis.feature_product.data.repo.FakeProductsRepositoryImpl
+import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import com.githukudenis.feature_user.data.UserRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +16,7 @@ import org.junit.Test
 @MediumTest
 class ProductsViewModelTest {
 
-    private lateinit var productsRepo: ProductsRepo
+    private lateinit var productsRepository: ProductsRepository
     private lateinit var productsViewModel: ProductsViewModel
     private lateinit var userRepository: UserRepository
     private lateinit var userPrefsRepository: UserPreferencesRepository
@@ -26,11 +26,11 @@ class ProductsViewModelTest {
 
     @Before
     fun setUp() {
-        productsRepo = FakeProductsDataSource()
+        productsRepository = FakeProductsRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
         userPrefsRepository = FakeUserPrefsRepository()
         productsViewModel = ProductsViewModel(
-            productsRepo, userRepository,
+            productsRepository, userRepository,
             userPreferencesRepository = userPrefsRepository
         )
     }
