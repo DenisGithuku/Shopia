@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.auth.R
 import com.githukudenis.auth.api.User
 
@@ -72,7 +73,7 @@ fun LoginScreen(
             snackBarHostState.showSnackbar(
                 message = userMessage.message ?: "An error occurred"
             )
-            userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
+            userMessage.id?.let { LoginUiEvent.DismissUserMessage(it) }
                 ?.let { loginViewModel.onEvent(it) }
         }
     }
@@ -84,7 +85,7 @@ fun LoginScreen(
                 dialogState = DialogState.SUCCESS,
                 message = userMessage.message ?: "An error occurred"
             )
-            userMessage.id?.let { LoginUiEvent.OnUserMessageShown(it) }
+            userMessage.id?.let { LoginUiEvent.DismissUserMessage(it) }
                 ?.let { loginViewModel.onEvent(it) }
             userOnLogin()
         }

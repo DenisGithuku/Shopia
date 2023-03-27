@@ -1,9 +1,9 @@
 package com.githukudenis.feature_user.data
 
+import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_user.data.remote.UserApiService
 import com.githukudenis.feature_user.data.remote.model.UsersDTO
 import com.githukudenis.feature_user.data.remote.model.UsersDTOItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -11,7 +11,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class UsersRepositoryImpl @Inject constructor(
-    private val usersApiService: UserApiService
+    private val usersApiService: UserApiService,
+    private val shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
 ) : UserRepository {
     override val users: Flow<UsersDTO?>
         get() = flow {
@@ -24,7 +25,7 @@ class UsersRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e)
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
 
     override suspend fun getUserByUserName(username: String): Flow<UsersDTOItem?> {
         return flow {
@@ -39,6 +40,6 @@ class UsersRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 Timber.e(e)
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
     }
 }

@@ -1,4 +1,4 @@
-package com.githukudenis.auth.ui
+package com.githukudenis.core_data.util
 
 import androidx.compose.runtime.Immutable
 

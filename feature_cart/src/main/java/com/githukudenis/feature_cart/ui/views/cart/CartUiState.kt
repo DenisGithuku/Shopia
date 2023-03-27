@@ -1,6 +1,6 @@
 package com.githukudenis.feature_cart.ui.views.cart
 
-import com.githukudenis.auth.ui.UserMessage
+import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 
 data class CartUiState(
