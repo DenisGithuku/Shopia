@@ -62,6 +62,7 @@ dependencies {
     implementation(project(":feature_product"))
     implementation(project(":feature_user"))
     implementation(project(":feature_cart"))
+    implementation(Dependencies.live_data)
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)

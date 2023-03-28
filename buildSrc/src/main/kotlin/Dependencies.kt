@@ -28,6 +28,7 @@ object Dependencies {
     val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
     val work = "androidx.work:work-runtime-ktx:${Versions.work_version}"
     val androidTestWork = "androidx.work:work-testing:${Versions.work_version}"
+    val live_data = "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
 
 
     // optional - Kotlin Extensions and Coroutines support for Room
