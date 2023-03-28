@@ -256,10 +256,10 @@ fun CategoryItem(
         animateColorAsState(targetValue = if (selected) MaterialTheme.colors.primary else Color.Transparent)
     Box(modifier = modifier
         .background(
-            color = animateBgColor.value, shape = RoundedCornerShape(16.dp)
+            color = animateBgColor.value, shape = RoundedCornerShape(32.dp)
         )
         .border(
-            width = 1.dp, color = animateBorderColor.value, shape = RoundedCornerShape(24.dp)
+            width = 1.dp, color = animateBorderColor.value, shape = RoundedCornerShape(32.dp)
         )
         .clickable(indication = null, interactionSource = interactionSource) {
             onSelect(category)
