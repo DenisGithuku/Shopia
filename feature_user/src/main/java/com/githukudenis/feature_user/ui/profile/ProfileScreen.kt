@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -25,6 +28,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,19 +47,46 @@ import com.githukudenis.feature_user.data.remote.model.Address
 import com.githukudenis.feature_user.data.remote.model.Geolocation
 import com.githukudenis.feature_user.data.remote.model.Name
 import com.githukudenis.feature_user.data.remote.model.UsersDTOItem
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun ProfileRoute(onSignOut: () -> Unit) {
+fun ProfileRoute(snackbarHostState: SnackbarHostState, onSignOut: () -> Unit) {
     val profileViewModel: ProfileViewModel = hiltViewModel()
     val uiState = profileViewModel.uiState.value
 
     val signOut by rememberUpdatedState(onSignOut)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = uiState) {
         if (uiState.signedOut) {
             signOut()
         }
+
+        if (uiState.userMessages.isNotEmpty()) {
+            val userMessage = uiState.userMessages.first()
+            coroutineScope.launch {
+                userMessage.message?.let {
+                    snackbarHostState.showSnackbar(
+                        message = it, duration = SnackbarDuration.Long
+                    )
+                    userMessage.id?.let { id ->
+                        ProfileUiEvent.DismissUserMessage(
+                            id
+                        )
+                    }?.let { event -> profileViewModel.onEvent(event) }
+                }
+            }
+        }
+    }
+
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
     }
 
     ProfileScreen(uiState = uiState, onSignOut = {
@@ -92,8 +123,9 @@ fun ProfileScreen(
             ) {
 
                 Text(
-                    text = "${profile.name.firstname.first().uppercase()}${profile.name.lastname.first().uppercase()}",
-                    style = TextStyle(
+                    text = "${
+                        profile.name.firstname.first().uppercase()
+                    }${profile.name.lastname.first().uppercase()}", style = TextStyle(
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colors.onPrimary
@@ -101,8 +133,7 @@ fun ProfileScreen(
                 )
 
             }
-            ProfileItem(
-                icon = Icons.Default.Person,
+            ProfileItem(icon = Icons.Default.Person,
                 iconDescription = R.string.person_avatar,
                 title = "Name",
                 value = "${profile.name.firstname.replaceFirstChar { it.uppercase() }} ${profile.name.lastname.replaceFirstChar { it.uppercase() }}"

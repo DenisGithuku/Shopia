@@ -87,7 +87,7 @@ fun AppNavigator(
                         inclusive = true
                     }
                 }
-            })
+            }, snackbarHostState = snackbarHostState)
         }
 
     }
