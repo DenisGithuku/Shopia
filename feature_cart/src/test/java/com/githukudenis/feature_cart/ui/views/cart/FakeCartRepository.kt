@@ -12,15 +12,25 @@ class FakeCartRepository : CartRepository {
             __v = 1, date = "today", id = 1, userId = 12, products = mutableListOf(
                 Product(
                     productId = 1, quantity = 13
-                ), Product(
+                ),
+                Product(
                     productId = 3, quantity = 10
-                ), Product(
-                    productId = 4, quantity = 5
-                ), Product(
-                    productId = 2, quantity = 8
-                ), Product(
-                    productId = 5, quantity = 7
-                )
+                ),
+                Product(
+                    productId = 4, quantity = 52
+                ),
+                Product(
+                    productId = 2, quantity = 18
+                ),
+                Product(
+                    productId = 6, quantity = 27
+                ),
+                Product(
+                    productId = 12, quantity = 34
+                ),
+                Product(
+                    productId = 15, quantity = 45
+                ),
             )
         ),
         ProductsInCartDTOItem(
@@ -67,8 +77,8 @@ class FakeCartRepository : CartRepository {
 
     override suspend fun insertProductInCart(product: Product) {
         products.find {
-                it.userId == 12
-            }?.products?.toMutableList()?.add(product)
+            it.userId == 12
+        }?.products?.toMutableList()?.add(product)
 
     }
 }

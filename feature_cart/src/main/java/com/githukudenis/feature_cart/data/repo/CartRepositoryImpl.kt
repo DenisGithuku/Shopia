@@ -4,7 +4,6 @@ import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.model.cart.Product
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_cart.data.remote.CartApiService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -27,7 +26,7 @@ class CartRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             throw Exception(e)
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
 
     override suspend fun insertProductInCart(product: Product) {
         try {
