@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeCartRepository : CartRepository {
-    val products = mutableListOf(
+    private val products = mutableListOf(
         ProductsInCartDTOItem(
             __v = 1, date = "today", id = 1, userId = 12, products = mutableListOf(
                 Product(
