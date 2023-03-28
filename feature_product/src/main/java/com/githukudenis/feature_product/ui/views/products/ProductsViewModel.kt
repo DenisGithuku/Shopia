@@ -49,6 +49,9 @@ class ProductsViewModel @Inject constructor(
             }
 
             is ProductsScreenEvent.ChangeCategory -> {
+                if (event.category == _state.value.selectedCategory) {
+                    return
+                }
                 changeSelectedCategory(event.category).also {
                     refreshProducts()
                 }
