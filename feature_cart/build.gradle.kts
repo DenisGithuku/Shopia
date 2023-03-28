@@ -93,7 +93,7 @@ dependencies {
 
 
     androidTestImplementation(Dependencies.coreAndroidTest)
-    androidTestImplementation(Dependencies.truthAndroidTEst)
+    androidTestImplementation(Dependencies.truthAndroidTest)
     androidTestImplementation(Dependencies.junitAndroidTest)
     androidTestImplementation(Dependencies.hiltAndroidTest)
     kaptAndroidTest(Dependencies.hiltAndroidCompilerTest)

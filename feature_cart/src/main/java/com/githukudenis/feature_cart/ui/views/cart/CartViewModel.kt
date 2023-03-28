@@ -34,11 +34,11 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getProductsInCart(userId: Int) {
+    suspend fun getProductsInCart(userId: Int) {
         uiState.value = uiState.value.copy(
             isLoading = false
         )
-        val productsInCart = combine(
+        val productsInCartFlow = combine(
             cartRepository.getProductsInCart(userId), productsRepository.getProducts()
         ) { productsInCart, allProducts ->
             productsInCart.map { productInCart ->
@@ -50,7 +50,7 @@ class CartViewModel @Inject constructor(
                 )
             }
         }
-        productsInCart.catch {
+        productsInCartFlow.catch {
             val userMessage = UserMessage(id = 0, message = it.message)
             val userMessages = mutableListOf<UserMessage>().apply {
                 add(userMessage)

@@ -1,4 +1,4 @@
-package com.githukudenis.feature_product.ui.util
+package com.githukudenis.core_nav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
