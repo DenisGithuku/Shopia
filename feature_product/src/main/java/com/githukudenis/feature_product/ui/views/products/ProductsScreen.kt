@@ -49,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -138,15 +139,12 @@ fun ProductsScreen(
                             )
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = {
-                                onOpenCart()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Outlined.ShoppingCart,
-                                    contentDescription = context.getString(R.string.cart)
-                                )
-                            }
-
+                            CartItem(
+                                itemCount = 0,
+                                onOpenCart = onOpenCart,
+                                modifier = modifier,
+                                contentDescription = context.getString(R.string.cart)
+                            )
                             Crossfade(
                                 targetState = state.userState?.userLoading
                             ) { userLoading ->
@@ -246,6 +244,42 @@ fun ProductsScreen(
 }
 
 @Composable
+fun CartItem(
+    modifier: Modifier = Modifier,
+    itemCount: Int,
+    contentDescription: String,
+    onOpenCart: () -> Unit
+) {
+    Box {
+        IconButton(onClick = {
+            onOpenCart()
+        }) {
+            Icon(
+                imageVector = Icons.Outlined.ShoppingCart,
+                contentDescription = contentDescription
+            )
+        }
+        Text(
+            text = "$itemCount",
+            style = TextStyle(
+                color = MaterialTheme.colors.onPrimary,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            ),
+
+            modifier = modifier
+                .align(Alignment.TopEnd)
+                .drawBehind {
+                drawCircle(
+                    color = Color.Red
+                )
+            }
+                .padding(4.dp)
+        )
+    }
+}
+
+@Composable
 fun CategoryItem(
     category: String, selected: Boolean, modifier: Modifier = Modifier, onSelect: (String) -> Unit
 ) {
@@ -316,4 +350,11 @@ fun CategoryItemPrev() {
 @Composable
 fun SelectedCategoryItemPrev() {
     CategoryItem(category = "Jewelery", selected = false, onSelect = {})
+}
+
+
+@Preview
+@Composable
+fun CartItemPrev() {
+    CartItem(itemCount = 12, contentDescription = "Cart", onOpenCart = {})
 }
