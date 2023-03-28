@@ -56,12 +56,9 @@ kapt {
 }
 
 dependencies {
-    implementation(project(":core_design"))
     implementation(project(":core_data"))
-    implementation(project(":feature_auth"))
     implementation(project(":feature_product"))
-    implementation(project(":feature_user"))
-    implementation(project(":feature_cart"))
+    implementation(project(":core_nav"))
     implementation(Dependencies.live_data)
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
@@ -101,7 +98,7 @@ dependencies {
 
 
     androidTestImplementation(Dependencies.coreAndroidTest)
-    androidTestImplementation(Dependencies.truthAndroidTEst)
+    androidTestImplementation(Dependencies.truthAndroidTest)
     androidTestImplementation(Dependencies.junitAndroidTest)
     androidTestImplementation(Dependencies.hiltAndroidTest)
     kaptAndroidTest(Dependencies.hiltAndroidCompilerTest)

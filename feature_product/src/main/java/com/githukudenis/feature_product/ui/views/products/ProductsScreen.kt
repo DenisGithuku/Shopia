@@ -74,7 +74,8 @@ fun ProductsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     onOpenProfile: () -> Unit,
-    onOpenProductDetails: (Int) -> Unit
+    onOpenProductDetails: (Int) -> Unit,
+    onOpenCart: () -> Unit
 ) {
     val context = LocalContext.current
     val productsViewModel: ProductsViewModel = hiltViewModel()
@@ -137,7 +138,9 @@ fun ProductsScreen(
                             )
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            IconButton(onClick = { /*TODO*/ }) {
+                            IconButton(onClick = {
+                                onOpenCart()
+                            }) {
                                 Icon(
                                     imageVector = Icons.Outlined.ShoppingCart,
                                     contentDescription = context.getString(R.string.cart)

@@ -51,7 +51,7 @@ object Dependencies {
     val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
     val truthUnitTest = "androidx.test.ext:truth:1.5.0"
     val coreAndroidTest = "androidx.arch.core:core-testing:2.2.0"
-    val truthAndroidTEst = "androidx.test.ext:truth:1.5.0"
+    val truthAndroidTest = "androidx.test.ext:truth:1.5.0"
     val junitAndroidTest = "androidx.test.ext:junit:1.1.5"
     val hiltAndroidTest = "com.google.dagger:hilt-android-testing:2.28-alpha"
     val hiltAndroidCompilerTest = "com.google.dagger:hilt-android-compiler:2.38.1"

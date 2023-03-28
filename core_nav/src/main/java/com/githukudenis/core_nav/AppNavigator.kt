@@ -1,4 +1,4 @@
-package com.githukudenis.coroutinesindustrialbuild
+package com.githukudenis.core_nav
 
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.githukudenis.auth.ui.LoginScreen
 import com.githukudenis.feature_cart.ui.views.cart.CartScreen
-import com.githukudenis.feature_product.ui.util.AppDestination
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
 import com.githukudenis.feature_product.ui.views.products.ProductsScreen
@@ -47,33 +46,33 @@ fun AppNavigator(
         composable(
             route = AppDestination.Products.route,
         ) {
-            ProductsScreen(
-                snackbarHostState = snackbarHostState,
-                onOpenProfile = {
-                    navController.navigate(AppDestination.ProfileScreen.route) {
-                        popUpTo(AppDestination.ProfileScreen.route) {
-                            saveState = true
-                            inclusive = true
-                        }
-                        restoreState = true
+            ProductsScreen(snackbarHostState = snackbarHostState, onOpenProfile = {
+                navController.navigate(AppDestination.ProfileScreen.route) {
+                    popUpTo(AppDestination.ProfileScreen.route) {
+                        saveState = true
+                        inclusive = true
                     }
+                    restoreState = true
                 }
-            ) { productId ->
+            }, onOpenProductDetails = { productId ->
                 navController.navigate(
                     route = AppDestination.ProductDetail.route + "/$productId"
                 ) {
                     popUpTo(AppDestination.Products.route)
                 }
-            }
-        }
-        composable(
-            route = AppDestination.ProductDetail.route + "/{productId}",
-            arguments = listOf(
-                navArgument("productId") {
-                    type = NavType.IntType
+            }, onOpenCart = {
+                navController.navigate(AppDestination.CartScreen.route) {
+                    popUpTo(AppDestination.Products.route) {
+                        saveState = true
+                    }
+                    restoreState = true
                 }
-            )
-        ) {
+            })
+        }
+        composable(route = AppDestination.ProductDetail.route + "/{productId}",
+            arguments = listOf(navArgument("productId") {
+                type = NavType.IntType
+            })) {
             ProductDetailScreen()
         }
         composable(route = AppDestination.CartScreen.route) {
