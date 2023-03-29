@@ -2,11 +2,13 @@ package com.githukudenis.feature_cart.data.repo
 
 import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.model.cart.Product
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_cart.data.remote.CartApiService
+import com.githukudenis.feature_cart.ui.views.cart.ProductInCart
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -14,24 +16,50 @@ import javax.inject.Inject
 class CartRepositoryImpl @Inject constructor(
     private val cartApiService: CartApiService,
     private val cartDao: CartDao,
+    private val productsRepository: ProductsRepository,
     private val shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
 ) : CartRepository {
-    override suspend fun getProductsInCart(userId: Int): Flow<List<Product>> = flow {
-        try {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun getProductsInCart(userId: Int): Flow<List<ProductInCart>> {
+        return try {
             if (cartDao.getAllProducts().isEmpty()) {
                 refreshProducts(userId)
             }
-            val products = cartDao.getAllProducts()
-            emit(products)
+            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                val productsInCart = cartDao.getAllProducts()
+                val allProductsFlow = productsRepository.getProducts()
+                val products = allProductsFlow.mapLatest { allProducts ->
+                    allProducts.filter { productDBO ->
+                        productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
+                    }.map {
+                        val quantity = productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
+                        ProductInCart(
+                            quantity = quantity,
+                            productDBO = it
+                        )
+                    }
+                }
+                products
+            }
         } catch (e: Exception) {
             throw Exception(e)
         }
-    }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
+    }
 
     override suspend fun insertProductInCart(product: Product) {
         try {
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {
                 cartDao.insertProduct(product)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
+    override suspend fun clearCart() {
+        try {
+            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                cartDao.deleteCart()
             }
         } catch (e: Exception) {
             Timber.e(e)
