@@ -6,6 +6,7 @@ import com.githukudenis.core_data.util.Constants
 import com.githukudenis.feature_cart.data.remote.CartApiService
 import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_cart.data.repo.CartRepositoryImpl
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,8 +33,9 @@ object CartModule {
     fun provideCartRepository(
         cartApiService: CartApiService,
         cartDao: CartDao,
-        shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
+        shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher,
+        productsRepository: ProductsRepository
     ): CartRepository {
-        return CartRepositoryImpl(cartApiService, cartDao = cartDao, shopiaCoroutineDispatcher)
+        return CartRepositoryImpl(cartApiService, cartDao, productsRepository, shopiaCoroutineDispatcher)
     }
 }

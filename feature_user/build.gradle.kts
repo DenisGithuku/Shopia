@@ -53,6 +53,7 @@ dependencies {
 
     implementation(project(":core_design"))
     implementation(project(":core_data"))
+    implementation(project(":feature_cart"))
     implementation(Dependencies.appCompat)
     implementation(Dependencies.hiltAndroid)
     implementation(Dependencies.testRunner)

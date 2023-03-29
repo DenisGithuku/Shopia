@@ -5,13 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_cart.data.repo.CartRepository
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +27,9 @@ class CartViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userPreferencesRepository.userPreferencesFlow.collect { prefs ->
-                val userId = checkNotNull(prefs.userId)
-                getProductsInCart(userId)
+                prefs.userId?.let { userId ->
+                    getProductsInCart(userId)
+                }
             }
         }
     }
@@ -38,19 +38,7 @@ class CartViewModel @Inject constructor(
         uiState.value = uiState.value.copy(
             isLoading = false
         )
-        val productsInCartFlow = combine(
-            cartRepository.getProductsInCart(userId), productsRepository.getProducts()
-        ) { productsInCart, allProducts ->
-            productsInCart.map { productInCart ->
-                val productDBO = allProducts.find { dbProductItem ->
-                    productInCart.productId == dbProductItem.id
-                }
-                ProductInCart(
-                    productInCart.productId, productDBO = productDBO
-                )
-            }
-        }
-        productsInCartFlow.catch {
+        cartRepository.getProductsInCart(userId).catch {
             val userMessage = UserMessage(id = 0, message = it.message)
             val userMessages = mutableListOf<UserMessage>().apply {
                 add(userMessage)

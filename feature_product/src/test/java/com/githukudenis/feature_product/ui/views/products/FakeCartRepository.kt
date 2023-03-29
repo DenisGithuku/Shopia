@@ -1,8 +1,9 @@
-package com.githukudenis.feature_cart.ui.views.cart
+package com.githukudenis.feature_product.ui.views.products
 
 import com.githukudenis.core_data.data.local.db.model.cart.Product
 import com.githukudenis.core_data.data.local.db.model.cart.ProductsInCartDTOItem
 import com.githukudenis.feature_cart.data.repo.CartRepository
+import com.githukudenis.feature_cart.ui.views.cart.ProductInCart
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -79,7 +80,6 @@ class FakeCartRepository : CartRepository {
         products.find {
             it.userId == 12
         }?.products?.toMutableList()?.add(product)
-
     }
 
     override suspend fun clearCart() {

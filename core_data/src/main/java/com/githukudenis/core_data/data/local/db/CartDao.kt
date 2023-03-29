@@ -19,4 +19,7 @@ interface CartDao {
 
     @Query("SELECT COUNT(productId) FROM cart")
     suspend fun getProductCount(): Int
+
+    @Query("DELETE FROM cart")
+    suspend fun deleteCart()
 }

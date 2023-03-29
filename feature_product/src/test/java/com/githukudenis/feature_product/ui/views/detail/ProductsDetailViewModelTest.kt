@@ -3,7 +3,7 @@ package com.githukudenis.feature_product.ui.views.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.filters.MediumTest
 import com.githukudenis.feature_product.data.repo.FakeProductsRepositoryImpl
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.feature_product.ui.views.products.MainCoroutineRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi

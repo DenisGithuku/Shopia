@@ -2,8 +2,8 @@ package com.githukudenis.feature_cart.ui.views.cart
 
 import androidx.test.filters.MediumTest
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.feature_cart.data.repo.CartRepository
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

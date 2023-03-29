@@ -2,8 +2,9 @@ package com.githukudenis.feature_product.ui.views.products
 
 import androidx.test.filters.MediumTest
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
+import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_product.data.repo.FakeProductsRepositoryImpl
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import com.githukudenis.feature_user.data.UserRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +21,7 @@ class ProductsViewModelTest {
     private lateinit var productsViewModel: ProductsViewModel
     private lateinit var userRepository: UserRepository
     private lateinit var userPrefsRepository: UserPreferencesRepository
+    private lateinit var cartRepository: CartRepository
 
     @get:Rule
     val mainCoroutineRule by lazy { MainCoroutineRule() }
@@ -29,9 +31,11 @@ class ProductsViewModelTest {
         productsRepository = FakeProductsRepositoryImpl()
         userRepository = FakeUserRepositoryImpl()
         userPrefsRepository = FakeUserPrefsRepository()
+        cartRepository = FakeCartRepository()
         productsViewModel = ProductsViewModel(
             productsRepository, userRepository,
-            userPreferencesRepository = userPrefsRepository
+            userPreferencesRepository = userPrefsRepository,
+            cartRepository = cartRepository
         )
     }
 
@@ -81,6 +85,17 @@ class ProductsViewModelTest {
         productsViewModel.getCurrentUserInfo("")
         productsViewModel.state.value.userState?.currentUser?.let { currentUser ->
             assertThat(currentUser.id).isEqualTo(1)
+        }
+    }
+
+    @Test
+    fun `get cart product count`() = runTest {
+        productsViewModel.getProductsInCartCount(12)
+        val cart = productsViewModel.state.value.cartState
+        cart?.let {  cartState ->
+            cartState.productCount?.let { count ->
+                assertThat(count).isEqualTo(7)
+            }
         }
     }
 }

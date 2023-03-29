@@ -9,16 +9,21 @@ data class ProductsScreenState(
     val categoriesLoading: Boolean = false,
     val productsLoading: Boolean = false,
     val categories: List<ProductCategory> = emptyList(),
-    val cartCount: Int? = null,
     val isRefreshing: Boolean = false,
     val products: List<ProductDBO> = emptyList(),
     val error: String? = null,
     val selectedCategory: String? = null,
     val userState: UserState? = null,
+    val cartState: CartState? = null,
     val userMessages: List<UserMessage> = emptyList()
 )
 
 data class UserState(
     val currentUser: UsersDTOItem? = null,
     val userLoading: Boolean = false,
+)
+
+data class CartState(
+    val isLoading: Boolean = false,
+    val productCount: Int? = null,
 )

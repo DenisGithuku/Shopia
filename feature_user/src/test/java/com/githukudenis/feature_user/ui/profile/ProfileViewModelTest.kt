@@ -1,6 +1,7 @@
 package com.githukudenis.feature_user.ui.profile
 
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.remote.FakeUserRepositoryImpl
 import com.google.common.truth.Truth.assertThat
@@ -16,6 +17,7 @@ class ProfileViewModelTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var userPrefsRepository: UserPreferencesRepository
+    private lateinit var cartRepository: CartRepository
     private lateinit var profileViewModel: ProfileViewModel
 
     @get:Rule
@@ -25,7 +27,8 @@ class ProfileViewModelTest {
     fun setUp() {
         userRepository = FakeUserRepositoryImpl()
         userPrefsRepository = FakeUserPrefsRepository()
-        profileViewModel = ProfileViewModel(userRepository, userPrefsRepository)
+        cartRepository = FakeCartRepository()
+        profileViewModel = ProfileViewModel(userRepository, cartRepository, userPrefsRepository)
     }
 
     @Test
@@ -47,5 +50,11 @@ class ProfileViewModelTest {
         profileViewModel.onEvent(ProfileUiEvent.Logout)
         val logoutSuccess = profileViewModel.uiState.value.signedOut
         assertThat(logoutSuccess).isTrue()
+    }
+
+    @Test
+    fun `logout clears user cart`() = runTest {
+        profileViewModel.onEvent(ProfileUiEvent.Logout)
+        val cart = cartRepository.getProductsInCart(12).first()
     }
 }
