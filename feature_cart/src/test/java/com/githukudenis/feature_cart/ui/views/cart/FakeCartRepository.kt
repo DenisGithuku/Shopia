@@ -66,7 +66,7 @@ class FakeCartRepository : CartRepository {
     )
 
 
-    override suspend fun getProductsInCart(userId: Int): Flow<List<Product>> {
+    override suspend fun getProductsInCart(userId: Int): Flow<List<ProductInCart>> {
         return flow {
             val userProducts = products.find { productItem ->
                 productItem.userId == userId
@@ -80,5 +80,9 @@ class FakeCartRepository : CartRepository {
             it.userId == 12
         }?.products?.toMutableList()?.add(product)
 
+    }
+
+    override suspend fun clearCart() {
+        products.clear()
     }
 }

@@ -3,7 +3,7 @@ package com.githukudenis.feature_product.data.repo
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.core_data.data.local.db.model.product.Rating
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

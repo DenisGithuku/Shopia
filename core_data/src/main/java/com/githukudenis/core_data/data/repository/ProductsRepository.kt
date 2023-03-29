@@ -1,4 +1,4 @@
-package com.githukudenis.feature_product.domain.repo
+package com.githukudenis.core_data.data.repository
 
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.db.model.product.ProductDBO

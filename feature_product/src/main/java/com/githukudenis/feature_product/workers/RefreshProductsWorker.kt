@@ -3,7 +3,7 @@ package com.githukudenis.feature_product.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 
 class RefreshProductsWorker(
     appContext: Context,

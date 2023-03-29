@@ -139,12 +139,17 @@ fun ProductsScreen(
                             )
                         )
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            CartItem(
-                                itemCount = 0,
-                                onOpenCart = onOpenCart,
-                                modifier = modifier,
-                                contentDescription = context.getString(R.string.cart)
-                            )
+
+                            state.cartState?.let { cart ->
+                                cart.productCount?.let { count ->
+                                    CartItem(
+                                        itemCount = count,
+                                        onOpenCart = onOpenCart,
+                                        modifier = modifier,
+                                        contentDescription = context.getString(R.string.cart)
+                                    )
+                                }
+                            }
                             Crossfade(
                                 targetState = state.userState?.userLoading
                             ) { userLoading ->
@@ -255,27 +260,23 @@ fun CartItem(
             onOpenCart()
         }) {
             Icon(
-                imageVector = Icons.Outlined.ShoppingCart,
-                contentDescription = contentDescription
+                imageVector = Icons.Outlined.ShoppingCart, contentDescription = contentDescription
             )
         }
-        Text(
-            text = "$itemCount",
-            style = TextStyle(
-                color = MaterialTheme.colors.onPrimary,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
-            ),
+        Text(text = "$itemCount", style = TextStyle(
+            color = MaterialTheme.colors.onPrimary,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center
+        ),
 
             modifier = modifier
                 .align(Alignment.TopEnd)
                 .drawBehind {
-                drawCircle(
-                    color = Color.Red
-                )
-            }
-                .padding(4.dp)
-        )
+                    drawCircle(
+                        color = Color.Red
+                    )
+                }
+                .padding(4.dp))
     }
 }
 
