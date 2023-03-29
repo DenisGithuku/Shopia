@@ -1,4 +1,4 @@
-package com.githukudenis.feature_product.data.repository
+package com.githukudenis.core_data.data.repository
 
 import com.githukudenis.core_data.data.local.db.model.ProductsDao
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
@@ -6,7 +6,6 @@ import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.core_data.data.local.db.model.product.toProduct
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_product.data.ProductsApiService
-import com.githukudenis.feature_product.domain.repo.ProductsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -33,8 +32,8 @@ class ProductsRepositoryImpl @Inject constructor(
 
     override suspend fun getProductsInCategory(category: String): Flow<List<ProductDBO>> = flow {
         try {
-                val productsInCategory = productsDao.getProductsInCategory(category)
-                emit(productsInCategory)
+            val productsInCategory = productsDao.getProductsInCategory(category)
+            emit(productsInCategory)
 
         } catch (e: Exception) {
             Timber.e(e)
@@ -46,8 +45,8 @@ class ProductsRepositoryImpl @Inject constructor(
             if (productsDao.getAllProducts().isEmpty()) {
                 refreshProducts()
             }
-                val products = productsDao.getAllProducts()
-                emit(products)
+            val products = productsDao.getAllProducts()
+            emit(products)
         } catch (e: Exception) {
             Timber.e(e)
         }
