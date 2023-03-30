@@ -10,7 +10,9 @@ import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,10 +27,10 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userPreferencesRepository.userPreferencesFlow.collect { prefs ->
-                val userId = checkNotNull(prefs.userId)
-                getUserProfile(userId)
-            }
+            userPreferencesRepository.userPreferencesFlow.distinctUntilChanged().collect { prefs ->
+                    val userId = checkNotNull(prefs.userId)
+                    getUserProfile(userId)
+                }
         }
     }
 
@@ -49,31 +51,35 @@ class ProfileViewModel @Inject constructor(
             isLoading = true
         )
         userRepository.users.catch { error ->
-                val userMessages = mutableListOf<UserMessage>().apply {
-                    val userMessage = UserMessage(id = 0, message = error.message)
-                    add(userMessage)
+            val userMessages = mutableListOf<UserMessage>().apply {
+                val userMessage = UserMessage(id = 0, message = error.message)
+                add(userMessage)
+            }
+            uiState.value = uiState.value.copy(
+                userMessages = userMessages, isLoading = false
+            )
+        }.collectLatest { usersDTO ->
+            usersDTO?.let { allUsers ->
+                val user = allUsers.find { user ->
+                    user.id == userId
                 }
                 uiState.value = uiState.value.copy(
-                    userMessages = userMessages, isLoading = false
+                    profile = user, isLoading = false
                 )
-            }.collectLatest { usersDTO ->
-                usersDTO?.let { allUsers ->
-                    val user = allUsers.find { user ->
-                        user.id == userId
-                    }
-                    uiState.value = uiState.value.copy(
-                        profile = user, isLoading = false
-                    )
-                }
             }
+        }
     }
 
     private fun logout() = viewModelScope.launch {
-        cartRepository.clearCart()
-        userPreferencesRepository.updateUserLoggedIn(false)
-        uiState.value = uiState.value.copy(
-            signedOut = true
-        )
+        try {
+            cartRepository.clearCart()
+            userPreferencesRepository.updateUserLoggedIn(false)
+            uiState.value = uiState.value.copy(
+                signedOut = true
+            )
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     private fun refreshUserMessages(messageId: Int) {

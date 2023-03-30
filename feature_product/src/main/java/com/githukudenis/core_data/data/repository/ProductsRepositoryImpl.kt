@@ -38,7 +38,7 @@ class ProductsRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e)
         }
-    }
+    }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
 
     override suspend fun getProducts(): Flow<List<ProductDBO>> = flow {
         try {

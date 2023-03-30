@@ -25,22 +25,21 @@ class CartRepositoryImpl @Inject constructor(
             if (cartDao.getAllProducts().isEmpty()) {
                 refreshProducts(userId)
             }
-            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
-                val productsInCart = cartDao.getAllProducts()
-                val allProductsFlow = productsRepository.getProducts()
-                val products = allProductsFlow.mapLatest { allProducts ->
-                    allProducts.filter { productDBO ->
-                        productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
-                    }.map {
-                        val quantity = productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
-                        ProductInCart(
-                            quantity = quantity,
-                            productDBO = it
-                        )
-                    }
+            val productsInCart = cartDao.getAllProducts()
+            val allProductsFlow = productsRepository.getProducts()
+            val products = allProductsFlow.mapLatest { allProducts ->
+                allProducts.filter { productDBO ->
+                    productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
+                }.map {
+                    val quantity =
+                        productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
+                    ProductInCart(
+                        quantity = quantity,
+                        productDBO = it
+                    )
                 }
-                products
             }
+            products
         } catch (e: Exception) {
             throw Exception(e)
         }
@@ -58,9 +57,11 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun clearCart() {
         try {
+            Timber.e("Before deleting cart")
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {
                 cartDao.deleteCart()
             }
+            Timber.e("After deleting cart")
         } catch (e: Exception) {
             Timber.e(e)
         }

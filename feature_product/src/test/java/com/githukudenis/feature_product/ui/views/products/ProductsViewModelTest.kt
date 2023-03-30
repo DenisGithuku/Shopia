@@ -57,14 +57,14 @@ class ProductsViewModelTest {
     fun `get categories`() = runTest {
         productsViewModel.getCategories()
         val categories = productsViewModel.state.value.categories
-        assertThat(categories.size).isEqualTo(5)
+        assertThat(categories).hasSize(5)
     }
 
     @Test
     fun `get products in category`() = runTest {
         productsViewModel.getProductsInCategory("jewelery")
         val products = productsViewModel.state.value.products
-        assertThat(products.size).isEqualTo(2)
+        assertThat(products).hasSize(2)
     }
 
     @Test
@@ -81,10 +81,18 @@ class ProductsViewModelTest {
     }
 
     @Test
-    fun `get user by id`() = runTest {
+    fun `get user by empty username returns null`() = runTest {
         productsViewModel.getCurrentUserInfo("")
         productsViewModel.state.value.userState?.currentUser?.let { currentUser ->
-            assertThat(currentUser.id).isEqualTo(1)
+            assertThat(currentUser).isNull()
+        }
+    }
+
+    @Test
+    fun `get user by available username returns user object`() = runTest {
+        productsViewModel.getCurrentUserInfo("ritaawuor")
+        productsViewModel.state.value.userState?.currentUser?.let { currentUser ->
+            assertThat(currentUser).isNotNull()
         }
     }
 

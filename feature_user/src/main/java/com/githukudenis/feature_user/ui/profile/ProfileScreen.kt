@@ -58,7 +58,7 @@ fun ProfileRoute(snackbarHostState: SnackbarHostState, onSignOut: () -> Unit) {
     val signOut by rememberUpdatedState(onSignOut)
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = uiState) {
+    LaunchedEffect(key1 = uiState.signedOut) {
         if (uiState.signedOut) {
             signOut()
         }

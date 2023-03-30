@@ -24,10 +24,10 @@ class FakeUserRepositoryImpl : UserRepository {
             __v = 1,
             email = "",
             id = 1,
-            name = Name(firstname = "", lastname = ""),
-            password = "",
-            phone = "",
-            username = ""
+            name = Name(firstname = "alex", lastname = "sam"),
+            password = "14234231",
+            phone = "0789234",
+            username = "alexsam"
         ), UsersDTOItem(
             address = Address(
                 city = "",
@@ -39,10 +39,10 @@ class FakeUserRepositoryImpl : UserRepository {
             __v = 1,
             email = "",
             id = 2,
-            name = Name(firstname = "", lastname = ""),
+            name = Name(firstname = "peter", lastname = "man"),
             password = "",
             phone = "",
-            username = ""
+            username = "peterman"
         ), UsersDTOItem(
             address = Address(
                 city = "",
@@ -54,10 +54,10 @@ class FakeUserRepositoryImpl : UserRepository {
             __v = 1,
             email = "",
             id = 4,
-            name = Name(firstname = "", lastname = ""),
+            name = Name(firstname = "jack", lastname = "odhiambo"),
             password = "",
             phone = "",
-            username = ""
+            username = "jackodhiambo"
         ), UsersDTOItem(
             address = Address(
                 city = "",
@@ -69,10 +69,10 @@ class FakeUserRepositoryImpl : UserRepository {
             __v = 1,
             email = "",
             id = 3,
-            name = Name(firstname = "", lastname = ""),
+            name = Name(firstname = "Rita", lastname = "Awuor"),
             password = "",
             phone = "",
-            username = ""
+            username = "ritaawuor"
         )
     )
 
