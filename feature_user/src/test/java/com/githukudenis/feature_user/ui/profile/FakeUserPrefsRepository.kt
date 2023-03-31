@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeUserPrefsRepository: UserPreferencesRepository {
-    val userPreferences = UserPreferences()
+    private var userPreferences = UserPreferences()
 
     override val userPreferencesFlow: Flow<UserPreferences>
         get() = flowOf(userPreferences)
@@ -23,7 +23,7 @@ class FakeUserPrefsRepository: UserPreferencesRepository {
         )
     }
 
-    override suspend fun storeUserId(userId: Int) {
+    override suspend fun storeUserId(userId: Int?) {
         userPreferences.copy(
             userId = userId
         )
@@ -32,6 +32,15 @@ class FakeUserPrefsRepository: UserPreferencesRepository {
     override suspend fun storeUserName(username: String) {
         userPreferences.copy(
             username = username
+        )
+    }
+
+    override suspend fun resetPreferences() {
+        userPreferences = userPreferences.copy(
+            appInitialized = false,
+            userLoggedIn = false,
+            userId = -1,
+            username = ""
         )
     }
 }
