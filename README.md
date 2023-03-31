@@ -44,8 +44,7 @@ The app leverages the following design patterns.
 To achieve a clear separation of concerns, the app leverages the power of multi-modular architecture. This leaves room for the app to scale. It also reduces build time since modules can be built in a parallel manner.
 To attain this the app has the following modules:
 
-![image](https://user-images.githubusercontent.com/47632042/227850395-c90809d4-f484-4077-b716-46fea73b0c0e.png)
-
+![image](https://user-images.githubusercontent.com/47632042/229034883-1179d378-ab4b-418c-89de-b9862608e9f7.png)
 
 ##### :app 
 -- serves as the entry point into the application. Also pools all the modules together.
