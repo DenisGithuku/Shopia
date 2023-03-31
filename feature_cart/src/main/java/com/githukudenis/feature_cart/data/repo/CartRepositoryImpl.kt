@@ -2,6 +2,7 @@ package com.githukudenis.feature_cart.data.repo
 
 import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.model.cart.Product
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_cart.data.remote.CartApiService
@@ -17,6 +18,7 @@ class CartRepositoryImpl @Inject constructor(
     private val cartApiService: CartApiService,
     private val cartDao: CartDao,
     private val productsRepository: ProductsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
 ) : CartRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -57,11 +59,18 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun clearCart() {
         try {
-            Timber.e("Before deleting cart")
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                /*
+                 clear cart for current user
+                 */
                 cartDao.deleteCart()
+
+                /*
+                reset the id to default value
+                 */
+                userPreferencesRepository.storeUserId(-1)
+                userPreferencesRepository.updateUserLoggedIn(false)
             }
-            Timber.e("After deleting cart")
         } catch (e: Exception) {
             Timber.e(e)
         }

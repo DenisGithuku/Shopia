@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.util.UserMessage
-import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
@@ -18,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val cartRepository: CartRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -27,8 +25,12 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userPreferencesRepository.userPreferencesFlow.distinctUntilChanged().collect { prefs ->
+            userPreferencesRepository.userPreferencesFlow.distinctUntilChanged()
+                .collectLatest { prefs ->
                     val userId = checkNotNull(prefs.userId)
+                    if (userId == -1) {
+                        return@collectLatest
+                    }
                     getUserProfile(userId)
                 }
         }
@@ -72,8 +74,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun logout() = viewModelScope.launch {
         try {
-            cartRepository.clearCart()
-            userPreferencesRepository.updateUserLoggedIn(false)
+            userPreferencesRepository.resetPreferences()
             uiState.value = uiState.value.copy(
                 signedOut = true
             )
