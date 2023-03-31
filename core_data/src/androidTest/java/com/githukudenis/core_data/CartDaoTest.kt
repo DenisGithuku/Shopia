@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.ShopiaDatabase
 import com.githukudenis.core_data.data.local.db.model.cart.Product
@@ -78,5 +78,27 @@ class CartDaoTest {
         cartDao.insertProduct(product)
         val allProducts = cartDao.getAllProducts()
         assertThat(allProducts).contains(product)
+    }
+
+    @Test
+    fun deleteCart() = runTest {
+        val products = listOf(
+            Product(
+                productId = 1,
+                quantity = 10
+            ),
+            Product(
+                productId = 2,
+                quantity = 14
+            ),
+            Product(
+                productId = 3,
+                quantity = 11
+            )
+        )
+        cartDao.insertProducts(products)
+        cartDao.deleteCart()
+        val productCount = cartDao.getProductCount()
+        assertThat(productCount).isEqualTo(0)
     }
 }
