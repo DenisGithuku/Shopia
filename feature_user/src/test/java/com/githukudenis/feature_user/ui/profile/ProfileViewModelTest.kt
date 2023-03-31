@@ -1,7 +1,7 @@
 package com.githukudenis.feature_user.ui.profile
 
+import com.githukudenis.core_data.data.local.prefs.UserPreferences
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
-import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_user.data.UserRepository
 import com.githukudenis.feature_user.data.remote.FakeUserRepositoryImpl
 import com.google.common.truth.Truth.assertThat
@@ -17,7 +17,6 @@ class ProfileViewModelTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var userPrefsRepository: UserPreferencesRepository
-    private lateinit var cartRepository: CartRepository
     private lateinit var profileViewModel: ProfileViewModel
 
     @get:Rule
@@ -27,8 +26,7 @@ class ProfileViewModelTest {
     fun setUp() {
         userRepository = FakeUserRepositoryImpl()
         userPrefsRepository = FakeUserPrefsRepository()
-        cartRepository = FakeCartRepository()
-        profileViewModel = ProfileViewModel(userRepository, cartRepository, userPrefsRepository)
+        profileViewModel = ProfileViewModel(userRepository, userPrefsRepository)
     }
 
     @Test
@@ -53,8 +51,15 @@ class ProfileViewModelTest {
     }
 
     @Test
-    fun `logout clears user cart`() = runTest {
+    fun `logout resets user prefs`() = runTest {
         profileViewModel.onEvent(ProfileUiEvent.Logout)
-        val cart = cartRepository.getProductsInCart(12).first()
+        val prefs = userPrefsRepository.userPreferencesFlow.first()
+        val defaultUserPref = UserPreferences(
+            appInitialized = false,
+            userLoggedIn = false,
+            userId = -1,
+            username = ""
+        )
+        assertThat(prefs.hashCode()).isEqualTo(defaultUserPref.hashCode())
     }
 }
