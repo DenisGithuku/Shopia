@@ -73,11 +73,17 @@ To attain this the app has the following modules:
 ### Interface
 ##### Auth - Login
 
-<img src ="https://user-images.githubusercontent.com/47632042/226111885-ffc3df97-1be4-407c-a6b6-d2ada433efb2.png" width = "30%" height = "30%">
+<img src ="https://user-images.githubusercontent.com/47632042/229041273-4d211eaf-5f21-423e-93e7-9fa1a351c8fd.png" width = "30%" height = "30%">
 
 #### Products
 <p align = "center">
-<img src = "https://user-images.githubusercontent.com/47632042/226111974-d56de010-9ad8-410c-b9f4-b040f747b257.png" width = "30%" height = "30%">
+<img src = "https://user-images.githubusercontent.com/47632042/229040667-c6730998-7f47-45e9-814b-9190482a1d0c.png"
+ width = "30%" height = "30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-<img src = "https://user-images.githubusercontent.com/47632042/226112108-fec2dfa7-e761-4699-a090-a07da4f6ec94.png" width = "30%" height = "30%">
+<img src = "https://user-images.githubusercontent.com/47632042/229040842-2232b0be-a850-4f48-a94e-d1ec5c4df0e4.png"
+ width = "30%" height = "30%">
 </p>
+
+#### Profile
+<img src = "https://user-images.githubusercontent.com/47632042/229041036-b19b88f6-1a36-4f82-9eb5-c86e66162f25.png" width = "30%" height = "30%">
+
