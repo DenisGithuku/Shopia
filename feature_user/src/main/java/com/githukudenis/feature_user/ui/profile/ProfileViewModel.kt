@@ -5,18 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.util.UserMessage
-import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val cartRepository: CartRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -25,10 +25,14 @@ class ProfileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            userPreferencesRepository.userPreferencesFlow.collect { prefs ->
-                val userId = checkNotNull(prefs.userId)
-                getUserProfile(userId)
-            }
+            userPreferencesRepository.userPreferencesFlow.distinctUntilChanged()
+                .collectLatest { prefs ->
+                    val userId = checkNotNull(prefs.userId)
+                    if (userId == -1) {
+                        return@collectLatest
+                    }
+                    getUserProfile(userId)
+                }
         }
     }
 
@@ -49,31 +53,34 @@ class ProfileViewModel @Inject constructor(
             isLoading = true
         )
         userRepository.users.catch { error ->
-                val userMessages = mutableListOf<UserMessage>().apply {
-                    val userMessage = UserMessage(id = 0, message = error.message)
-                    add(userMessage)
+            val userMessages = mutableListOf<UserMessage>().apply {
+                val userMessage = UserMessage(id = 0, message = error.message)
+                add(userMessage)
+            }
+            uiState.value = uiState.value.copy(
+                userMessages = userMessages, isLoading = false
+            )
+        }.collectLatest { usersDTO ->
+            usersDTO?.let { allUsers ->
+                val user = allUsers.find { user ->
+                    user.id == userId
                 }
                 uiState.value = uiState.value.copy(
-                    userMessages = userMessages, isLoading = false
+                    profile = user, isLoading = false
                 )
-            }.collectLatest { usersDTO ->
-                usersDTO?.let { allUsers ->
-                    val user = allUsers.find { user ->
-                        user.id == userId
-                    }
-                    uiState.value = uiState.value.copy(
-                        profile = user, isLoading = false
-                    )
-                }
             }
+        }
     }
 
     private fun logout() = viewModelScope.launch {
-        cartRepository.clearCart()
-        userPreferencesRepository.updateUserLoggedIn(false)
-        uiState.value = uiState.value.copy(
-            signedOut = true
-        )
+        try {
+            userPreferencesRepository.resetPreferences()
+            uiState.value = uiState.value.copy(
+                signedOut = true
+            )
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 
     private fun refreshUserMessages(messageId: Int) {

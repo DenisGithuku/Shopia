@@ -10,7 +10,9 @@ interface UserPreferencesRepository {
 
     suspend fun updateUserLoggedIn(loggedIn: Boolean)
 
-    suspend fun storeUserId(userId: Int)
+    suspend fun storeUserId(userId: Int?)
 
     suspend fun storeUserName(username: String)
+
+    suspend fun resetPreferences()
 }

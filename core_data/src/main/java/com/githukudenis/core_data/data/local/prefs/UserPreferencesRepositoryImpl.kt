@@ -16,12 +16,6 @@ import javax.inject.Inject
 class UserPreferencesRepositoryImpl @Inject constructor(
     private val context: Context
 ) : UserPreferencesRepository {
-    override suspend fun storeUserId(userId: Int) {
-        context.datastore.edit { prefs ->
-            prefs[PreferenceKeys.USER_ID] = userId
-        }
-    }
-
     private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = Constants.userPreferences)
 
     override val userPreferencesFlow: Flow<UserPreferences>
@@ -32,6 +26,15 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             val username = prefs[PreferenceKeys.USER_NAME]
             UserPreferences(appInitialized, userLoggedIn, userId, username)
         }
+
+    override suspend fun storeUserId(userId: Int?) {
+        context.datastore.edit { prefs ->
+            userId?.let { id ->
+                prefs[PreferenceKeys.USER_ID] = id
+            }
+
+        }
+    }
 
     override suspend fun updateAppInitialization(appInitialized: Boolean) {
         context.datastore.edit { prefs ->
@@ -48,6 +51,15 @@ class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun storeUserName(username: String) {
         context.datastore.edit { prefs ->
             prefs[PreferenceKeys.USER_NAME] = username
+        }
+    }
+
+    override suspend fun resetPreferences() {
+        context.datastore.edit {prefs ->
+            prefs[PreferenceKeys.USER_ID] = -1
+            prefs[PreferenceKeys.USER_LOGGED_IN] = false
+            prefs[PreferenceKeys.USER_NAME] = ""
+            prefs[PreferenceKeys.APP_INITIALIZED] = false
         }
     }
 }

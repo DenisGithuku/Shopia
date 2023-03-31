@@ -2,6 +2,7 @@ package com.githukudenis.feature_cart.data.repo
 
 import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.model.cart.Product
+import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_cart.data.remote.CartApiService
@@ -17,6 +18,7 @@ class CartRepositoryImpl @Inject constructor(
     private val cartApiService: CartApiService,
     private val cartDao: CartDao,
     private val productsRepository: ProductsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val shopiaCoroutineDispatcher: ShopiaCoroutineDispatcher
 ) : CartRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -25,22 +27,21 @@ class CartRepositoryImpl @Inject constructor(
             if (cartDao.getAllProducts().isEmpty()) {
                 refreshProducts(userId)
             }
-            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
-                val productsInCart = cartDao.getAllProducts()
-                val allProductsFlow = productsRepository.getProducts()
-                val products = allProductsFlow.mapLatest { allProducts ->
-                    allProducts.filter { productDBO ->
-                        productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
-                    }.map {
-                        val quantity = productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
-                        ProductInCart(
-                            quantity = quantity,
-                            productDBO = it
-                        )
-                    }
+            val productsInCart = cartDao.getAllProducts()
+            val allProductsFlow = productsRepository.getProducts()
+            val products = allProductsFlow.mapLatest { allProducts ->
+                allProducts.filter { productDBO ->
+                    productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
+                }.map {
+                    val quantity =
+                        productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
+                    ProductInCart(
+                        quantity = quantity,
+                        productDBO = it
+                    )
                 }
-                products
             }
+            products
         } catch (e: Exception) {
             throw Exception(e)
         }
@@ -59,7 +60,16 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun clearCart() {
         try {
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                /*
+                 clear cart for current user
+                 */
                 cartDao.deleteCart()
+
+                /*
+                reset the id to default value
+                 */
+                userPreferencesRepository.storeUserId(-1)
+                userPreferencesRepository.updateUserLoggedIn(false)
             }
         } catch (e: Exception) {
             Timber.e(e)
