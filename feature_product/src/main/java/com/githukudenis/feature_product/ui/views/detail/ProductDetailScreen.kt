@@ -11,11 +11,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -31,15 +35,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductDetailScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
 ) {
     val productsDetailViewModel: ProductsDetailViewModel = hiltViewModel()
     val state by productsDetailViewModel.state
+    val scope = rememberCoroutineScope()
 
     if (state.isLoading) {
         Box(
@@ -51,20 +58,21 @@ fun ProductDetailScreen(
         return
     }
 
-    if (state.error?.isNotEmpty() == true) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = state.error ?: "An unknown error occurred. Don't worry" +
-                "it's us",
-                textAlign = TextAlign.Start
-            )
+    LaunchedEffect(key1 = state) {
+        if (state.userMessages.isNotEmpty()) {
+            val (id, userMessage) = state.userMessages[0]
+            userMessage?.let{ message ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message  = message,
+                        duration = SnackbarDuration.Long
+                    )
+                    id?.let {
+                        productsDetailViewModel.onEvent(ProductDetailEvent.DismissUserMessage(it))
+                    }
+                }
+            }
         }
-        return
     }
 
     Column(
