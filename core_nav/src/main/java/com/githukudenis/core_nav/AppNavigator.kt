@@ -73,7 +73,7 @@ fun AppNavigator(
             arguments = listOf(navArgument("productId") {
                 type = NavType.IntType
             })) {
-            ProductDetailScreen()
+            ProductDetailScreen(snackbarHostState = snackbarHostState)
         }
         composable(route = AppDestination.CartScreen.route) {
             CartScreen()

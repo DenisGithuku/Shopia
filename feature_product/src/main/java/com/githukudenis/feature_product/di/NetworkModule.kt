@@ -2,13 +2,13 @@ package com.githukudenis.feature_product.di
 
 import android.content.Context
 import com.githukudenis.core_data.data.local.db.model.ProductsDao
+import com.githukudenis.core_data.data.repository.ProductsRepository
+import com.githukudenis.core_data.data.repository.ProductsRepositoryImpl
 import com.githukudenis.core_data.di.ShopiaCoroutineDispatcher
 import com.githukudenis.feature_product.data.ProductsApiService
 import com.githukudenis.feature_product.data.base_url
-import com.githukudenis.core_data.data.repository.ProductsRepositoryImpl
 import com.githukudenis.feature_product.data.util.NetworkObserver
 import com.githukudenis.feature_product.data.util.NetworkStateObserver
-import com.githukudenis.core_data.data.repository.ProductsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
