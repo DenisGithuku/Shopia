@@ -8,21 +8,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Difference
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -146,11 +145,12 @@ fun ProductDetailScreen(
                 }
             }
         }
+        AddToCartSection(onAddToCart = { quantity -> productsDetailViewModel.onEvent(ProductDetailEvent.AddToCart(quantity)) })
     }
 }
 
 @Composable
-fun CartSection(
+fun AddToCartSection(
     modifier: Modifier = Modifier, onAddToCart: (Int) -> Unit
 ) {
     var productCount by rememberSaveable {
@@ -163,11 +163,14 @@ fun CartSection(
         }
     }
     Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Button(
-            modifier = modifier, onClick = {
+        OutlinedButton(
+            modifier = modifier.weight(2.5f), onClick = {
                 onAddToCart(productCount)
             }, enabled = buttonEnabled.value
 
@@ -177,29 +180,32 @@ fun CartSection(
             )
         }
         Row(
-            modifier = modifier
+            modifier = modifier.weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = modifier.size(30.dp)
-                    .clip(RoundedCornerShape(20.dp))
+                modifier = modifier
+                    .clip(RoundedCornerShape(14.dp))
                     .background(color = MaterialTheme.colors.secondary)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add one",
-                    tint = MaterialTheme.colors.onPrimary
+                    tint = MaterialTheme.colors.onPrimary,
+                    modifier = modifier.padding(8.dp)
                 )
             }
             Box(
-                modifier = modifier.size(30.dp)
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(20.dp))
+                modifier = modifier
+                    .clip(RoundedCornerShape(14.dp))
                     .background(color = MaterialTheme.colors.secondary)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Difference,
+                    imageVector = Icons.Default.Remove,
                     contentDescription = "Minus one",
-                    tint = MaterialTheme.colors.onPrimary
+                    tint = MaterialTheme.colors.onPrimary,
+                    modifier = modifier.padding(8.dp)
                 )
             }
         }
@@ -209,5 +215,5 @@ fun CartSection(
 @Preview
 @Composable
 fun CartSectionPreview() {
-    CartSection(onAddToCart = {})
+    AddToCartSection(onAddToCart = {})
 }

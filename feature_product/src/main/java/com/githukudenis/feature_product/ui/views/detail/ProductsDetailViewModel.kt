@@ -34,7 +34,7 @@ class ProductsDetailViewModel @Inject constructor(
         val productId: Int = checkNotNull(savedStateHandle["productId"])
         getProductDetails(productId)
         viewModelScope.launch {
-            userPreferencesRepository.userPreferencesFlow.collectLatest {  prefs ->
+            userPreferencesRepository.userPreferencesFlow.collectLatest { prefs ->
                 val userId = checkNotNull(prefs.userId)
                 if (userId == -1) {
                     return@collectLatest
@@ -54,6 +54,15 @@ class ProductsDetailViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     userMessages = userMessages
                 )
+            }
+
+            is ProductDetailEvent.AddToCart -> {
+                val id = _state.value.product.id
+                val quantity = event.quantity
+
+                id?.let { Product(it, quantity) }?.let { product ->
+                    insertProductIntoCart(product)
+                }
             }
         }
     }
