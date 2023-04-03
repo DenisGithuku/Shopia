@@ -1,6 +1,7 @@
 package com.githukudenis.feature_product.ui.views.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -170,13 +172,21 @@ fun AddToCartSection(
         horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         OutlinedButton(
-            modifier = modifier.weight(2.5f), onClick = {
+            modifier = modifier
+                .weight(2f)
+            , onClick = {
                 onAddToCart(productCount)
-            }, enabled = buttonEnabled.value
+            },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSecondary
+            ),
+            shape = RoundedCornerShape(32.dp),
+            enabled = buttonEnabled.value
 
         ) {
             Text(
-                "Add to cart"
+                "Add to cart",
             )
         }
         Row(
@@ -188,6 +198,9 @@ fun AddToCartSection(
                 modifier = modifier
                     .clip(RoundedCornerShape(14.dp))
                     .background(color = MaterialTheme.colors.secondary)
+                    .clickable {
+                        productCount += 1
+                    }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -196,10 +209,22 @@ fun AddToCartSection(
                     modifier = modifier.padding(8.dp)
                 )
             }
+            Text(
+                text = "$productCount",
+                style = TextStyle(
+                    fontSize = 16.sp
+                )
+            )
             Box(
                 modifier = modifier
                     .clip(RoundedCornerShape(14.dp))
                     .background(color = MaterialTheme.colors.secondary)
+                    .clickable {
+                        if (productCount == 0) {
+                            return@clickable
+                        }
+                        productCount -= 1
+                    }
             ) {
                 Icon(
                     imageVector = Icons.Default.Remove,
