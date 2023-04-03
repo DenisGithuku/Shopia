@@ -159,7 +159,7 @@ fun AddToCartSection(
         mutableStateOf(0)
     }
 
-    var buttonEnabled = remember {
+    val buttonEnabled = remember {
         derivedStateOf {
             productCount >= 1
         }
