@@ -141,7 +141,7 @@ fun ProductsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
 
                             state.cartState?.let { cart ->
-                                cart.productCount?.let { count ->
+                                cart.products.size.let { count ->
                                     CartItem(
                                         itemCount = count,
                                         onOpenCart = onOpenCart,
@@ -195,7 +195,7 @@ fun ProductsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                onOpenProductDetails(productItem.id)
+                                productItem.product?.id?.let { onOpenProductDetails(it) }
                             }
                             .padding(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -203,7 +203,7 @@ fun ProductsScreen(
                     ) {
 
                         GlideImage(
-                            model = productItem.image,
+                            model = productItem.product?.image,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = modifier.requiredSize(120.dp)
@@ -212,19 +212,21 @@ fun ProductsScreen(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            productItem.product?.title?.let {
+                                Text(
+                                    text = it, style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp,
+                                    ), maxLines = 3, overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            productItem.product?.description?.let {
+                                Text(
+                                    text = it, maxLines = 4, overflow = TextOverflow.Ellipsis
+                                )
+                            }
                             Text(
-                                text = productItem.title, style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                ), maxLines = 3, overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = productItem.description,
-                                maxLines = 4,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = "${productItem.price}"
+                                text = "${productItem.product?.price}"
                             )
                         }
                     }

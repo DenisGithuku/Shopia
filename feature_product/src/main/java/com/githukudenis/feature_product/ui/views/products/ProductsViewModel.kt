@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
+import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_cart.data.repo.CartRepository
-import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.feature_user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -41,7 +41,7 @@ class ProductsViewModel @Inject constructor(
                 username?.let { name ->
                     getCurrentUserInfo(name)
                 }
-                userId?.let { id -> getProductsInCartCount(id) }
+                userId?.let { id -> getProductsInCart(id) }
             }
         }
         getCategories()
@@ -88,14 +88,24 @@ class ProductsViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isRefreshing = true
             )
-            val countriesDeferred = async {
+            val productsDeferred = async {
                 productsRepository.getProducts()
             }
 
-            countriesDeferred.await().buffer(capacity = 10).collect { result ->
+
+            productsDeferred.await().buffer(capacity = 10).collect { result ->
+                val products = result.map { product ->
+                    _state.value.cartState?.products?.any { productInCart -> productInCart.productDBO?.id == product.id }
+                        ?.let {
+                            ProductState(
+                                productInCart = it,
+                                product = product
+                            )
+                        }
+                }
                 _state.update { state ->
                     state.copy(
-                        productsLoading = false, isRefreshing = false, products = result
+                        productsLoading = false, isRefreshing = false, products = products as List<ProductState>
                     )
                 }
             }
@@ -111,8 +121,14 @@ class ProductsViewModel @Inject constructor(
         }
 
         productCategoryDeferred.await().collect { productsInCategory ->
+            val products = productsInCategory.map {
+                ProductState(
+                    product = it
+                )
+            }
             _state.value = _state.value.copy(
-                products = productsInCategory, isRefreshing = false
+                products = products,
+                isRefreshing = false
             )
         }
 
@@ -173,7 +189,7 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    suspend fun getProductsInCartCount(userId: Int) = viewModelScope.launch {
+    suspend fun getProductsInCart(userId: Int) = viewModelScope.launch {
         val cartState = CartState().copy(
             isLoading = true
         )
@@ -190,7 +206,7 @@ class ProductsViewModel @Inject constructor(
         }.collectLatest { products ->
             _state.value = _state.value.copy(
                 cartState = cartState.copy(
-                    isLoading = false, productCount = products.size
+                    isLoading = false, products = products
                 )
             )
         }
