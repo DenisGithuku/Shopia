@@ -76,7 +76,11 @@ fun AppNavigator(
             ProductDetailScreen(snackbarHostState = snackbarHostState)
         }
         composable(route = AppDestination.CartScreen.route) {
-            CartScreen()
+            CartScreen(onOpenProductDetails = { productId ->
+                navController.navigate(AppDestination.ProductDetail.route + "/${productId}") {
+                    popUpTo(AppDestination.CartScreen.route)
+                }
+            })
         }
 
         composable(route = AppDestination.ProfileScreen.route) {

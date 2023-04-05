@@ -5,4 +5,6 @@ sealed class ProductsScreenEvent {
     object RefreshProducts: ProductsScreenEvent()
 
     class DismissUserMessage(val messageId: Int): ProductsScreenEvent()
+
+    class AddToCart(val productId: Int): ProductsScreenEvent()
 }
