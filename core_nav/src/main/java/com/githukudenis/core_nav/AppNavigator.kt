@@ -12,6 +12,7 @@ import com.githukudenis.feature_cart.ui.views.cart.CartScreen
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
 import com.githukudenis.feature_product.ui.views.products.ProductsScreen
+import com.githukudenis.feature_user.ui.about.AboutRoute
 import com.githukudenis.feature_user.ui.profile.ProfileRoute
 
 @Composable
@@ -67,12 +68,20 @@ fun AppNavigator(
                     }
                     restoreState = true
                 }
+            }, onOpenAbout = {
+                navController.navigate(AppDestination.About.route) {
+                    popUpTo(AppDestination.Products.route) {
+                        saveState = true
+                    }
+                    restoreState = true
+                }
             })
         }
         composable(route = AppDestination.ProductDetail.route + "/{productId}",
             arguments = listOf(navArgument("productId") {
                 type = NavType.IntType
-            })) {
+            })
+        ) {
             ProductDetailScreen(snackbarHostState = snackbarHostState)
         }
         composable(route = AppDestination.CartScreen.route) {
@@ -91,6 +100,10 @@ fun AppNavigator(
                     }
                 }
             }, snackbarHostState = snackbarHostState)
+        }
+
+        composable(route = AppDestination.About.route) {
+            AboutRoute()
         }
 
     }

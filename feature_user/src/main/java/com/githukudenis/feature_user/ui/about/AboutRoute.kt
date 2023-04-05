@@ -19,8 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.githukudenis.core_design.BuildConfig
 import com.githukudenis.feature_user.R
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -69,6 +70,7 @@ fun AboutRoute(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Column(
@@ -86,8 +88,9 @@ fun AboutRoute(
                     Divider(modifier = modifier.fillMaxWidth(.8f))
                 }
                 Text(
-                    text = "Version: ${com.githukudenis.core_data.BuildConfig.BUILD_TYPE}"
+                    text = "Version: ${BuildConfig.BUILD_TYPE}"
                 )
+                Divider(modifier = modifier.fillMaxWidth(.8f))
                 Column(
                     modifier = modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -100,7 +103,7 @@ fun AboutRoute(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Surface(onClick = {
+                        IconButton(onClick = {
 
                         }) {
                             Icon(
@@ -110,7 +113,7 @@ fun AboutRoute(
                             )
                         }
                         Spacer(modifier = modifier.width(6.dp))
-                        Surface(onClick = {
+                        IconButton(onClick = {
 
                         }) {
                             Icon(
@@ -123,7 +126,7 @@ fun AboutRoute(
                         }
                         Spacer(modifier = modifier.width(6.dp))
 
-                        Surface(onClick = {
+                        IconButton(onClick = {
 
                         }) {
                             Icon(
@@ -131,12 +134,11 @@ fun AboutRoute(
                                     com.githukudenis.core_design.R.drawable.ic_git
                                 ), contentDescription = "GitHub account",
                                 modifier = modifier.size(24.dp)
-
                             )
                         }
                         Spacer(modifier = modifier.width(6.dp))
 
-                        Surface(onClick = {
+                        IconButton(onClick = {
 
                         }) {
                             Icon(
@@ -150,7 +152,7 @@ fun AboutRoute(
             }
         }
         Text(
-            text = "Made by Gitsoft Apps with ♥️",
+            text = "Made by GitSoft Apps with ♥️",
             modifier = modifier
                 .padding(12.dp),
         )
