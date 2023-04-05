@@ -32,6 +32,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -54,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -228,6 +230,38 @@ fun ProductsScreen(
                             Text(
                                 text = "${productItem.product?.price}"
                             )
+
+                            Row(modifier = modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically) {
+                                OutlinedButton(
+                                    onClick = {
+                                        productItem.product?.id?.let {
+                                            ProductsScreenEvent.AddToCart(
+                                                it
+                                            )
+                                        }?.let {
+                                            productsViewModel.onEvent(
+                                                it
+                                            )
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(32.dp),
+                                    enabled = !productItem.productInCart,
+                                ) {
+                                    Text(
+                                        text = "Add to cart"
+                                    )
+                                }
+                                if (productItem.productInCart) {
+                                    Text(
+                                        text = "In cart",
+                                        style = TextStyle(
+                                            fontStyle = FontStyle.Italic
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -329,7 +363,7 @@ fun ProfileAvatar(
             .clickable { onClick(username) }, contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "$initial", textAlign = TextAlign.Center, color = Color.White
+            text = initial, textAlign = TextAlign.Center, color = Color.White
         )
     }
 }
