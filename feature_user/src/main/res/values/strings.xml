@@ -3,4 +3,6 @@
     <string name="person_avatar">Profile Avatar</string>
     <string name="phone">Mobile</string>
     <string name="email">Email</string>
+    <string name="app_icon">App icon</string>
+    <string name="app_name">Shopia</string>
 </resources>

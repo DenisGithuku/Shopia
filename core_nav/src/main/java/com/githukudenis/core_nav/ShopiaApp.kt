@@ -17,7 +17,7 @@ import com.githukudenis.core_design.theme.CoroutinesIndustrialBuildTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
-fun CoroutinesApp(
+fun ShopiaApp(
     isLoggedIn: Boolean
 ) {
     val navController = rememberNavController()
