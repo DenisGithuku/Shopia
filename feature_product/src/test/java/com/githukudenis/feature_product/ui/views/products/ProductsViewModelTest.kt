@@ -98,7 +98,7 @@ class ProductsViewModelTest {
 
     @Test
     fun `get cart product count`() = runTest {
-        productsViewModel.getProductsInCartCount(12)
+        productsViewModel.getProductsInCart(12)
         val cart = productsViewModel.state.value.cartState
         cart?.let {  cartState ->
             cartState.productCount?.let { count ->

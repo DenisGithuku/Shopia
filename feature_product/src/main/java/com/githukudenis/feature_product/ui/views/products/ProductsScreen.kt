@@ -32,6 +32,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -54,6 +55,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -141,7 +143,7 @@ fun ProductsScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
 
                             state.cartState?.let { cart ->
-                                cart.productCount?.let { count ->
+                                cart.products.size.let { count ->
                                     CartItem(
                                         itemCount = count,
                                         onOpenCart = onOpenCart,
@@ -195,7 +197,7 @@ fun ProductsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                onOpenProductDetails(productItem.id)
+                                productItem.product?.id?.let { onOpenProductDetails(it) }
                             }
                             .padding(12.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -203,7 +205,7 @@ fun ProductsScreen(
                     ) {
 
                         GlideImage(
-                            model = productItem.image,
+                            model = productItem.product?.image,
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = modifier.requiredSize(120.dp)
@@ -212,20 +214,54 @@ fun ProductsScreen(
                         Column(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            productItem.product?.title?.let {
+                                Text(
+                                    text = it, style = TextStyle(
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 18.sp,
+                                    ), maxLines = 3, overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            productItem.product?.description?.let {
+                                Text(
+                                    text = it, maxLines = 4, overflow = TextOverflow.Ellipsis
+                                )
+                            }
                             Text(
-                                text = productItem.title, style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                ), maxLines = 3, overflow = TextOverflow.Ellipsis
+                                text = "${productItem.product?.price}"
                             )
-                            Text(
-                                text = productItem.description,
-                                maxLines = 4,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Text(
-                                text = "${productItem.price}"
-                            )
+
+                            Row(modifier = modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically) {
+                                OutlinedButton(
+                                    onClick = {
+                                        productItem.product?.id?.let {
+                                            ProductsScreenEvent.AddToCart(
+                                                it
+                                            )
+                                        }?.let {
+                                            productsViewModel.onEvent(
+                                                it
+                                            )
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(32.dp),
+                                    enabled = !productItem.productInCart,
+                                ) {
+                                    Text(
+                                        text = "Add to cart"
+                                    )
+                                }
+                                if (productItem.productInCart) {
+                                    Text(
+                                        text = "In cart",
+                                        style = TextStyle(
+                                            fontStyle = FontStyle.Italic
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -327,7 +363,7 @@ fun ProfileAvatar(
             .clickable { onClick(username) }, contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "$initial", textAlign = TextAlign.Center, color = Color.White
+            text = initial, textAlign = TextAlign.Center, color = Color.White
         )
     }
 }
