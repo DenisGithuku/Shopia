@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.githukudenis.feature_user.R
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AboutRoute(
     modifier: Modifier = Modifier
@@ -56,11 +61,13 @@ fun AboutRoute(
             modifier = modifier.height(20.dp)
         )
         Box(
-            modifier = modifier.fillMaxWidth(.8f)
+            modifier = modifier
+                .fillMaxWidth(.8f)
                 .background(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp))
         ) {
             Column(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -72,8 +79,7 @@ fun AboutRoute(
                     Text(
                         text = context.getString(R.string.app_name),
                         style = MaterialTheme.typography.subtitle1.copy(
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center
+                            fontWeight = FontWeight.Medium, textAlign = TextAlign.Center
                         )
                     )
                     Spacer(modifier = modifier.height(12.dp))
@@ -82,16 +88,72 @@ fun AboutRoute(
                 Text(
                     text = "Version: ${com.githukudenis.core_data.BuildConfig.BUILD_TYPE}"
                 )
-                Row(
+                Column(
                     modifier = modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Connect: "
+                        text = "Connect"
                     )
+                    Row(
+                        modifier = modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(onClick = {
+
+                        }) {
+                            Icon(
+                                painter = painterResource(com.githukudenis.core_design.R.drawable.ic_twitter),
+                                contentDescription = "Twitter account",
+                                modifier = modifier.size(24.dp)
+                            )
+                        }
+                        Spacer(modifier = modifier.width(6.dp))
+                        Surface(onClick = {
+
+                        }) {
+                            Icon(
+                                painter = painterResource(
+                                    com.githukudenis.core_design.R.drawable.ic_linkedin
+                                ), contentDescription = "Linkedin account",
+                                modifier = modifier.size(24.dp)
+
+                            )
+                        }
+                        Spacer(modifier = modifier.width(6.dp))
+
+                        Surface(onClick = {
+
+                        }) {
+                            Icon(
+                                painter = painterResource(
+                                    com.githukudenis.core_design.R.drawable.ic_git
+                                ), contentDescription = "GitHub account",
+                                modifier = modifier.size(24.dp)
+
+                            )
+                        }
+                        Spacer(modifier = modifier.width(6.dp))
+
+                        Surface(onClick = {
+
+                        }) {
+                            Icon(
+                                painter = painterResource(id = com.githukudenis.core_design.R.drawable.ic_reddit),
+                                contentDescription = "Reddit account",
+                                modifier = modifier.size(24.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
+        Text(
+            text = "Made by Gitsoft Apps with ♥️",
+            modifier = modifier
+                .padding(12.dp),
+        )
     }
 }
 

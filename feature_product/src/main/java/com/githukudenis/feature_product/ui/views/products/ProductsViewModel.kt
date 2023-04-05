@@ -146,7 +146,6 @@ class ProductsViewModel @Inject constructor(
                     else -> {
                         getProductsInCategory(category.lowercase())
                     }
-
                 }
             }
         }
