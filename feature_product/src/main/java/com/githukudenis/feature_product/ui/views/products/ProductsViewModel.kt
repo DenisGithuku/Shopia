@@ -2,6 +2,7 @@ package com.githukudenis.feature_product.ui.views.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.githukudenis.core_data.data.local.db.model.cart.Product
 import com.githukudenis.core_data.data.local.db.model.product.ProductCategory
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.data.repository.ProductsRepository
@@ -43,9 +44,10 @@ class ProductsViewModel @Inject constructor(
                 }
                 userId?.let { id -> getProductsInCart(id) }
             }
+
+            getCategories()
+            getAllProducts()
         }
-        getCategories()
-        getAllProducts()
     }
 
     fun onEvent(event: ProductsScreenEvent) {
@@ -65,6 +67,13 @@ class ProductsViewModel @Inject constructor(
 
             is ProductsScreenEvent.DismissUserMessage -> {
                 refreshUserMessages(event.messageId)
+            }
+
+            is ProductsScreenEvent.AddToCart -> {
+                val product = Product(productId = event.productId, quantity = 1)
+                addProductToCart(product).also {
+                    refreshProducts()
+                }
             }
         }
     }
@@ -105,7 +114,9 @@ class ProductsViewModel @Inject constructor(
                 }
                 _state.update { state ->
                     state.copy(
-                        productsLoading = false, isRefreshing = false, products = products as List<ProductState>
+                        productsLoading = false,
+                        isRefreshing = false,
+                        products = products as List<ProductState>
                     )
                 }
             }
@@ -209,6 +220,14 @@ class ProductsViewModel @Inject constructor(
                     isLoading = false, products = products
                 )
             )
+        }
+    }
+
+    fun addProductToCart(
+        product: Product
+    ) {
+        viewModelScope.launch {
+            cartRepository.insertProductInCart(product)
         }
     }
 }
