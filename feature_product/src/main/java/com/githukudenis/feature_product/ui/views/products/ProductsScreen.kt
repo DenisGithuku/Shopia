@@ -2,7 +2,6 @@ package com.githukudenis.feature_product.ui.views.products
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -70,8 +69,7 @@ import com.githukudenis.feature_product.R
 
 @OptIn(
     ExperimentalMaterialApi::class,
-    ExperimentalGlideComposeApi::class,
-    ExperimentalAnimationApi::class
+    ExperimentalGlideComposeApi::class
 )
 @Composable
 fun ProductsScreen(
