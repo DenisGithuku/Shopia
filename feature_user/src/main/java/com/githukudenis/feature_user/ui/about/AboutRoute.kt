@@ -1,5 +1,8 @@
 package com.githukudenis.feature_user.ui.about
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,20 +22,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.githukudenis.core_design.BuildConfig
 import com.githukudenis.feature_user.R
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -69,6 +76,7 @@ fun AboutRoute(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Column(
@@ -86,8 +94,9 @@ fun AboutRoute(
                     Divider(modifier = modifier.fillMaxWidth(.8f))
                 }
                 Text(
-                    text = "Version: ${com.githukudenis.core_data.BuildConfig.BUILD_TYPE}"
+                    text = "Version: ${BuildConfig.BUILD_TYPE}"
                 )
+                Divider(modifier = modifier.fillMaxWidth(.8f))
                 Column(
                     modifier = modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -100,59 +109,59 @@ fun AboutRoute(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Surface(onClick = {
-
-                        }) {
-                            Icon(
-                                painter = painterResource(com.githukudenis.core_design.R.drawable.ic_twitter),
-                                contentDescription = "Twitter account",
-                                modifier = modifier.size(24.dp)
-                            )
-                        }
+                        SocialItem(
+                            context = context,
+                            uriString = "https://twitter.com/denis_githuku",
+                            icon = com.githukudenis.core_design.R.drawable.ic_twitter,
+                            contentDescription = "Follow on Twitter"
+                        )
                         Spacer(modifier = modifier.width(6.dp))
-                        Surface(onClick = {
-
-                        }) {
-                            Icon(
-                                painter = painterResource(
-                                    com.githukudenis.core_design.R.drawable.ic_linkedin
-                                ), contentDescription = "Linkedin account",
-                                modifier = modifier.size(24.dp)
-
-                            )
-                        }
+                        SocialItem(
+                            context = context,
+                            uriString = "https://github.com/DenisGithuku",
+                            icon = com.githukudenis.core_design.R.drawable.ic_git,
+                            contentDescription = "Open GitHub Profile"
+                        )
                         Spacer(modifier = modifier.width(6.dp))
 
-                        Surface(onClick = {
-
-                        }) {
-                            Icon(
-                                painter = painterResource(
-                                    com.githukudenis.core_design.R.drawable.ic_git
-                                ), contentDescription = "GitHub account",
-                                modifier = modifier.size(24.dp)
-
-                            )
-                        }
-                        Spacer(modifier = modifier.width(6.dp))
-
-                        Surface(onClick = {
-
-                        }) {
-                            Icon(
-                                painter = painterResource(id = com.githukudenis.core_design.R.drawable.ic_reddit),
-                                contentDescription = "Reddit account",
-                                modifier = modifier.size(24.dp)
-                            )
-                        }
+                        SocialItem(
+                            context = context,
+                            uriString = "https://linkedin.com/in/githukudenis",
+                            icon = com.githukudenis.core_design.R.drawable.ic_linkedin,
+                            contentDescription = "Connect on LinkedIn"
+                        )
                     }
                 }
             }
         }
         Text(
-            text = "Made by Gitsoft Apps with ♥️",
-            modifier = modifier
-                .padding(12.dp),
+            text = "Made by GitSoft Apps with ♥️",
+            modifier = modifier.padding(12.dp),
+        )
+    }
+}
+
+@Composable
+fun SocialItem(
+    context: Context,
+    uriString: String,
+    icon: Int,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+
+    IconButton(onClick = {
+        Intent(Intent.ACTION_VIEW).apply {
+            val uri = Uri.parse(uriString)
+            data = uri
+            context.startActivity(this)
+        }
+    }) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = icon),
+            contentDescription = contentDescription,
+            modifier = modifier.size(30.dp),
+            tint = Color.Unspecified
         )
     }
 }
