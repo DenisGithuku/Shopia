@@ -115,7 +115,7 @@ fun ProductDetailScreen(
         Text(
             text = description ?: "", textAlign = TextAlign.Justify
         )
-        Text(text = price ?: "0",
+        Text(text = "$ $price" ?: "0",
             textAlign = TextAlign.End,
             color = Color.White,
             modifier = modifier
@@ -192,7 +192,7 @@ fun AddToCartSection(
             Box(
                 modifier = modifier
                     .clip(RoundedCornerShape(14.dp))
-                    .background(color = MaterialTheme.colors.secondary)
+                    .background(color = MaterialTheme.colors.primary)
                     .clickable {
                         productCount += 1
                     }
