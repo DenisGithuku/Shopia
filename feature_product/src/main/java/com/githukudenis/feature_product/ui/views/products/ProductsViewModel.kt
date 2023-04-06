@@ -137,14 +137,19 @@ class ProductsViewModel @Inject constructor(
 
     fun refreshProducts() {
         viewModelScope.launch {
-            _state.value.selectedCategory?.let { category ->
-                when (category.lowercase()) {
-                    "all" -> {
-                        getAllProducts()
-                    }
+            userPreferencesRepository.userPreferencesFlow.collectLatest {
+                checkNotNull(it.userId).also { id ->
+                    getProductsInCart(id)
+                }
+                _state.value.selectedCategory?.let { category ->
+                    when (category.lowercase()) {
+                        "all" -> {
+                            getAllProducts()
+                        }
 
-                    else -> {
-                        getProductsInCategory(category.lowercase())
+                        else -> {
+                            getProductsInCategory(category.lowercase())
+                        }
                     }
                 }
             }

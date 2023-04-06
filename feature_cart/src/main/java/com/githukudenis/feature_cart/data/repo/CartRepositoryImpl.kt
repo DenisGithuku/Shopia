@@ -64,12 +64,6 @@ class CartRepositoryImpl @Inject constructor(
                  clear cart for current user
                  */
                 cartDao.deleteCart()
-
-                /*
-                reset the id to default value
-                 */
-                userPreferencesRepository.storeUserId(-1)
-                userPreferencesRepository.updateUserLoggedIn(false)
             }
         } catch (e: Exception) {
             Timber.e(e)
