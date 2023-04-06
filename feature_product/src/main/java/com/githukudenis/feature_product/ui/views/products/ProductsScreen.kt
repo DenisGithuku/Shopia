@@ -169,7 +169,10 @@ fun ProductsScreen(
                             expanded = optionsMenuOpen,
                             onDismissRequest = { optionsMenuOpen = !optionsMenuOpen }) {
                             DropdownMenuItem(
-                                onClick = { onOpenAbout() }
+                                onClick = {
+                                    optionsMenuOpen = !optionsMenuOpen
+                                    onOpenAbout()
+                                }
                             ) {
                                 Text(
                                     text = "About app"
@@ -235,7 +238,7 @@ fun ProductsScreen(
                             )
                         }
                         Text(
-                            text = "${productItem.product?.price}"
+                            text = "$ ${productItem.product?.price}"
                         )
 
                         Row(

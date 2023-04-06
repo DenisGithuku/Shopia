@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -177,10 +176,6 @@ fun AddToCartSection(
             , onClick = {
                 onAddToCart(productCount)
             },
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.secondary,
-                contentColor = MaterialTheme.colors.onSecondary
-            ),
             shape = RoundedCornerShape(32.dp),
             enabled = buttonEnabled.value
 
@@ -218,7 +213,7 @@ fun AddToCartSection(
             Box(
                 modifier = modifier
                     .clip(RoundedCornerShape(14.dp))
-                    .background(color = MaterialTheme.colors.secondary)
+                    .background(color = MaterialTheme.colors.primary)
                     .clickable {
                         if (productCount == 0) {
                             return@clickable
