@@ -40,7 +40,6 @@ class ProductsDetailViewModel @Inject constructor(
                     return@collectLatest
                 }
                 getProductsInCartCount(userId)
-
             }
         }
     }
@@ -70,6 +69,9 @@ class ProductsDetailViewModel @Inject constructor(
 
     fun getProductDetails(productId: Int) {
         viewModelScope.launch {
+            _state.value = _state.value.copy(
+                isLoading = true
+            )
             val productJob = launch {
                 productsRepository.getProductDetails(productId).collect { result ->
                     val (category, description, id, image, price, rating, title) = result
@@ -119,7 +121,7 @@ class ProductsDetailViewModel @Inject constructor(
         }
     }
 
-    suspend fun getProductsInCartCount(userId: Int) = viewModelScope.launch {
+    private suspend fun getProductsInCartCount(userId: Int) = viewModelScope.launch {
         val cartState = CartState().copy(
             isLoading = true
         )
