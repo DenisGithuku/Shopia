@@ -1,5 +1,6 @@
 package com.githukudenis.feature_product.ui.views.detail
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -115,7 +116,7 @@ fun ProductDetailScreen(
         Text(
             text = description ?: "", textAlign = TextAlign.Justify
         )
-        Text(text = "$ $price" ?: "0",
+        Text(text = "$ $price",
             textAlign = TextAlign.End,
             color = Color.White,
             modifier = modifier
@@ -146,13 +147,20 @@ fun ProductDetailScreen(
                 }
             }
         }
-        AddToCartSection(onAddToCart = { quantity -> productsDetailViewModel.onEvent(ProductDetailEvent.AddToCart(quantity)) })
+        AddToCartSection(onAddToCart = { quantity ->
+            productsDetailViewModel.onEvent(
+                ProductDetailEvent.AddToCart(quantity)
+            )
+        }, productInCart = state.product.productInCart, removeFromCart = { productsDetailViewModel.onEvent(ProductDetailEvent.RemoveFromCart) })
     }
 }
 
 @Composable
 fun AddToCartSection(
-    modifier: Modifier = Modifier, onAddToCart: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    onAddToCart: (Int) -> Unit,
+    productInCart: Boolean,
+    removeFromCart: () -> Unit
 ) {
     var productCount by rememberSaveable {
         mutableStateOf(0)
@@ -163,70 +171,79 @@ fun AddToCartSection(
             productCount >= 1
         }
     }
-    Row(
-        modifier = modifier
-            .padding(10.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        OutlinedButton(
-            modifier = modifier
-                .weight(2f)
-            , onClick = {
-                onAddToCart(productCount)
-            },
-            shape = RoundedCornerShape(32.dp),
-            enabled = buttonEnabled.value
-
-        ) {
-            Text(
-                "Add to cart",
-            )
-        }
-        Row(
-            modifier = modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = modifier
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(color = MaterialTheme.colors.primary)
-                    .clickable {
-                        productCount += 1
+    Crossfade(targetState = productInCart) { status ->
+        when (status) {
+            true -> {
+                Row(
+                    modifier = modifier.fillMaxWidth()
+                ) {
+                    OutlinedButton(onClick = removeFromCart, shape = RoundedCornerShape(32.dp)) {
+                        Text(
+                            text = "Remove from cart"
+                        )
                     }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add one",
-                    tint = MaterialTheme.colors.onPrimary,
-                    modifier = modifier.padding(8.dp)
-                )
+                }
             }
-            Text(
-                text = "$productCount",
-                style = TextStyle(
-                    fontSize = 16.sp
-                )
-            )
-            Box(
-                modifier = modifier
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(color = MaterialTheme.colors.primary)
-                    .clickable {
-                        if (productCount == 0) {
-                            return@clickable
-                        }
-                        productCount -= 1
+
+            false -> {
+                Row(
+                    modifier = modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    OutlinedButton(
+                        modifier = modifier.weight(2f), onClick = {
+                            onAddToCart(productCount)
+                        }, shape = RoundedCornerShape(32.dp), enabled = buttonEnabled.value
+
+                    ) {
+                        Text(
+                            "Add to cart",
+                        )
                     }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Remove,
-                    contentDescription = "Minus one",
-                    tint = MaterialTheme.colors.onPrimary,
-                    modifier = modifier.padding(8.dp)
-                )
+                    Row(
+                        modifier = modifier.weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(color = MaterialTheme.colors.primary)
+                            .clickable {
+                                productCount += 1
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add one",
+                                tint = MaterialTheme.colors.onPrimary,
+                                modifier = modifier.padding(8.dp)
+                            )
+                        }
+                        Text(
+                            text = "$productCount", style = TextStyle(
+                                fontSize = 16.sp
+                            )
+                        )
+                        Box(modifier = modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(color = MaterialTheme.colors.primary)
+                            .clickable {
+                                if (productCount == 0) {
+                                    return@clickable
+                                }
+                                productCount -= 1
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.Remove,
+                                contentDescription = "Minus one",
+                                tint = MaterialTheme.colors.onPrimary,
+                                modifier = modifier.padding(8.dp)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -235,5 +252,5 @@ fun AddToCartSection(
 @Preview
 @Composable
 fun CartSectionPreview() {
-    AddToCartSection(onAddToCart = {})
+    AddToCartSection(onAddToCart = {}, productInCart = true, removeFromCart = {})
 }

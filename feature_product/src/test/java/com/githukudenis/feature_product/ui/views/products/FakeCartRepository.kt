@@ -85,4 +85,12 @@ class FakeCartRepository : CartRepository {
     override suspend fun clearCart() {
         products.clear()
     }
+
+    override suspend fun removeFromCart(productId: Int) {
+        products.find {
+            it.userId == 12
+        }?.products?.dropWhile {
+            it.productId == productId
+        }
+    }
 }

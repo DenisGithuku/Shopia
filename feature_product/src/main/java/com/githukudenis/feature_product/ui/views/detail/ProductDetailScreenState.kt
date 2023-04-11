@@ -16,7 +16,8 @@ data class ProductDetailState(
     val description: String? = null,
     val price: String? = null,
     val image: String? = null,
-    val rating: Double? = null
+    val rating: Double? = null,
+    val productInCart: Boolean = false,
 )
 
 data class CartState(

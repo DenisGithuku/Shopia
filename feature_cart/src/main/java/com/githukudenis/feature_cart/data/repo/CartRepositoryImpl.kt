@@ -70,6 +70,19 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun removeFromCart(productId: Int) {
+        try {
+            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                val product = cartDao.getAllProducts().find {
+                    it.productId == productId
+                }
+                product?.let { cartDao.deleteProduct(it) }
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     private suspend fun refreshProducts(userId: Int) {
         try {
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {

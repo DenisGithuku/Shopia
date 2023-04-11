@@ -117,11 +117,17 @@ class ProductsViewModel @Inject constructor(
             isRefreshing = true
         )
         productsRepository.getProductsInCategory(category).collect { productsInCategory ->
-            val products = productsInCategory.map {
-                ProductState(
-                    product = it
-                )
-            }
+
+            val products = productsInCategory.map { productFromRepo ->
+                _state.value.cartState?.products?.any { productInCart ->
+                    productInCart.productDBO?.id == productFromRepo.id
+                }?.let { productIsInCart ->
+                    ProductState(
+                        productInCart = productIsInCart,
+                        product = productFromRepo
+                    )
+                }
+            } as List<ProductState>
             _state.value = _state.value.copy(
                 products = products, isRefreshing = false
             )
@@ -141,6 +147,7 @@ class ProductsViewModel @Inject constructor(
                 checkNotNull(it.userId).also { id ->
                     getProductsInCart(id)
                 }
+                Timber.d(_state.value.cartState?.products.toString())
                 _state.value.selectedCategory?.let { category ->
                     when (category.lowercase()) {
                         "all" -> {

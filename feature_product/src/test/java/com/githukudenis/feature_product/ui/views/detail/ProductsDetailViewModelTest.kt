@@ -56,4 +56,17 @@ class ProductsDetailViewModelTest {
             }
         }
     }
+
+    @Test
+    fun `delete product from cart`() = runTest {
+        val product = Product(productId = 2, quantity = 23)
+        productsDetailViewModel.insertProductIntoCart(product)
+        productsDetailViewModel.removeFromCart(product.productId)
+        val productsInCart = productsDetailViewModel.state.value.cartState
+        productsInCart?.let { cartState ->
+            cartState.productCount?.let { count ->
+                assertThat(count).isEqualTo(0)
+            }
+        }
+    }
 }
