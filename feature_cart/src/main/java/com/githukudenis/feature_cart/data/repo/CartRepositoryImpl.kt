@@ -70,6 +70,16 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun removeFromCart(product: Product) {
+        try {
+            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                cartDao.deleteProduct(product)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
+
     private suspend fun refreshProducts(userId: Int) {
         try {
             withContext(shopiaCoroutineDispatcher.ioDispatcher) {

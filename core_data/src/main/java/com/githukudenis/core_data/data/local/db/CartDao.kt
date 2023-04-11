@@ -1,6 +1,7 @@
 package com.githukudenis.core_data.data.local.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,4 +23,7 @@ interface CartDao {
 
     @Query("DELETE FROM cart")
     suspend fun deleteCart()
+
+    @Delete
+    suspend fun deleteProduct(product: Product)
 }
