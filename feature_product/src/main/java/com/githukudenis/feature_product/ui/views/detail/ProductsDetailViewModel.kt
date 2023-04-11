@@ -39,7 +39,7 @@ class ProductsDetailViewModel @Inject constructor(
                 if (userId == -1) {
                     return@collectLatest
                 }
-                getProductsInCartCount(userId)
+                getCartState(userId)
             }
         }
     }
@@ -62,6 +62,10 @@ class ProductsDetailViewModel @Inject constructor(
                 id?.let { Product(it, quantity) }?.let { product ->
                     insertProductIntoCart(product)
                 }
+            }
+
+            ProductDetailEvent.RemoveFromCart -> {
+                _state.value.product.id?.let { removeFromCart(it) }
             }
         }
     }
@@ -121,7 +125,7 @@ class ProductsDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getProductsInCartCount(userId: Int) = viewModelScope.launch {
+    private suspend fun getCartState(userId: Int) = viewModelScope.launch {
         val cartState = CartState().copy(
             isLoading = true
         )
@@ -136,12 +140,21 @@ class ProductsDetailViewModel @Inject constructor(
                 userMessages = userMessages, cartState = cartState.copy(isLoading = false)
             )
         }.collectLatest { products ->
+            val productInCart =
+                products.any { productInCart -> productInCart.productDBO?.id == _state.value.product.id }
             _state.value = _state.value.copy(
                 cartState = cartState.copy(
                     isLoading = false, productCount = products.size
+                ), product = _state.value.product.copy(
+                    productInCart = productInCart
                 )
             )
         }
     }
 
+    fun removeFromCart(productId: Int) {
+        viewModelScope.launch {
+            cartRepository.removeFromCart(productId)
+        }
+    }
 }
