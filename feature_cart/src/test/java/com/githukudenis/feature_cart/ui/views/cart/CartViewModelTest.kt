@@ -5,11 +5,13 @@ import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.feature_cart.data.repo.CartRepository
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MediumTest
 class CartViewModelTest {
 
@@ -28,7 +30,7 @@ class CartViewModelTest {
         productsRepository = FakeProductsRepositoryImpl()
         userPreferencesRepository = FakeUserPrefsRepository()
         cartViewModel = CartViewModel(
-            cartRepository, productsRepository,userPreferencesRepository
+            cartRepository, productsRepository, userPreferencesRepository
         )
     }
 
@@ -38,5 +40,16 @@ class CartViewModelTest {
         cartViewModel.uiState.value.cartState?.let { cartState ->
             assertThat(cartState.products.size).isEqualTo(7)
         }
+    }
+
+    @Test
+    fun `remove item from cart`() = runTest {
+        cartViewModel.getProductsInCart(userId = 12)
+        val products = cartViewModel.uiState.value.cartState?.products
+        val firstProduct = products?.first()
+        if (firstProduct != null) {
+            cartViewModel.removeItemFromCart(firstProduct)
+        }
+        assertThat(products).doesNotContain(firstProduct)
     }
 }
