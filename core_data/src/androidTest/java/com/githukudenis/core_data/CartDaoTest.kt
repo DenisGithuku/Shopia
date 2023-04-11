@@ -3,8 +3,8 @@ package com.githukudenis.core_data
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.filters.SmallTest
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.githukudenis.core_data.data.local.db.CartDao
 import com.githukudenis.core_data.data.local.db.ShopiaDatabase
 import com.githukudenis.core_data.data.local.db.model.cart.Product
@@ -98,6 +98,18 @@ class CartDaoTest {
         )
         cartDao.insertProducts(products)
         cartDao.deleteCart()
+        val productCount = cartDao.getProductCount()
+        assertThat(productCount).isEqualTo(0)
+    }
+
+    @Test
+    fun deleteProduct() = runTest {
+        val product = Product(
+            productId = 3,
+            quantity = 11
+        )
+        cartDao.insertProduct(product)
+        cartDao.deleteProduct(product)
         val productCount = cartDao.getProductCount()
         assertThat(productCount).isEqualTo(0)
     }
