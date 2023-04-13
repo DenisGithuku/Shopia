@@ -74,7 +74,7 @@ class ProductsViewModelTest {
         productsViewModel.changeSelectedCategory(categories.last().value)
         productsViewModel.refreshProducts()
         val productCount = productsViewModel.state.value.products.count {
-            it.category == categories.last().value
+            it.product?.category == categories.last().value
         }
 
         assertThat(productCount).isEqualTo(2)
@@ -98,10 +98,10 @@ class ProductsViewModelTest {
 
     @Test
     fun `get cart product count`() = runTest {
-        productsViewModel.getProductsInCartCount(12)
+        productsViewModel.getProductsInCart(12)
         val cart = productsViewModel.state.value.cartState
         cart?.let {  cartState ->
-            cartState.productCount?.let { count ->
+            cartState.products.size.let { count ->
                 assertThat(count).isEqualTo(7)
             }
         }

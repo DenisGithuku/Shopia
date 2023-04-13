@@ -64,12 +64,19 @@ class CartRepositoryImpl @Inject constructor(
                  clear cart for current user
                  */
                 cartDao.deleteCart()
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+    }
 
-                /*
-                reset the id to default value
-                 */
-                userPreferencesRepository.storeUserId(-1)
-                userPreferencesRepository.updateUserLoggedIn(false)
+    override suspend fun removeFromCart(productId: Int) {
+        try {
+            withContext(shopiaCoroutineDispatcher.ioDispatcher) {
+                val product = cartDao.getAllProducts().find {
+                    it.productId == productId
+                }
+                product?.let { cartDao.deleteProduct(it) }
             }
         } catch (e: Exception) {
             Timber.e(e)

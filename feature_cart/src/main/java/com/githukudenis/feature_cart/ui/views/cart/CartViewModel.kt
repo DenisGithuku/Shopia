@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
-import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_cart.data.repo.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartRepository: CartRepository,
-    private val productsRepository: ProductsRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -54,5 +52,9 @@ class CartViewModel @Inject constructor(
                 isLoading = false, cartState = cartState
             )
         }
+    }
+
+    suspend fun removeItemFromCart(productInCart: ProductInCart) {
+
     }
 }

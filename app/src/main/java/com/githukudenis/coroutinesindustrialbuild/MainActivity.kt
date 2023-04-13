@@ -11,7 +11,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.githukudenis.core_data.util.Constants
-import com.githukudenis.core_nav.CoroutinesApp
+import com.githukudenis.core_nav.ShopiaApp
 import com.githukudenis.feature_product.workers.RefreshProductsWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isLoggedIn = mainViewModel.uiState.collectAsStateWithLifecycle().value.userLoggedIn
-            CoroutinesApp(isLoggedIn = isLoggedIn)
+            ShopiaApp(isLoggedIn = isLoggedIn)
         }
 
         WorkManager.getInstance(this).getWorkInfosByTagLiveData(Constants.products_sync_worker)

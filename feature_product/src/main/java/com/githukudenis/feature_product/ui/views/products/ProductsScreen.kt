@@ -2,7 +2,6 @@ package com.githukudenis.feature_product.ui.views.products
 
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -22,30 +21,31 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,36 +62,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.githukudenis.feature_product.R
 
 @OptIn(
     ExperimentalMaterialApi::class,
-    ExperimentalGlideComposeApi::class,
-    ExperimentalAnimationApi::class
+    ExperimentalGlideComposeApi::class
 )
 @Composable
 fun ProductsScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     onOpenProfile: () -> Unit,
+    onOpenAbout: () -> Unit,
     onOpenProductDetails: (Int) -> Unit,
     onOpenCart: () -> Unit
 ) {
     val context = LocalContext.current
     val productsViewModel: ProductsViewModel = hiltViewModel()
-    val state by productsViewModel.state.collectAsState()
+    val state by productsViewModel.state.collectAsStateWithLifecycle()
     val isRefreshing = state.isRefreshing
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts)
     })
     val categories = state.categories.toList()
-
-    val modalBottomSheetState = remember {
-        ModalBottomSheetState(
-            initialValue = ModalBottomSheetValue.Hidden
-        )
+    var optionsMenuOpen by rememberSaveable {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(key1 = state.userMessages) {
@@ -104,147 +103,191 @@ fun ProductsScreen(
         }
     }
 
-    ModalBottomSheetLayout(sheetShape = MaterialTheme.shapes.large.copy(
-        CornerSize(16.dp)
-    ),
-        sheetState = modalBottomSheetState,
-        sheetElevation = 16.dp,
-        scrimColor = Color.LightGray.copy(alpha = 0.1f),
-        sheetContent = {
-            Column {
-                Text("some text")
-            }
-        }) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 12.dp)
-                .pullRefresh(pullRefreshState)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 12.dp)
+            .pullRefresh(pullRefreshState)
+    ) {
+
+        LazyColumn(
+            modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
-            LazyColumn(
-                modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                item {
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Shopia", style = TextStyle(
-                                fontSize = 30.sp, fontWeight = FontWeight.Bold
-                            )
+            item {
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Shopia", style = TextStyle(
+                            fontSize = 30.sp, fontWeight = FontWeight.Bold
                         )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
 
-                            state.cartState?.let { cart ->
-                                cart.productCount?.let { count ->
-                                    CartItem(
-                                        itemCount = count,
-                                        onOpenCart = onOpenCart,
-                                        modifier = modifier,
-                                        contentDescription = context.getString(R.string.cart)
-                                    )
-                                }
+                        state.cartState?.let { cart ->
+                            cart.products.size.let { count ->
+                                CartItem(
+                                    itemCount = count,
+                                    onOpenCart = onOpenCart,
+                                    modifier = modifier,
+                                    contentDescription = context.getString(R.string.cart)
+                                )
                             }
-                            Crossfade(
-                                targetState = state.userState?.userLoading
-                            ) { userLoading ->
-                                userLoading?.let { loading ->
-                                    when (loading) {
-                                        true -> {
-                                            CircularProgressIndicator()
-                                        }
-
-                                        false -> {
-                                            ProfileAvatar(username = "${state.userState?.currentUser?.username}",
-                                                onClick = { onOpenProfile() })
-                                        }
+                        }
+                        Crossfade(
+                            targetState = state.userState?.userLoading
+                        ) { userLoading ->
+                            userLoading?.let { loading ->
+                                when (loading) {
+                                    true -> {
+                                        CircularProgressIndicator()
                                     }
 
+                                    false -> {
+                                        ProfileAvatar(username = "${state.userState?.currentUser?.username}",
+                                            onClick = { onOpenProfile() })
+                                    }
                                 }
+
+                            }
+                        }
+
+                        IconButton(onClick = {
+                            optionsMenuOpen = !optionsMenuOpen
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert, contentDescription = "More items"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = optionsMenuOpen,
+                            onDismissRequest = { optionsMenuOpen = !optionsMenuOpen }) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    optionsMenuOpen = !optionsMenuOpen
+                                    onOpenAbout()
+                                }
+                            ) {
+                                Text(
+                                    text = "About app"
+                                )
                             }
                         }
                     }
                 }
-                item {
-                    LazyRow(
-                        modifier = modifier.padding(horizontal = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = categories
-                        ) { category ->
-                            CategoryItem(category = category.value.replaceFirstChar { char -> char.uppercase() },
-                                selected = state.selectedCategory == category.value,
-                                onSelect = {
-                                    productsViewModel.onEvent(
-                                        ProductsScreenEvent.ChangeCategory(
-                                            category.value
-                                        )
+            }
+            item {
+                LazyRow(
+                    modifier = modifier.padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(
+                        items = categories
+                    ) { category ->
+                        CategoryItem(category = category.value.replaceFirstChar { char -> char.uppercase() },
+                            selected = state.selectedCategory == category.value,
+                            onSelect = {
+                                productsViewModel.onEvent(
+                                    ProductsScreenEvent.ChangeCategory(
+                                        category.value
                                     )
-                                })
-                        }
+                                )
+                            })
                     }
                 }
-                items(items = state.products) { productItem ->
-                    Row(verticalAlignment = Alignment.Top,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onOpenProductDetails(productItem.id)
-                            }
-                            .padding(12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+            }
+            items(items = state.products) { productItem ->
+                Row(verticalAlignment = Alignment.Top,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            productItem.product?.id?.let { onOpenProductDetails(it) }
+                        }
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
 
+                ) {
+
+                    GlideImage(
+                        model = productItem.product?.image,
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = modifier.requiredSize(120.dp)
+                    )
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-
-                        GlideImage(
-                            model = productItem.image,
-                            contentDescription = null,
-                            contentScale = ContentScale.Fit,
-                            modifier = modifier.requiredSize(120.dp)
-                        )
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
+                        productItem.product?.title?.let {
                             Text(
-                                text = productItem.title, style = TextStyle(
+                                text = it, style = TextStyle(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
                                 ), maxLines = 3, overflow = TextOverflow.Ellipsis
                             )
+                        }
+                        productItem.product?.description?.let {
                             Text(
-                                text = productItem.description,
-                                maxLines = 4,
-                                overflow = TextOverflow.Ellipsis
+                                text = it, maxLines = 4, overflow = TextOverflow.Ellipsis
                             )
-                            Text(
-                                text = "${productItem.price}"
-                            )
+                        }
+                        Text(
+                            text = "$ ${productItem.product?.price}"
+                        )
+
+                        Row(
+                            modifier = modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    productItem.product?.id?.let {
+                                        ProductsScreenEvent.AddToCart(
+                                            it
+                                        )
+                                    }?.let {
+                                        productsViewModel.onEvent(
+                                            it
+                                        )
+                                    }
+                                },
+                                shape = RoundedCornerShape(32.dp),
+                                enabled = !productItem.productInCart,
+                            ) {
+                                Text(
+                                    text = "Add to cart"
+                                )
+                            }
+                            if (productItem.productInCart) {
+                                Text(
+                                    text = "In cart", style = TextStyle(
+                                        fontStyle = FontStyle.Italic
+                                    )
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
 
-
-            if (state.error?.isNotEmpty() == true) {
-                Text(
-                    text = state.error ?: "An unknown error occurred",
-                    modifier = modifier.align(Alignment.Center)
-                )
-            }
-
-            PullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
+        if (state.error?.isNotEmpty() == true) {
+            Text(
+                text = state.error ?: "An unknown error occurred",
+                modifier = modifier.align(Alignment.Center)
             )
         }
+
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 
@@ -327,7 +370,7 @@ fun ProfileAvatar(
             .clickable { onClick(username) }, contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "$initial", textAlign = TextAlign.Center, color = Color.White
+            text = initial, textAlign = TextAlign.Center, color = Color.White
         )
     }
 }
