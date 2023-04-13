@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.githukudenis.auth.ui.LoginScreen
+import com.githukudenis.auth.ui.LoginRoute
 import com.githukudenis.feature_cart.ui.views.cart.CartScreen
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
@@ -36,7 +36,7 @@ fun AppNavigator(
             }
         }
         composable(route = AppDestination.Login.route) {
-            LoginScreen(snackBarHostState = snackbarHostState) {
+            LoginRoute(snackBarHostState = snackbarHostState) {
                 navController.navigate(AppDestination.Products.route) {
                     popUpTo(AppDestination.Login.route) {
                         inclusive = true
