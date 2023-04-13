@@ -51,19 +51,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.auth.R
 import com.githukudenis.auth.api.User
+import com.githukudenis.core_data.util.UserMessage
 
-@OptIn(ExperimentalAnimationApi::class)
+
 @Composable
-fun LoginScreen(
-    snackBarHostState: SnackbarHostState, modifier: Modifier = Modifier, onLoggedIn: () -> Unit
+fun LoginRoute(
+    snackBarHostState: SnackbarHostState, onLoggedIn: () -> Unit
 ) {
-
     val loginViewModel: LoginViewModel = hiltViewModel()
     val uiState by loginViewModel.state
-    val passwordIsVisible = uiState.formState.passwordIsVisible
 
     val userOnLogin by rememberUpdatedState(onLoggedIn)
 
@@ -96,7 +94,31 @@ fun LoginScreen(
         UserDialog(dialogState = DialogState.LOADING, message = "Please wait...")
     }
 
+    LoginScreen(username = uiState.formState.username,
+        onUserNameChange = { loginViewModel.onEvent(LoginUiEvent.OnUsernameChange(it)) },
+        password = uiState.formState.password,
+        onPasswordChange = { loginViewModel.onEvent(LoginUiEvent.OnPasswordChange(it)) },
+        onTogglePasswordVisibility = { loginViewModel.onEvent(LoginUiEvent.OnTogglePasswordVisibility) },
+        passwordIsVisible = uiState.formState.passwordIsVisible,
+        formIsValid = uiState.formIsValid,
+        onLogin = { loginViewModel.onEvent(LoginUiEvent.OnLogin(it)) },
+        onShowUserMessage = { loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(it)) })
+}
 
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    username: String,
+    onUserNameChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    onTogglePasswordVisibility: () -> Unit,
+    passwordIsVisible: Boolean,
+    formIsValid: Boolean,
+    onLogin: (User) -> Unit,
+    onShowUserMessage: (UserMessage) -> Unit
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,8 +130,8 @@ fun LoginScreen(
             )
         )
         Spacer(modifier = modifier.height(16.dp))
-        OutlinedTextField(value = uiState.formState.username,
-            onValueChange = { value -> loginViewModel.onEvent(LoginUiEvent.OnUsernameChange(value)) },
+        OutlinedTextField(value = username,
+            onValueChange = { value -> onUserNameChange(value) },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next,
                 capitalization = KeyboardCapitalization.None,
@@ -124,9 +146,8 @@ fun LoginScreen(
             })
         Spacer(modifier = modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = uiState.formState.password,
-            onValueChange = { value -> loginViewModel.onEvent(LoginUiEvent.OnPasswordChange(value)) },
+        OutlinedTextField(value = password,
+            onValueChange = { value -> onPasswordChange(value) },
             placeholder = {
                 Text(
                     text = "Password"
@@ -139,7 +160,7 @@ fun LoginScreen(
             ),
             trailingIcon = {
                 IconButton(onClick = {
-                    loginViewModel.onEvent(LoginUiEvent.OnTogglePasswordVisibility)
+                    onTogglePasswordVisibility()
                 }) {
                     AnimatedContent(
                         targetState = if (passwordIsVisible) R.drawable.ic_close else R.drawable.ic_eye,
@@ -155,26 +176,24 @@ fun LoginScreen(
             shape = RoundedCornerShape(6.dp),
             singleLine = true,
             keyboardActions = KeyboardActions(onDone = {
-                if (uiState.formIsValid) {
-                    val (username, password) = uiState.formState
+                if (formIsValid) {
                     val user = User(username, password)
-                    loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
+                    onLogin(user)
                 } else {
                     val userMessage = UserMessage(id = 0, message = "Invalid details")
-                    loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(userMessage))
+                    onShowUserMessage(userMessage)
                 }
             })
         )
         Spacer(modifier = modifier.height(16.dp))
 
         Button(onClick = {
-            if (uiState.formIsValid) {
-                val (username, password) = uiState.formState
+            if (formIsValid) {
                 val user = User(username, password)
-                loginViewModel.onEvent(LoginUiEvent.OnLogin(user))
+                onLogin(user)
             } else {
                 val userMessage = UserMessage(id = 0, message = "Invalid details")
-                loginViewModel.onEvent(LoginUiEvent.OnShowUserMessage(userMessage))
+                onShowUserMessage(userMessage)
             }
         }) {
             Text(
@@ -259,7 +278,13 @@ enum class DialogState {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(snackBarHostState = SnackbarHostState()) {
-
-    }
+    LoginScreen(username = "",
+        onUserNameChange = {},
+        onShowUserMessage = {},
+        password = "",
+        onPasswordChange = {},
+        onTogglePasswordVisibility = {},
+        passwordIsVisible = true,
+        formIsValid = true,
+        onLogin = {})
 }
