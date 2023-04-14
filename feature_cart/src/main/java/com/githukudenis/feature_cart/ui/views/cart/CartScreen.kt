@@ -41,13 +41,25 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @Composable
+fun CartRoute(
+    onOpenProductDetails: (Int) -> Unit
+) {
+    val cartViewModel: CartViewModel = hiltViewModel()
+    val state by cartViewModel.uiState
+
+
+    CartScreen(
+        onOpenProductDetails = onOpenProductDetails,
+        cartState = state.cartState,
+    )
+}
+@Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
     onOpenProductDetails: (Int) -> Unit,
-    cartViewModel: CartViewModel = hiltViewModel(),
+    cartState: CartState?
 ) {
-    val state by cartViewModel.uiState
-    val totalPrice = state.cartState?.let { cart ->
+    val totalPrice = cartState?.let { cart ->
         cart.products.map { productInCart ->
             productInCart.productDBO?.price ?: 0.0
         }
@@ -56,12 +68,12 @@ fun CartScreen(
     }
 
     val lazyColumnState = rememberLazyListState()
+
     val cartStateIsVisible = remember {
         derivedStateOf {
             lazyColumnState.firstVisibleItemIndex >= 1
         }
     }
-
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             state = lazyColumnState,
@@ -82,7 +94,7 @@ fun CartScreen(
                     )
                 }
             }
-            state.cartState?.let { cart ->
+            cartState?.let { cart ->
                 items(cart.products) { product ->
                     ProductInCartItem(productInCart = product, onOpenProductDetails = { productId ->
                         onOpenProductDetails(productId)
@@ -167,5 +179,5 @@ fun ProductInCartItem(
 @Preview
 @Composable
 fun CartScreenPreview() {
-    CartScreen(onOpenProductDetails = {})
+    CartScreen(onOpenProductDetails = {}, cartState = CartState())
 }
