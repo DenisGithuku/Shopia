@@ -81,11 +81,13 @@ class ProductsViewModel @Inject constructor(
         productsRepository.getCategories().collect { result ->
             val category = ProductCategory(value = "all")
             val categories = result.toMutableList().apply { add(index = 0, category) }
-            _state.value = _state.value.copy(
-                categories = categories,
-                selectedCategory = categories.first().value,
-                categoriesLoading = false
-            )
+            _state.update { state ->
+                state.copy(
+                    categories = categories,
+                    selectedCategory = categories.first().value,
+                    categoriesLoading = false
+                )
+            }
         }
     }
 
@@ -113,9 +115,11 @@ class ProductsViewModel @Inject constructor(
     }
 
     suspend fun getProductsInCategory(category: String) {
-        _state.value = _state.value.copy(
-            isRefreshing = true
-        )
+        _state.update { state ->
+            state.copy(
+                isRefreshing = true
+            )
+        }
         productsRepository.getProductsInCategory(category).collect { productsInCategory ->
 
             val products = productsInCategory.map { productFromRepo ->
@@ -123,22 +127,25 @@ class ProductsViewModel @Inject constructor(
                     productInCart.productDBO?.id == productFromRepo.id
                 }?.let { productIsInCart ->
                     ProductState(
-                        productInCart = productIsInCart,
-                        product = productFromRepo
+                        productInCart = productIsInCart, product = productFromRepo
                     )
                 }
             } as List<ProductState>
-            _state.value = _state.value.copy(
-                products = products, isRefreshing = false
-            )
+            _state.update { state ->
+                state.copy(
+                    products = products, isRefreshing = false
+                )
+            }
         }
 
     }
 
     fun changeSelectedCategory(category: String) {
-        _state.value = _state.value.copy(
-            selectedCategory = category
-        )
+        _state.update { state ->
+            state.copy(
+                selectedCategory = category
+            )
+        }
     }
 
     fun refreshProducts() {
@@ -177,11 +184,13 @@ class ProductsViewModel @Inject constructor(
                 )
             }.collect { user ->
                 Timber.i(user.toString())
-                _state.value = _state.value.copy(
-                    userState = userState.copy(
-                        currentUser = user, userLoading = false
-                    ),
-                )
+                _state.update { state ->
+                    state.copy(
+                        userState = userState.copy(
+                            currentUser = user, userLoading = false
+                        ),
+                    )
+                }
             }
         }
     }
@@ -199,9 +208,11 @@ class ProductsViewModel @Inject constructor(
         val cartState = CartState().copy(
             isLoading = true
         )
-        _state.value = _state.value.copy(
-            cartState = cartState
-        )
+        _state.update { state ->
+            state.copy(
+                cartState = cartState
+            )
+        }
         cartRepository.getProductsInCart(userId).catch { throwable ->
             val userMessage = UserMessage(id = 0, message = throwable.message)
             val userMessages = mutableListOf<UserMessage>()
@@ -210,11 +221,13 @@ class ProductsViewModel @Inject constructor(
                 userMessages = userMessages, cartState = cartState.copy(isLoading = false)
             )
         }.collectLatest { products ->
-            _state.value = _state.value.copy(
-                cartState = cartState.copy(
-                    isLoading = false, products = products
+            _state.update { state ->
+                state.copy(
+                    cartState = cartState.copy(
+                        isLoading = false, products = products
+                    )
                 )
-            )
+            }
         }
     }
 

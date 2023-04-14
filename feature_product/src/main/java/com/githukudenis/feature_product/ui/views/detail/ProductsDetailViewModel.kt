@@ -61,11 +61,15 @@ class ProductsDetailViewModel @Inject constructor(
 
                 id?.let { Product(it, quantity) }?.let { product ->
                     insertProductIntoCart(product)
+                    refreshCart()
                 }
             }
 
             ProductDetailEvent.RemoveFromCart -> {
-                _state.value.product.id?.let { removeFromCart(it) }
+                _state.value.product.id?.let {
+                    removeFromCart(it)
+                    refreshCart()
+                }
             }
         }
     }
@@ -155,6 +159,16 @@ class ProductsDetailViewModel @Inject constructor(
     fun removeFromCart(productId: Int) {
         viewModelScope.launch {
             cartRepository.removeFromCart(productId)
+        }
+    }
+
+    fun refreshCart() {
+        viewModelScope.launch {
+            userPreferencesRepository.userPreferencesFlow.collectLatest { prefs ->
+                checkNotNull(prefs.userId).also { userId ->
+                    getCartState(userId)
+                }
+            }
         }
     }
 }

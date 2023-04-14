@@ -41,7 +41,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +62,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.githukudenis.feature_product.R
@@ -82,7 +82,7 @@ fun ProductsScreen(
 ) {
     val context = LocalContext.current
     val productsViewModel: ProductsViewModel = hiltViewModel()
-    val state by productsViewModel.state.collectAsState()
+    val state by productsViewModel.state.collectAsStateWithLifecycle()
     val isRefreshing = state.isRefreshing
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
         productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts)
