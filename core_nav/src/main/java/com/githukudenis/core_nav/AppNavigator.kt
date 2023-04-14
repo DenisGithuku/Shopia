@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.githukudenis.auth.ui.LoginRoute
-import com.githukudenis.feature_cart.ui.views.cart.CartScreen
+import com.githukudenis.feature_cart.ui.views.cart.CartRoute
 import com.githukudenis.feature_product.ui.views.SplashScreen
 import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
 import com.githukudenis.feature_product.ui.views.products.ProductsScreen
@@ -85,7 +85,7 @@ fun AppNavigator(
             ProductDetailScreen(snackbarHostState = snackbarHostState)
         }
         composable(route = AppDestination.CartScreen.route) {
-            CartScreen(onOpenProductDetails = { productId ->
+            CartRoute(onOpenProductDetails = { productId ->
                 navController.navigate(AppDestination.ProductDetail.route + "/${productId}") {
                     popUpTo(AppDestination.CartScreen.route)
                 }
