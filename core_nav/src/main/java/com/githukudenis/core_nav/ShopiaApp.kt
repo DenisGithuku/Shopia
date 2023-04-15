@@ -53,7 +53,7 @@ fun ShopiaApp(
             ) {
                 AppNavigator(
                     navController = navController,
-                    snackbarHostState = snackbarHostState,
+                    snackBarHostState = snackbarHostState,
                     afterSplashDestination = startDestination
                 )
             }
