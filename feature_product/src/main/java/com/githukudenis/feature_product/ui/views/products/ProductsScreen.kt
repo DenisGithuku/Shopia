@@ -1,5 +1,6 @@
 package com.githukudenis.feature_product.ui.views.products
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
@@ -67,13 +68,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.githukudenis.feature_product.R
 
-@OptIn(
-    ExperimentalMaterialApi::class,
-    ExperimentalGlideComposeApi::class
-)
+
 @Composable
-fun ProductsScreen(
-    modifier: Modifier = Modifier,
+fun ProductsRoute(
     snackbarHostState: SnackbarHostState,
     onOpenProfile: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -84,9 +81,6 @@ fun ProductsScreen(
     val productsViewModel: ProductsViewModel = hiltViewModel()
     val state by productsViewModel.state.collectAsStateWithLifecycle()
     val isRefreshing = state.isRefreshing
-    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
-        productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts)
-    })
     val categories = state.categories.toList()
     var optionsMenuOpen by rememberSaveable {
         mutableStateOf(false)
@@ -102,6 +96,45 @@ fun ProductsScreen(
                 ?.let { productsViewModel.onEvent(it) }
         }
     }
+
+
+    ProductsScreen(onOpenProfile = { onOpenProfile() },
+        onOpenAbout = { onOpenAbout() },
+        onOpenProductDetails = { onOpenProductDetails(it) },
+        onOpenCart = { onOpenCart() },
+        menuIsOpen = optionsMenuOpen,
+        onToggleOptionsMenu = { optionsMenuOpen = !optionsMenuOpen },
+        isRefreshing = isRefreshing,
+        onRefresh = { productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts) },
+        state = state,
+        onAddToCart = { productsViewModel.onEvent(ProductsScreenEvent.AddToCart(it)) },
+        onChangeCategory = { productsViewModel.onEvent(ProductsScreenEvent.ChangeCategory(it)) },
+        context = context
+    )
+}
+
+@OptIn(
+    ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class
+)
+@Composable
+fun ProductsScreen(
+    modifier: Modifier = Modifier,
+    onOpenProfile: () -> Unit,
+    onOpenAbout: () -> Unit,
+    onOpenProductDetails: (Int) -> Unit,
+    onOpenCart: () -> Unit,
+    menuIsOpen: Boolean,
+    onToggleOptionsMenu: () -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    state: ProductsScreenState,
+    onAddToCart: (Int) -> Unit,
+    onChangeCategory: (String) -> Unit,
+    context: Context
+) {
+
+    val pullRefreshState =
+        rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
 
     Box(
         modifier = Modifier
@@ -157,21 +190,19 @@ fun ProductsScreen(
                         }
 
                         IconButton(onClick = {
-                            optionsMenuOpen = !optionsMenuOpen
+                            onToggleOptionsMenu()
                         }) {
                             Icon(
-                                imageVector = Icons.Default.MoreVert, contentDescription = "More items"
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More items"
                             )
                         }
-                        DropdownMenu(
-                            expanded = optionsMenuOpen,
-                            onDismissRequest = { optionsMenuOpen = !optionsMenuOpen }) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    optionsMenuOpen = !optionsMenuOpen
-                                    onOpenAbout()
-                                }
-                            ) {
+                        DropdownMenu(expanded = menuIsOpen,
+                            onDismissRequest = { onToggleOptionsMenu() }) {
+                            DropdownMenuItem(onClick = {
+                                onToggleOptionsMenu()
+                                onOpenAbout()
+                            }) {
                                 Text(
                                     text = "About app"
                                 )
@@ -186,16 +217,12 @@ fun ProductsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(
-                        items = categories
+                        items = state.categories.toList()
                     ) { category ->
                         CategoryItem(category = category.value.replaceFirstChar { char -> char.uppercase() },
                             selected = state.selectedCategory == category.value,
                             onSelect = {
-                                productsViewModel.onEvent(
-                                    ProductsScreenEvent.ChangeCategory(
-                                        category.value
-                                    )
-                                )
+                                onChangeCategory(it)
                             })
                     }
                 }
@@ -247,13 +274,7 @@ fun ProductsScreen(
                             OutlinedButton(
                                 onClick = {
                                     productItem.product?.id?.let {
-                                        ProductsScreenEvent.AddToCart(
-                                            it
-                                        )
-                                    }?.let {
-                                        productsViewModel.onEvent(
-                                            it
-                                        )
+                                        onAddToCart(it)
                                     }
                                 },
                                 shape = RoundedCornerShape(32.dp),
@@ -278,7 +299,7 @@ fun ProductsScreen(
 
         if (state.error?.isNotEmpty() == true) {
             Text(
-                text = state.error ?: "An unknown error occurred",
+                text = state.error,
                 modifier = modifier.align(Alignment.Center)
             )
         }

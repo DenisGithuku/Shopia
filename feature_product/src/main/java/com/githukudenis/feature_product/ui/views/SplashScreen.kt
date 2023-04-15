@@ -17,9 +17,15 @@ import com.githukudenis.core_design.R
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(
-    modifier: Modifier = Modifier,
+fun SplashRoute(
     onNavigateToProducts: () -> Unit
+) {
+    SplashScreen(onNavigateToProducts = onNavigateToProducts)
+}
+
+@Composable
+fun SplashScreen(
+    modifier: Modifier = Modifier, onNavigateToProducts: () -> Unit
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
@@ -29,10 +35,8 @@ fun SplashScreen(
 
         LaunchedEffect(key1 = Unit) {
             animateSplashImage.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(
-                    durationMillis = 2000,
-                    easing = EaseOut
+                targetValue = 1f, animationSpec = tween(
+                    durationMillis = 2000, easing = EaseOut
                 )
             )
             delay(timeMillis = 3000)
@@ -43,9 +47,7 @@ fun SplashScreen(
             modifier = modifier.graphicsLayer {
                 scaleX = animateSplashImage.value * 0.5f
                 scaleY = animateSplashImage.value * 0.5f
-            },
-            painter = painterResource(id = R.drawable.blue_cart),
-            contentDescription = null
+            }, painter = painterResource(id = R.drawable.blue_cart), contentDescription = null
         )
 
     }

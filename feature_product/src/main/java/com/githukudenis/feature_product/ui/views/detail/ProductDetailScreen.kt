@@ -54,11 +54,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalGlideComposeApi::class)
+
 @Composable
-fun ProductDetailScreen(
-    modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
+fun ProductDetailRoute(
+    snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier
 ) {
     val productsDetailViewModel: ProductsDetailViewModel = hiltViewModel()
     val state by productsDetailViewModel.state
@@ -88,6 +87,21 @@ fun ProductDetailScreen(
             }
         }
     }
+
+    ProductDetailScreen(modifier = modifier,
+        state = state,
+        onAddToCart = { productsDetailViewModel.onEvent(ProductDetailEvent.AddToCart(it)) },
+        onRemoveFromCart = { productsDetailViewModel.onEvent(ProductDetailEvent.RemoveFromCart) })
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProductDetailScreen(
+    modifier: Modifier = Modifier,
+    state: ProductDetailScreenState,
+    onAddToCart: (Int) -> Unit,
+    onRemoveFromCart: () -> Unit
+) {
 
     Column(
         modifier = modifier
@@ -147,11 +161,11 @@ fun ProductDetailScreen(
                 }
             }
         }
-        AddToCartSection(onAddToCart = { quantity ->
-            productsDetailViewModel.onEvent(
-                ProductDetailEvent.AddToCart(quantity)
-            )
-        }, productInCart = state.product.productInCart, removeFromCart = { productsDetailViewModel.onEvent(ProductDetailEvent.RemoveFromCart) })
+        AddToCartSection(
+            onAddToCart = { quantity ->
+                onAddToCart(quantity)
+            }, productInCart = state.product.productInCart, removeFromCart = onRemoveFromCart
+        )
     }
 }
 
