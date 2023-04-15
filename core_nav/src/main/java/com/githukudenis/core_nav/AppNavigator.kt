@@ -9,16 +9,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.githukudenis.auth.ui.LoginRoute
 import com.githukudenis.feature_cart.ui.views.cart.CartRoute
-import com.githukudenis.feature_product.ui.views.SplashScreen
-import com.githukudenis.feature_product.ui.views.detail.ProductDetailScreen
-import com.githukudenis.feature_product.ui.views.products.ProductsScreen
+import com.githukudenis.feature_product.ui.views.SplashRoute
+import com.githukudenis.feature_product.ui.views.detail.ProductDetailRoute
+import com.githukudenis.feature_product.ui.views.products.ProductsRoute
 import com.githukudenis.feature_user.ui.about.AboutRoute
 import com.githukudenis.feature_user.ui.profile.ProfileRoute
 
 @Composable
 fun AppNavigator(
     navController: NavHostController,
-    snackbarHostState: SnackbarHostState,
+    snackBarHostState: SnackbarHostState,
     afterSplashDestination: AppDestination
 ) {
     NavHost(
@@ -27,7 +27,7 @@ fun AppNavigator(
         composable(
             route = AppDestination.Splash.route
         ) {
-            SplashScreen {
+            SplashRoute {
                 navController.navigate(afterSplashDestination.route) {
                     popUpTo(AppDestination.Splash.route) {
                         inclusive = true
@@ -36,7 +36,7 @@ fun AppNavigator(
             }
         }
         composable(route = AppDestination.Login.route) {
-            LoginRoute(snackBarHostState = snackbarHostState) {
+            LoginRoute(snackBarHostState = snackBarHostState) {
                 navController.navigate(AppDestination.Products.route) {
                     popUpTo(AppDestination.Login.route) {
                         inclusive = true
@@ -47,7 +47,7 @@ fun AppNavigator(
         composable(
             route = AppDestination.Products.route,
         ) {
-            ProductsScreen(snackbarHostState = snackbarHostState, onOpenProfile = {
+            ProductsRoute(snackbarHostState = snackBarHostState, onOpenProfile = {
                 navController.navigate(AppDestination.ProfileScreen.route) {
                     popUpTo(AppDestination.ProfileScreen.route) {
                         saveState = true
@@ -82,7 +82,7 @@ fun AppNavigator(
                 type = NavType.IntType
             })
         ) {
-            ProductDetailScreen(snackbarHostState = snackbarHostState)
+            ProductDetailRoute(snackbarHostState = snackBarHostState)
         }
         composable(route = AppDestination.CartScreen.route) {
             CartRoute(onOpenProductDetails = { productId ->
@@ -99,7 +99,7 @@ fun AppNavigator(
                         inclusive = true
                     }
                 }
-            }, snackbarHostState = snackbarHostState)
+            }, snackbarHostState = snackBarHostState)
         }
 
         composable(route = AppDestination.About.route) {
