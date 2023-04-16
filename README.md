@@ -77,12 +77,16 @@ To attain this the app has the following modules:
 
 #### Products
 <p align = "center">
-<img src = "https://user-images.githubusercontent.com/47632042/229040667-c6730998-7f47-45e9-814b-9190482a1d0c.png"
+<img src = "https://user-images.githubusercontent.com/47632042/232340032-52ce1a7e-279a-44c9-b6cb-1edd97880ee1.png"
  width = "30%" height = "30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-<img src = "https://user-images.githubusercontent.com/47632042/229040842-2232b0be-a850-4f48-a94e-d1ec5c4df0e4.png"
+<img src = "https://user-images.githubusercontent.com/47632042/232340366-15effa35-2eea-4341-949e-48a67667f6a9.png)"
  width = "30%" height = "30%">
 </p>
+<p align = "center">
+<img src = "https://user-images.githubusercontent.com/47632042/232340032-52ce1a7e-279a-44c9-b6cb-1edd97880ee1.png" width = "30%" height = "30%">
+</p>
+
 
 #### Profile
 <img src = "https://user-images.githubusercontent.com/47632042/229041036-b19b88f6-1a36-4f82-9eb5-c86e66162f25.png" width = "30%" height = "30%">
