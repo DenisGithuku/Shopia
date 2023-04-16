@@ -77,10 +77,10 @@ To attain this the app has the following modules:
 
 #### Products
 <p align = "center">
-<img src = "https://user-images.githubusercontent.com/47632042/232340032-52ce1a7e-279a-44c9-b6cb-1edd97880ee1.png"
+<img src = "https://user-images.githubusercontent.com/47632042/232340530-aa2b85ab-ed86-49c4-9f87-0e5f97863df8.png"
  width = "30%" height = "30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-<img src = "https://user-images.githubusercontent.com/47632042/232340366-15effa35-2eea-4341-949e-48a67667f6a9.png)"
+<img src = "https://user-images.githubusercontent.com/47632042/232340441-79e793fe-efbd-4cbd-ac4d-3c029d6c84e3.png"
  width = "30%" height = "30%">
 </p>
 <p align = "center">
