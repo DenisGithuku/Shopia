@@ -36,12 +36,11 @@ class ProductsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             userPreferencesRepository.userPreferencesFlow.collectLatest { prefs ->
-                val (_, _, userId, username) = prefs
-
-                username?.let { name ->
-                    getCurrentUserInfo(name)
+                _state.update {
+                    it.copy(username = prefs.username)
                 }
-                userId?.let { id -> getProductsInCart(id) }
+
+                prefs.userId?.let { id -> getProductsInCart(id) }
 
                 getCategories()
                 getAllProducts()
@@ -97,8 +96,8 @@ class ProductsViewModel @Inject constructor(
         )
         productsRepository.getProducts().buffer(capacity = 10).collect { result ->
             val products = result.map { product ->
-                _state.value.cartState?.products?.any { productInCart -> productInCart.productDBO?.id == product.id }
-                    ?.let {
+                _state.value.cartState.products.any { productInCart -> productInCart.productDBO?.id == product.id }
+                    .let {
                         ProductState(
                             productInCart = it, product = product
                         )
@@ -106,9 +105,7 @@ class ProductsViewModel @Inject constructor(
             }
             _state.update { state ->
                 state.copy(
-                    productsLoading = false,
-                    isRefreshing = false,
-                    products = products as List<ProductState>
+                    productsLoading = false, isRefreshing = false, products = products
                 )
             }
         }
@@ -123,14 +120,14 @@ class ProductsViewModel @Inject constructor(
         productsRepository.getProductsInCategory(category).collect { productsInCategory ->
 
             val products = productsInCategory.map { productFromRepo ->
-                _state.value.cartState?.products?.any { productInCart ->
+                _state.value.cartState.products.any { productInCart ->
                     productInCart.productDBO?.id == productFromRepo.id
-                }?.let { productIsInCart ->
+                }.let { productIsInCart ->
                     ProductState(
                         productInCart = productIsInCart, product = productFromRepo
                     )
                 }
-            } as List<ProductState>
+            }
             _state.update { state ->
                 state.copy(
                     products = products, isRefreshing = false
@@ -154,7 +151,7 @@ class ProductsViewModel @Inject constructor(
                 checkNotNull(it.userId).also { id ->
                     getProductsInCart(id)
                 }
-                Timber.d(_state.value.cartState?.products.toString())
+                Timber.d(_state.value.cartState.products.toString())
                 _state.value.selectedCategory?.let { category ->
                     when (category.lowercase()) {
                         "all" -> {
@@ -170,30 +167,38 @@ class ProductsViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentUserInfo(username: String) {
-        viewModelScope.launch {
-            val userState = UserState(
-                userLoading = true
-            )
-            userRepository.getUserByUserName(username).catch {
-                val userMessage = UserMessage(id = 0, message = it.message)
-                val userMessages = mutableListOf<UserMessage>()
-                userMessages.add(userMessage)
-                _state.value = _state.value.copy(
-                    userMessages = userMessages, userState = userState.copy(userLoading = false)
-                )
-            }.collect { user ->
-                Timber.i(user.toString())
-                _state.update { state ->
-                    state.copy(
-                        userState = userState.copy(
-                            currentUser = user, userLoading = false
-                        ),
-                    )
-                }
-            }
-        }
-    }
+//    fun getCurrentUserInfo(username: String) {
+//        viewModelScope.launch {
+//            val userState = _state.value.userState.copy(
+//                userLoading = true
+//            )
+//
+//            _state.update {
+//                it.copy(userState = userState)
+//            }
+//
+//            userRepository.getUserDetails(username).catch {
+//                val userMessage = UserMessage(id = 0, message = it.message)
+//                val userMessages = mutableListOf<UserMessage>()
+//                userMessages.add(userMessage)
+//                _state.update { oldState ->
+//                    oldState.copy(
+//                        userMessages = userMessages,
+//                        userState = userState.copy(userLoading = false)
+//                    )
+//                }
+//            }.collect { user ->
+//                Timber.i(user.toString())
+//                _state.update { state ->
+//                    state.copy(
+//                        userState = userState.copy(
+//                            currentUser = user, userLoading = false
+//                        ),
+//                    )
+//                }
+//            }
+//        }
+//    }
 
     private fun refreshUserMessages(messageId: Int) {
         val userMessages = _state.value.userMessages.filterNot { userMessage ->
@@ -205,9 +210,10 @@ class ProductsViewModel @Inject constructor(
     }
 
     suspend fun getProductsInCart(userId: Int) {
-        val cartState = CartState().copy(
+        val cartState = _state.value.cartState.copy(
             isLoading = true
         )
+
         _state.update { state ->
             state.copy(
                 cartState = cartState

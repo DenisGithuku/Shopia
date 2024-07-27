@@ -114,7 +114,7 @@ class LoginViewModel @Inject constructor(
                 * user details from the server
                 */
                 val userDeferred = async {
-                    userRepository.getUserByUserName(_state.value.formState.username)
+                    userRepository.getUserDetails(_state.value.formState.username)
                 }
                 userDeferred.await().catch {
                     Timber.e(it)

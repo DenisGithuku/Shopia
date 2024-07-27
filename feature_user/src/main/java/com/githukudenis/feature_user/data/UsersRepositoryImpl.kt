@@ -27,7 +27,7 @@ class UsersRepositoryImpl @Inject constructor(
             }
         }.flowOn(shopiaCoroutineDispatcher.ioDispatcher)
 
-    override suspend fun getUserByUserName(username: String): Flow<UsersDTOItem?> {
+    override suspend fun getUserDetails(username: String): Flow<UsersDTOItem?> {
         return flow {
             try {
                 val response = usersApiService.getAllUsers()

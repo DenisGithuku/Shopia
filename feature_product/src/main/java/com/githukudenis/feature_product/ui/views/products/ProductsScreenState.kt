@@ -14,14 +14,9 @@ data class ProductsScreenState(
     val products: List<ProductState> = emptyList(),
     val error: String? = null,
     val selectedCategory: String? = null,
-    val userState: UserState? = null,
-    val cartState: CartState? = null,
+    val username: String? = null,
+    val cartState: CartState = CartState(),
     val userMessages: List<UserMessage> = emptyList()
-)
-
-data class UserState(
-    val currentUser: UsersDTOItem? = null,
-    val userLoading: Boolean = false,
 )
 
 data class ProductState(

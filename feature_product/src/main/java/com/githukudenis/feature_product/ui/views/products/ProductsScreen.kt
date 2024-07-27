@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -81,7 +82,6 @@ fun ProductsRoute(
     val productsViewModel: ProductsViewModel = hiltViewModel()
     val state by productsViewModel.state.collectAsStateWithLifecycle()
     val isRefreshing = state.isRefreshing
-    val categories = state.categories.toList()
     var optionsMenuOpen by rememberSaveable {
         mutableStateOf(false)
     }
@@ -161,7 +161,7 @@ fun ProductsScreen(
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
 
-                        state.cartState?.let { cart ->
+                        state.cartState.let { cart ->
                             cart.products.size.let { count ->
                                 CartItem(
                                     itemCount = count,
@@ -171,46 +171,32 @@ fun ProductsScreen(
                                 )
                             }
                         }
-                        Crossfade(
-                            targetState = state.userState?.userLoading
-                        ) { userLoading ->
-                            userLoading?.let { loading ->
-                                when (loading) {
-                                    true -> {
-                                        CircularProgressIndicator()
-                                    }
 
-                                    false -> {
-                                        ProfileAvatar(username = "${state.userState?.currentUser?.username}",
-                                            onClick = { onOpenProfile() })
-                                    }
-                                }
+                        ProfileAvatar(username = "${state.username}", onClick = { onOpenProfile() })
 
-                            }
-                        }
+                    }
 
-                        IconButton(onClick = {
+                    IconButton(onClick = {
+                        onToggleOptionsMenu()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert, contentDescription = "More items"
+                        )
+                    }
+                    DropdownMenu(expanded = menuIsOpen,
+                        onDismissRequest = { onToggleOptionsMenu() }) {
+                        DropdownMenuItem(onClick = {
                             onToggleOptionsMenu()
+                            onOpenAbout()
                         }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More items"
+                            Text(
+                                text = "About app"
                             )
-                        }
-                        DropdownMenu(expanded = menuIsOpen,
-                            onDismissRequest = { onToggleOptionsMenu() }) {
-                            DropdownMenuItem(onClick = {
-                                onToggleOptionsMenu()
-                                onOpenAbout()
-                            }) {
-                                Text(
-                                    text = "About app"
-                                )
-                            }
                         }
                     }
                 }
             }
+
             item {
                 LazyRow(
                     modifier = modifier.padding(horizontal = 12.dp),
@@ -299,8 +285,7 @@ fun ProductsScreen(
 
         if (state.error?.isNotEmpty() == true) {
             Text(
-                text = state.error,
-                modifier = modifier.align(Alignment.Center)
+                text = state.error, modifier = modifier.align(Alignment.Center)
             )
         }
 
