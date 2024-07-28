@@ -89,7 +89,6 @@ import com.githukudenis.feature_product.R
 fun ProductsRoute(
     snackbarHostState: SnackbarHostState,
     onOpenProfile: () -> Unit,
-    onOpenAbout: () -> Unit,
     onOpenProductDetails: (Int) -> Unit,
     onOpenCart: () -> Unit
 ) {
@@ -114,8 +113,7 @@ fun ProductsRoute(
 
 
     ProductsScreen(
-//        onOpenProfile = { onOpenProfile() },
-        onOpenAbout = { onOpenAbout() },
+        onOpenProfile = { onOpenProfile() },
         onOpenProductDetails = { onOpenProductDetails(it) },
         onOpenCart = { onOpenCart() },
         menuIsOpen = optionsMenuOpen,
@@ -140,11 +138,11 @@ fun ProductsRoute(
 @Composable
 fun ProductsScreen(
     modifier: Modifier = Modifier,
-    onOpenAbout: () -> Unit,
     onOpenProductDetails: (Int) -> Unit,
     onOpenCart: () -> Unit,
     menuIsOpen: Boolean,
     onToggleOptionsMenu: () -> Unit,
+    onOpenProfile: () -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     state: ProductsScreenState,
@@ -205,12 +203,13 @@ fun ProductsScreen(
                         }
                         DropdownMenu(expanded = menuIsOpen,
                             onDismissRequest = { onToggleOptionsMenu() }) {
+
                             DropdownMenuItem(onClick = {
                                 onToggleOptionsMenu()
-                                onOpenAbout()
+                                onOpenProfile()
                             }) {
                                 Text(
-                                    text = "About app"
+                                    text = "Settings"
                                 )
                             }
                         }

@@ -1,7 +1,6 @@
 package com.githukudenis.feature_product.ui.views
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,7 @@ fun SplashScreen(
         LaunchedEffect(key1 = Unit) {
             animateSplashImage.animateTo(
                 targetValue = 1f, animationSpec = tween(
-                    durationMillis = 2000, easing = EaseOut
+                    durationMillis = 2000
                 )
             )
             delay(timeMillis = 3000)

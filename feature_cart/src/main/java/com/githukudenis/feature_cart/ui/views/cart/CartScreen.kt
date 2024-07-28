@@ -67,8 +67,8 @@ fun CartRoute(
         onRemoveFromCart = {
             cartViewModel.removeItemFromCart(it)
         },
-        onChangeCount = {
-            cartViewModel.changeProductCount(it)
+        onChangeCount = { id, count ->
+            cartViewModel.changeProductCount(id, count)
         })
 }
 
@@ -79,7 +79,7 @@ fun CartScreen(
     cartState: CartState?,
     onOpenProductDetails: (Int) -> Unit,
     onRemoveFromCart: (Int) -> Unit,
-    onChangeCount: (Int) -> Unit,
+    onChangeCount: (Int, Int) -> Unit,
     onNavigateUp: () -> Unit
 ) {
     val totalPrice = cartState?.let { cart ->
@@ -88,7 +88,7 @@ fun CartScreen(
         }
     }?.let { prices ->
         prices.sumOf { price -> price }
-    }
+    }?.toFloat()
 
     val lazyColumnState = rememberLazyListState()
 
@@ -117,8 +117,7 @@ fun CartScreen(
 
                 Button(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
@@ -129,7 +128,7 @@ fun CartScreen(
                         text = "Add payment method",
                         style = MaterialTheme.typography.body1,
                         modifier = Modifier.padding(4.dp)
-                        )
+                    )
                 }
             }
         }) {
@@ -288,7 +287,7 @@ fun ProductInCartItem(
     modifier: Modifier = Modifier,
     onOpenProductDetails: (Int) -> Unit,
     onRemoveFromCart: (Int) -> Unit,
-    onChangeCount: (Int) -> Unit
+    onChangeCount: (Int, Int) -> Unit
 ) {
     productInCart.productDBO?.let { product ->
         Row(verticalAlignment = Alignment.CenterVertically,
@@ -353,7 +352,9 @@ fun ProductInCartItem(
                                 productInCart.quantity?.let {
                                     if (productInCart.quantity <= 0) return@CountButton
 
-                                    onChangeCount(productInCart.quantity.minus(1))
+                                    onChangeCount(
+                                        productInCart.productDBO.id, productInCart.quantity.minus(1)
+                                    )
                                 }
                             })
                         Text(
@@ -363,7 +364,10 @@ fun ProductInCartItem(
                             contentDescription = "Add",
                             onClick = {
                                 productInCart.quantity?.let {
-                                    onChangeCount(productInCart.quantity.plus(1))
+                                    onChangeCount(
+                                        productInCart.productDBO.id,
+                                        productInCart.quantity.plus(1)
+                                    )
                                 }
                             })
                     }
@@ -399,5 +403,5 @@ fun CartScreenPreview() {
         cartState = CartState(),
         onNavigateUp = {},
         onRemoveFromCart = {},
-        onChangeCount = {})
+        onChangeCount = { _, _ ->})
 }

@@ -34,7 +34,7 @@ class CartRepositoryImpl @Inject constructor(
                     productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
                 }.map {
                     val quantity =
-                        productsInCart.first { productInCart -> productInCart.productId == it.id }?.quantity
+                        productsInCart.first { productInCart -> productInCart.productId == it.id }.quantity
 
                         ProductInCart(
                             quantity = quantity,

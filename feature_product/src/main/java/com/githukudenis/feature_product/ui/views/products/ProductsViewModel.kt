@@ -51,6 +51,9 @@ class ProductsViewModel @Inject constructor(
         when (event) {
             is ProductsScreenEvent.RefreshProducts -> {
                 refreshProducts()
+                _state.update {
+                    it.copy(searchState = SearchState())
+                }
             }
 
             is ProductsScreenEvent.ChangeCategory -> {
@@ -72,17 +75,15 @@ class ProductsViewModel @Inject constructor(
                     refreshProducts()
                 }
             }
+
             is ProductsScreenEvent.OnSearchQueryChange -> {
                 val products = _state.value.products.filter {
-                    _state.value.searchState.query in it.title ||
-                            _state.value.searchState.query in it.description
+                    _state.value.searchState.query in it.title || _state.value.searchState.query in it.description
                 }
 
                 _state.update { state ->
-                    state.copy(
-                        searchState = state.searchState.copy(query = event.query),
-                        products = products.ifEmpty { _state.value.products }
-                    )
+                    state.copy(searchState = state.searchState.copy(query = event.query),
+                        products = products.ifEmpty { _state.value.products })
                 }
             }
 
@@ -93,16 +94,14 @@ class ProductsViewModel @Inject constructor(
                     )
                 }
             }
+
             ProductsScreenEvent.Search -> {
                 if (!_state.value.searchState.isActive) return
                 val products = _state.value.products.filter {
-                    _state.value.searchState.query in it.title ||
-                            _state.value.searchState.query in it.description
+                    _state.value.searchState.query in it.title || _state.value.searchState.query in it.description
                 }
                 _state.update { state ->
-                    state.copy(
-                        products = products.ifEmpty { _state.value.products }
-                    )
+                    state.copy(products = products.ifEmpty { _state.value.products })
                 }
             }
         }
@@ -177,48 +176,48 @@ class ProductsViewModel @Inject constructor(
     }
 
 
-        private fun refreshUserMessages(messageId: Int) {
-            val userMessages = _state.value.userMessages.filterNot { userMessage ->
-                userMessage.id == messageId
-            }
-            _state.update { currentState ->
-                currentState.copy(userMessages = userMessages)
-            }
+    private fun refreshUserMessages(messageId: Int) {
+        val userMessages = _state.value.userMessages.filterNot { userMessage ->
+            userMessage.id == messageId
         }
+        _state.update { currentState ->
+            currentState.copy(userMessages = userMessages)
+        }
+    }
 
-        suspend fun getProductsInCart(userId: Int) {
-            val cartState = _state.value.cartState.copy(
-                isLoading = true
+    suspend fun getProductsInCart(userId: Int) {
+        val cartState = _state.value.cartState.copy(
+            isLoading = true
+        )
+
+        _state.update { state ->
+            state.copy(
+                cartState = cartState
             )
-
+        }
+        cartRepository.getProductsInCart(userId).catch { throwable ->
+            val userMessage = UserMessage(id = 0, message = throwable.message)
+            val userMessages = mutableListOf<UserMessage>()
+            userMessages.add(userMessage)
+            _state.value = _state.value.copy(
+                userMessages = userMessages, cartState = cartState.copy(isLoading = false)
+            )
+        }.collectLatest { products ->
             _state.update { state ->
                 state.copy(
-                    cartState = cartState
-                )
-            }
-            cartRepository.getProductsInCart(userId).catch { throwable ->
-                val userMessage = UserMessage(id = 0, message = throwable.message)
-                val userMessages = mutableListOf<UserMessage>()
-                userMessages.add(userMessage)
-                _state.value = _state.value.copy(
-                    userMessages = userMessages, cartState = cartState.copy(isLoading = false)
-                )
-            }.collectLatest { products ->
-                _state.update { state ->
-                    state.copy(
-                        cartState = cartState.copy(
-                            isLoading = false, products = products
-                        )
+                    cartState = cartState.copy(
+                        isLoading = false, products = products
                     )
-                }
-            }
-        }
-
-        private fun addProductToCart(
-            product: Product
-        ) {
-            viewModelScope.launch {
-                cartRepository.insertProductInCart(product)
+                )
             }
         }
     }
+
+    private fun addProductToCart(
+        product: Product
+    ) {
+        viewModelScope.launch {
+            cartRepository.insertProductInCart(product)
+        }
+    }
+}

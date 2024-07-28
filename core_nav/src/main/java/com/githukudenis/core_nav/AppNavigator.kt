@@ -1,7 +1,11 @@
 package com.githukudenis.core_nav
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -68,13 +72,6 @@ fun AppNavigator(
                     }
                     restoreState = true
                 }
-            }, onOpenAbout = {
-                navController.navigate(AppDestination.About.route) {
-                    popUpTo(AppDestination.Products.route) {
-                        saveState = true
-                    }
-                    restoreState = true
-                }
             })
         }
         composable(route = AppDestination.ProductDetail.route + "/{productId}",
@@ -97,7 +94,16 @@ fun AppNavigator(
         }
 
         composable(route = AppDestination.ProfileScreen.route) {
-            ProfileRoute(onSignOut = {
+            ProfileRoute(
+                onOpenAbout = {
+                    navController.navigate(AppDestination.About.route) {
+                        popUpTo(AppDestination.Products.route) {
+                            saveState = true
+                        }
+                        restoreState = true
+                    }
+                },
+                onSignOut = {
                 navController.navigate(AppDestination.Login.route) {
                     popUpTo(AppDestination.Products.route) {
                         inclusive = true
@@ -108,6 +114,10 @@ fun AppNavigator(
 
         composable(route = AppDestination.About.route) {
             AboutRoute(onNavigateUp = { navController.popBackStack()})
+        }
+
+        composable(route = AppDestination.Search.route) {
+            Box(modifier = Modifier.fillMaxSize())
         }
 
     }

@@ -4,6 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.githukudenis.core_data.data.local.db.model.cart.Product
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 import com.githukudenis.core_data.data.local.prefs.UserPreferencesRepository
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_cart.data.repo.CartRepository
@@ -56,12 +58,36 @@ class CartViewModel @Inject constructor(
     }
 
     fun removeItemFromCart(id: Int) {
-
+        viewModelScope.launch {
+           cartRepository.removeFromCart(id)
+        }
+        refreshProducts()
     }
 
-    fun changeProductCount(count: Int) {
-        val cartState = uiState.value.cartState.products.map {
-
+    private fun refreshProducts() {
+        viewModelScope.launch {
+            val userId = userPreferencesRepository.userPreferencesFlow.first().userId
+            checkNotNull(userId).also {
+                val products = cartRepository.getProductsInCart(userId).first()
+                uiState.value = uiState.value.copy(
+                    cartState = uiState.value.cartState.copy(
+                        products = products
+                    )
+                )
+            }
         }
+    }
+
+    fun changeProductCount(id: Int, count: Int) {
+        val products = uiState.value.cartState.products.map {
+            if (it.productDBO?.id == id) {
+                it.copy(quantity = count)
+            } else {
+                it
+            }
+        }
+        uiState.value = uiState.value.copy(
+            cartState = uiState.value.cartState.copy(products)
+        )
     }
 }

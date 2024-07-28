@@ -25,7 +25,7 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             val userLoggedIn = prefs[PreferenceKeys.USER_LOGGED_IN] ?: false
             val userId = prefs[PreferenceKeys.USER_ID]
             val username = prefs[PreferenceKeys.USER_NAME]
-            val favourites = prefs[PreferenceKeys.FAVOURITES]?.map { it.toInt() }?.toSet() ?: emptySet<Int>()
+            val favourites = prefs[PreferenceKeys.FAVOURITES]?.map { it.toInt() }?.toSet() ?: emptySet()
             UserPreferences(appInitialized, userLoggedIn, userId, username, favourites)
         }
 

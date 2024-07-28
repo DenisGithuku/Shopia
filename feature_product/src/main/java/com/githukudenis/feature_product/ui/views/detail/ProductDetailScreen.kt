@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -82,14 +86,12 @@ fun ProductDetailRoute(
         }
     }
 
-    ProductDetailScreen(
-        modifier = modifier,
+    ProductDetailScreen(modifier = modifier,
         state = state,
         onAddToCart = { productsDetailViewModel.onEvent(ProductDetailEvent.AddToCart(it)) },
         onRemoveFromCart = { productsDetailViewModel.onEvent(ProductDetailEvent.RemoveFromCart) },
         onNavigateUp = onNavigateUp,
-        onToggleFavourite = { productsDetailViewModel.onEvent(ProductDetailEvent.ToggleFavourite)}
-    )
+        onToggleFavourite = { productsDetailViewModel.onEvent(ProductDetailEvent.ToggleFavourite) })
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -111,13 +113,14 @@ fun ProductDetailScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        val (id, category, title, description, price, image, rating, isFavourite) = state.product
-
         Box {
             GlideImage(
-                model = image,
+                model = state.product.image,
                 contentDescription = "Product image",
-                modifier = modifier.sizeIn(maxHeight = 200.dp),
+                modifier = modifier
+                    .sizeIn(maxHeight = 200.dp)
+                    .offset(y = 32.dp)
+                    .align(Alignment.BottomCenter),
                 contentScale = ContentScale.Fit
             )
             Row(
@@ -134,43 +137,35 @@ fun ProductDetailScreen(
                 }
                 Row {
                     IconButton(onClick = {
-                        if (id != null) {
+                        if (state.product.id != null) {
                             onToggleFavourite()
                         }
                     }) {
                         Icon(
-                            imageVector = if (isFavourite) Icons.Filled.Favorite else Icons.Outlined.Favorite,
-                            tint = if (isFavourite) Color(0xFFF7980C) else MaterialTheme.colors.onBackground,
-                            contentDescription = if (isFavourite) "Remove from favourites" else "Add to favourites"
+                            imageVector = if (state.product.isFavourite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            tint = if (state.product.isFavourite) Color(0xFFF7980C) else MaterialTheme.colors.onBackground,
+                            contentDescription = if (state.product.isFavourite) "Remove from favourites" else "Add to favourites"
                         )
                     }
                 }
             }
         }
-
+        Spacer(modifier = Modifier.height(24.dp))
         Text(modifier = modifier,
-            text = title?.replaceFirstChar { char -> char.uppercase() } ?: "",
+            text = state.product.title?.replaceFirstChar { char -> char.uppercase() } ?: "",
             style = TextStyle(
                 fontWeight = FontWeight.Bold, fontSize = 20.sp
             ))
         Text(
-            text = description ?: "", textAlign = TextAlign.Justify
+            text = state.product.description ?: "", textAlign = TextAlign.Justify
         )
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            InfoPill {
-                Icon(
-                    imageVector = Icons.Default.Star,
-                    tint = Color(0xFFF7980C),
-                    contentDescription = "Product rating",
-                    modifier = Modifier.size(12.dp)
-                )
-                Text(
-                    text = "${state.product.image}",
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f)
-                )
-            }
+            InfoPill(
+                icon = Icons.Default.Star,
+                iconTint = Color(0xFFF7980C),
+                description = "${state.product.rating?.toFloat()}"
+            )
         }
 
         AddToCartSection(
@@ -187,15 +182,34 @@ fun ProductDetailScreen(
 
 @Composable
 fun InfoPill(
-    content: @Composable RowScope.() -> Unit
+    icon: ImageVector? = null, iconTint: Color? = null, description: String
 ) {
     Box(
         modifier = Modifier.border(
             width = 0.5.dp, color = Color.LightGray, shape = RoundedCornerShape(32.dp)
         ), contentAlignment = Center
     ) {
-        content
-
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(8.dp)
+        ) {
+            if (icon != null) {
+                if (iconTint != null) {
+                    Icon(
+                        imageVector = icon,
+                        tint = iconTint,
+                        contentDescription = description,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+            Text(
+                text = description,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.onBackground.copy(alpha = 0.8f)
+            )
+        }
     }
 }
 
@@ -215,11 +229,13 @@ fun AddToCartSection(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = price,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h6,
         )
         if (!productInCart) {
             Button(
+                modifier = Modifier.weight(2f),
                 onClick = { onAddToCart(id) },
                 elevation = ButtonDefaults.elevation(0.dp),
                 shape = RoundedCornerShape(12.dp),
@@ -239,8 +255,7 @@ fun AddToCartSection(
 @Preview
 @Composable
 fun CartSectionPreview() {
-    AddToCartSection(
-        onAddToCart = {},
+    AddToCartSection(onAddToCart = {},
         productInCart = true,
         price = "$518",
         id = 3,
