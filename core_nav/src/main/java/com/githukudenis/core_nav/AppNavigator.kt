@@ -82,13 +82,17 @@ fun AppNavigator(
                 type = NavType.IntType
             })
         ) {
-            ProductDetailRoute(snackbarHostState = snackBarHostState)
+            ProductDetailRoute(snackbarHostState = snackBarHostState, onNavigateUp = {
+                navController.popBackStack()
+            })
         }
         composable(route = AppDestination.CartScreen.route) {
             CartRoute(onOpenProductDetails = { productId ->
                 navController.navigate(AppDestination.ProductDetail.route + "/${productId}") {
                     popUpTo(AppDestination.CartScreen.route)
                 }
+            }, onNavigateUp = {
+                navController.popBackStack()
             })
         }
 
@@ -103,7 +107,7 @@ fun AppNavigator(
         }
 
         composable(route = AppDestination.About.route) {
-            AboutRoute()
+            AboutRoute(onNavigateUp = { navController.popBackStack()})
         }
 
     }

@@ -11,20 +11,22 @@ data class ProductsScreenState(
     val productsLoading: Boolean = false,
     val categories: List<ProductCategory> = emptyList(),
     val isRefreshing: Boolean = false,
-    val products: List<ProductState> = emptyList(),
+    val products: List<ProductDBO> = emptyList(),
     val error: String? = null,
     val selectedCategory: String? = null,
     val username: String? = null,
     val cartState: CartState = CartState(),
-    val userMessages: List<UserMessage> = emptyList()
-)
-
-data class ProductState(
-    val productInCart: Boolean = false,
-    val product: ProductDBO? = null,
+    val searchState: SearchState = SearchState(),
+    val userMessages: List<UserMessage> = emptyList(),
 )
 
 data class CartState(
     val isLoading: Boolean = false,
     val products: List<ProductInCart> = emptyList(),
 )
+
+data class SearchState(
+    val query: String = ""
+) {
+    val isActive: Boolean = query.isNotEmpty()
+}

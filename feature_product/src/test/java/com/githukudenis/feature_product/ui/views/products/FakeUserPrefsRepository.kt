@@ -43,4 +43,9 @@ class FakeUserPrefsRepository: UserPreferencesRepository {
             username = null
         )
     }
+    override suspend fun updateFavourites(favourites: Set<Int>) {
+        userPreferences = userPreferences.copy(
+            favourites = favourites
+        )
+    }
 }

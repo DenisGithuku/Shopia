@@ -47,7 +47,7 @@ fun SplashScreen(
             modifier = modifier.graphicsLayer {
                 scaleX = animateSplashImage.value * 0.5f
                 scaleY = animateSplashImage.value * 0.5f
-            }, painter = painterResource(id = R.drawable.blue_cart), contentDescription = null
+            }, painter = painterResource(id = R.drawable.ic_cart), contentDescription = null
         )
 
     }

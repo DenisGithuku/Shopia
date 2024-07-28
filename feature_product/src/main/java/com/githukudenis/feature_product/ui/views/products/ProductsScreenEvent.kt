@@ -7,4 +7,7 @@ sealed class ProductsScreenEvent {
     class DismissUserMessage(val messageId: Int): ProductsScreenEvent()
 
     class AddToCart(val productId: Int): ProductsScreenEvent()
+    class OnSearchQueryChange(val query: String): ProductsScreenEvent()
+    object ClearQuery: ProductsScreenEvent()
+    object Search: ProductsScreenEvent()
 }

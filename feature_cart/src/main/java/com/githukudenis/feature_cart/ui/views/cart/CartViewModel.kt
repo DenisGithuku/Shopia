@@ -10,6 +10,7 @@ import com.githukudenis.feature_cart.data.repo.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +46,7 @@ class CartViewModel @Inject constructor(
                 userMessages = userMessages, isLoading = false
             )
         }.collectLatest { products ->
-            val cartState = CartState().copy(
+            val cartState = uiState.value.cartState.copy(
                 products = products
             )
             uiState.value = uiState.value.copy(
@@ -54,7 +55,13 @@ class CartViewModel @Inject constructor(
         }
     }
 
-    suspend fun removeItemFromCart(productInCart: ProductInCart) {
+    fun removeItemFromCart(id: Int) {
 
+    }
+
+    fun changeProductCount(count: Int) {
+        val cartState = uiState.value.cartState.products.map {
+
+        }
     }
 }

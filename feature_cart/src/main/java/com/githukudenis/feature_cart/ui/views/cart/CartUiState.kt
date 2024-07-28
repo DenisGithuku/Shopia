@@ -5,7 +5,7 @@ import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
 
 data class CartUiState(
     val isLoading: Boolean = false,
-    val cartState: CartState? = null,
+    val cartState: CartState = CartState(),
     val userMessages: List<UserMessage> = emptyList()
 )
 

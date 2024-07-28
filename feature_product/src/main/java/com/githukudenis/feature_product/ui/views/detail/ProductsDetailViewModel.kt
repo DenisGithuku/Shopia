@@ -14,6 +14,7 @@ import com.githukudenis.feature_cart.data.repo.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -70,6 +71,10 @@ class ProductsDetailViewModel @Inject constructor(
                     removeFromCart(it)
                     refreshCart()
                 }
+            }
+
+            ProductDetailEvent.ToggleFavourite -> {
+                toggleFavourite()
             }
         }
     }
@@ -169,6 +174,26 @@ class ProductsDetailViewModel @Inject constructor(
                     getCartState(userId)
                 }
             }
+        }
+    }
+
+    private fun toggleFavourite() {
+        viewModelScope.launch {
+            val favourites = userPreferencesRepository.userPreferencesFlow.first().favourites
+            val updatedFavourites = if (favourites.contains(_state.value.product.id)) {
+                favourites.toMutableSet().remove(_state.value.product.id)
+                favourites
+            } else {
+                _state.value.product.id?.let { favourites.toMutableSet().add(it) }
+                favourites
+            }
+
+            userPreferencesRepository.updateFavourites(
+                updatedFavourites
+            )
+            _state.value = _state.value.copy(
+                product = _state.value.product.copy(isFavourite = _state.value.product.id in updatedFavourites)
+            )
         }
     }
 }
