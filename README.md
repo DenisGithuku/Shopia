@@ -73,21 +73,22 @@ To attain this the app has the following modules:
 ### Interface
 ##### Auth - Login
 
-<img src ="https://user-images.githubusercontent.com/47632042/229041273-4d211eaf-5f21-423e-93e7-9fa1a351c8fd.png" width = "30%" height = "30%">
+<img src ="https://github.com/user-attachments/assets/8d6b4ad9-5a0b-4d56-ae81-afe582a6f86a" width = "30%" height = "30%">
 
 #### Products
 <p align = "center">
-<img src = "https://user-images.githubusercontent.com/47632042/232340530-aa2b85ab-ed86-49c4-9f87-0e5f97863df8.png"
- width = "30%" height = "30%">
+<img src = "https://github.com/user-attachments/assets/df85f27c-e195-4815-a79a-7c5929fb2dd5" width = "30%" height = "30%">
 &nbsp; &nbsp; &nbsp; &nbsp;
-<img src = "https://user-images.githubusercontent.com/47632042/232340441-79e793fe-efbd-4cbd-ac4d-3c029d6c84e3.png"
- width = "30%" height = "30%">
-</p>
-<p align = "center">
-<img src = "https://user-images.githubusercontent.com/47632042/232340032-52ce1a7e-279a-44c9-b6cb-1edd97880ee1.png" width = "30%" height = "30%">
+<img src = "https://github.com/user-attachments/assets/386a950d-28a7-4807-95bd-a178844bf151" width = "30%" height = "30%">
 </p>
 
+#### Cart
+<p align = "center">
+<img src = "https://github.com/user-attachments/assets/4b5a6637-a150-4ccd-82fe-0d0482e50de7" width = "30%" height = "30%">
+&nbsp; &nbsp; &nbsp; &nbsp;
+<img src = "https://github.com/user-attachments/assets/cc67a419-f2be-47e7-a724-07eaff2ce8a6" width = "30%" height = "30%">
+</p>
 
 #### Profile
-<img src = "https://user-images.githubusercontent.com/47632042/229041036-b19b88f6-1a36-4f82-9eb5-c86e66162f25.png" width = "30%" height = "30%">
+<img src = "https://github.com/user-attachments/assets/ce0b8a8d-d3f9-4795-b82b-3a6c0c60facf" width = "30%" height = "30%">
 
