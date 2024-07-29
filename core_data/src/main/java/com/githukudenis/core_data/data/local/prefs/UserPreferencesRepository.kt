@@ -14,5 +14,7 @@ interface UserPreferencesRepository {
 
     suspend fun storeUserName(username: String)
 
+    suspend fun updateFavourites(favourites: Set<Int>)
+
     suspend fun resetPreferences()
 }

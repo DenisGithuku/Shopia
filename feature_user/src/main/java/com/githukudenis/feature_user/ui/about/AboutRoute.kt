@@ -25,6 +25,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,99 +47,110 @@ import com.githukudenis.feature_user.R
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AboutRoute(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit
 ) {
     val context = LocalContext.current
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = com.githukudenis.core_design.R.drawable.blue_cart),
-            contentDescription = context.getString(R.string.app_icon),
-            contentScale = ContentScale.Fit,
-            alignment = Alignment.Center,
-            modifier = modifier
-                .size(200.dp)
-                .clip(CircleShape)
-                .border(width = 2.dp, shape = CircleShape, color = MaterialTheme.colors.primary)
-        )
-        Spacer(
-            modifier = modifier.height(20.dp)
-        )
-        Box(
-            modifier = modifier
-                .fillMaxWidth(.8f)
-                .background(color = MaterialTheme.colors.surface, shape = RoundedCornerShape(20.dp))
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
+            IconButton(onClick = onNavigateUp) {
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+        }
+        Column(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = com.githukudenis.core_design.R.drawable.ic_cart),
+                contentDescription = context.getString(R.string.app_icon),
+                contentScale = ContentScale.Fit,
+                alignment = Alignment.Center,
                 modifier = modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .size(100.dp)
+            )
+            Spacer(
+                modifier = modifier.height(20.dp)
+            )
+            Box(
+                modifier = modifier
+                    .fillMaxWidth(.8f)
+                    .background(
+                        color = MaterialTheme.colors.surface,
+                        shape = RoundedCornerShape(20.dp)
+                    )
             ) {
                 Column(
-                    modifier = modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = context.getString(R.string.app_name),
-                        style = MaterialTheme.typography.subtitle1.copy(
-                            fontWeight = FontWeight.Medium, textAlign = TextAlign.Center
-                        )
-                    )
-                    Spacer(modifier = modifier.height(12.dp))
-                    Divider(modifier = modifier.fillMaxWidth(.8f))
-                }
-                Text(
-                    text = "Version: ${BuildConfig.BUILD_TYPE}"
-                )
-                Divider(modifier = modifier.fillMaxWidth(.8f))
-                Column(
-                    modifier = modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Connect"
-                    )
-                    Row(
+                    Column(
                         modifier = modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SocialItem(
-                            context = context,
-                            uriString = "https://twitter.com/denis_githuku",
-                            icon = com.githukudenis.core_design.R.drawable.ic_twitter,
-                            contentDescription = "Follow on Twitter"
+                        Text(
+                            text = context.getString(R.string.app_name),
+                            style = MaterialTheme.typography.subtitle1.copy(
+                                fontWeight = FontWeight.Medium, textAlign = TextAlign.Center
+                            )
                         )
-                        Spacer(modifier = modifier.width(6.dp))
-                        SocialItem(
-                            context = context,
-                            uriString = "https://github.com/DenisGithuku",
-                            icon = com.githukudenis.core_design.R.drawable.ic_git,
-                            contentDescription = "Open GitHub Profile"
+                        Spacer(modifier = modifier.height(12.dp))
+                        Divider(modifier = modifier.fillMaxWidth(.8f))
+                    }
+                    Text(
+                        text = "Version: ${BuildConfig.BUILD_TYPE}"
+                    )
+                    Divider(modifier = modifier.fillMaxWidth(.8f))
+                    Column(
+                        modifier = modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Connect"
                         )
-                        Spacer(modifier = modifier.width(6.dp))
+                        Row(
+                            modifier = modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            SocialItem(
+                                context = context,
+                                uriString = "https://twitter.com/denis_githuku",
+                                icon = com.githukudenis.core_design.R.drawable.ic_twitter,
+                                contentDescription = "Follow on Twitter"
+                            )
+                            Spacer(modifier = modifier.width(6.dp))
+                            SocialItem(
+                                context = context,
+                                uriString = "https://github.com/DenisGithuku",
+                                icon = com.githukudenis.core_design.R.drawable.ic_git,
+                                contentDescription = "Open GitHub Profile"
+                            )
+                            Spacer(modifier = modifier.width(6.dp))
 
-                        SocialItem(
-                            context = context,
-                            uriString = "https://linkedin.com/in/githukudenis",
-                            icon = com.githukudenis.core_design.R.drawable.ic_linkedin,
-                            contentDescription = "Connect on LinkedIn"
-                        )
+                            SocialItem(
+                                context = context,
+                                uriString = "https://linkedin.com/in/githukudenis",
+                                icon = com.githukudenis.core_design.R.drawable.ic_linkedin,
+                                contentDescription = "Connect on LinkedIn"
+                            )
+                        }
                     }
                 }
             }
+            Text(
+                text = "Made by GitSoft Apps with ♥️",
+                modifier = modifier.padding(12.dp),
+            )
         }
-        Text(
-            text = "Made by GitSoft Apps with ♥️",
-            modifier = modifier.padding(12.dp),
-        )
     }
 }
 
@@ -169,5 +182,5 @@ fun SocialItem(
 @Preview(showBackground = true)
 @Composable
 fun AboutRoutePrev() {
-    AboutRoute()
+    AboutRoute {}
 }

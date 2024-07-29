@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.githukudenis.core_data.util.Constants
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +25,8 @@ class UserPreferencesRepositoryImpl @Inject constructor(
             val userLoggedIn = prefs[PreferenceKeys.USER_LOGGED_IN] ?: false
             val userId = prefs[PreferenceKeys.USER_ID]
             val username = prefs[PreferenceKeys.USER_NAME]
-            UserPreferences(appInitialized, userLoggedIn, userId, username)
+            val favourites = prefs[PreferenceKeys.FAVOURITES]?.map { it.toInt() }?.toSet() ?: emptySet()
+            UserPreferences(appInitialized, userLoggedIn, userId, username, favourites)
         }
 
     override suspend fun storeUserId(userId: Int?) {
@@ -54,12 +56,19 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateFavourites(favourites: Set<Int>) {
+        context.datastore.edit { prefs ->
+            prefs[PreferenceKeys.FAVOURITES] = favourites.map { it.toString() }.toSet()
+        }
+    }
+
     override suspend fun resetPreferences() {
         context.datastore.edit {prefs ->
             prefs[PreferenceKeys.USER_ID] = -1
             prefs[PreferenceKeys.USER_LOGGED_IN] = false
             prefs[PreferenceKeys.USER_NAME] = ""
             prefs[PreferenceKeys.APP_INITIALIZED] = false
+            prefs[PreferenceKeys.FAVOURITES] = emptySet()
         }
     }
 }
@@ -69,4 +78,5 @@ private object PreferenceKeys {
     val USER_LOGGED_IN = booleanPreferencesKey("user_logged_in")
     val USER_ID = intPreferencesKey("user_id")
     val USER_NAME = stringPreferencesKey("username")
+    val FAVOURITES = stringSetPreferencesKey("favourites")
 }

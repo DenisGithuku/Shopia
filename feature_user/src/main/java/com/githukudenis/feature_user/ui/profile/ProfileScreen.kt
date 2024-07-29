@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +23,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
@@ -51,7 +54,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ProfileRoute(snackbarHostState: SnackbarHostState, onSignOut: () -> Unit) {
+fun ProfileRoute(snackbarHostState: SnackbarHostState, onOpenAbout: () -> Unit, onSignOut: () -> Unit) {
     val profileViewModel: ProfileViewModel = hiltViewModel()
     val uiState = profileViewModel.uiState.value
 
@@ -89,7 +92,9 @@ fun ProfileRoute(snackbarHostState: SnackbarHostState, onSignOut: () -> Unit) {
         return
     }
 
-    ProfileScreen(uiState = uiState, onSignOut = {
+    ProfileScreen(uiState = uiState,
+        onOpenAbout = onOpenAbout,
+        onSignOut = {
         profileViewModel.onEvent(ProfileUiEvent.Logout)
     })
 
@@ -97,7 +102,9 @@ fun ProfileRoute(snackbarHostState: SnackbarHostState, onSignOut: () -> Unit) {
 
 @Composable
 fun ProfileScreen(
-    modifier: Modifier = Modifier, uiState: ProfileUiState, onSignOut: () -> Unit
+    modifier: Modifier = Modifier, uiState: ProfileUiState,
+    onOpenAbout: () -> Unit,
+    onSignOut: () -> Unit
 ) {
 
     Column(
@@ -121,7 +128,6 @@ fun ProfileScreen(
                     .background(MaterialTheme.colors.primary),
                 contentAlignment = Alignment.Center
             ) {
-
                 Text(
                     text = "${
                         profile.name.firstname.first().uppercase()
@@ -158,6 +164,13 @@ fun ProfileScreen(
         ) {
             Text(
                 text = "Sign out"
+            )
+        }
+
+        Spacer(modifier = Modifier.height(64.dp))
+        TextButton(onClick = onOpenAbout) {
+            Text(
+                text = "About"
             )
         }
     }
@@ -221,5 +234,6 @@ fun ProfileScreePreview() {
             phone = "0712345678",
             username = "alanmosh"
         )
-    ), onSignOut = {})
+    ), onSignOut = {},
+        onOpenAbout = {})
 }

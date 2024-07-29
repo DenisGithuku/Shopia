@@ -4,5 +4,6 @@ data class UserPreferences(
     val appInitialized: Boolean = false,
     val userLoggedIn: Boolean = false,
     val userId: Int? = null,
-    val username: String? = null
+    val username: String? = null,
+    val favourites: Set<Int> = emptySet()
 )

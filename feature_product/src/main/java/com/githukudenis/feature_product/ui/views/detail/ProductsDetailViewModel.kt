@@ -1,5 +1,6 @@
 package com.githukudenis.feature_product.ui.views.detail
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -12,8 +13,10 @@ import com.githukudenis.core_data.data.repository.ProductsRepository
 import com.githukudenis.core_data.util.UserMessage
 import com.githukudenis.feature_cart.data.repo.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,15 +64,17 @@ class ProductsDetailViewModel @Inject constructor(
 
                 id?.let { Product(it, quantity) }?.let { product ->
                     insertProductIntoCart(product)
-                    refreshCart()
                 }
             }
 
             ProductDetailEvent.RemoveFromCart -> {
                 _state.value.product.id?.let {
                     removeFromCart(it)
-                    refreshCart()
                 }
+            }
+
+            ProductDetailEvent.ToggleFavourite -> {
+                toggleFavourite()
             }
         }
     }
@@ -83,6 +88,8 @@ class ProductsDetailViewModel @Inject constructor(
             val productJob = launch {
                 productsRepository.getProductDetails(productId).collect { result ->
                     val (category, description, id, image, price, rating, title) = result
+                    val favourites = userPreferencesRepository.userPreferencesFlow.first().favourites
+                    Log.d("product favourites", favourites.toString())
                     val productDetailState = ProductDetailState(
                         id = id,
                         category = category,
@@ -90,8 +97,10 @@ class ProductsDetailViewModel @Inject constructor(
                         description = description,
                         price = "$price",
                         image = image,
-                        rating = rating.rate
+                        rating = rating.rate,
+                        isFavourite = id in favourites
                     )
+                    Log.d("product", productDetailState.toString())
                     _state.value = _state.value.copy(
                         product = productDetailState
                     )
@@ -123,6 +132,7 @@ class ProductsDetailViewModel @Inject constructor(
                 )
                 return@invokeOnCompletion
             }
+            refreshCart()
             _state.value = _state.value.copy(
                 isLoading = false
             )
@@ -159,16 +169,45 @@ class ProductsDetailViewModel @Inject constructor(
     fun removeFromCart(productId: Int) {
         viewModelScope.launch {
             cartRepository.removeFromCart(productId)
+            refreshCart()
         }
     }
 
-    fun refreshCart() {
+    private fun refreshCart() {
         viewModelScope.launch {
             userPreferencesRepository.userPreferencesFlow.collectLatest { prefs ->
                 checkNotNull(prefs.userId).also { userId ->
                     getCartState(userId)
                 }
             }
+        }
+    }
+
+    private fun toggleFavourite() {
+         viewModelScope.launch {
+            val favourites = userPreferencesRepository.userPreferencesFlow.first().favourites.toMutableSet()
+            if (favourites.contains(_state.value.product.id)) {
+                favourites.remove(_state.value.product.id)
+            } else {
+                _state.value.product.id?.let { favourites.add(it) }
+            }
+
+            userPreferencesRepository.updateFavourites(
+               favourites
+            )
+             refreshFavourites()
+        }
+    }
+
+    private fun refreshFavourites() {
+        viewModelScope.launch {
+            val favourites = userPreferencesRepository.userPreferencesFlow.first().favourites
+            _state.value = _state.value.copy(
+                product = _state.value.product.copy(
+                    isFavourite = _state.value.product.id in favourites
+                )
+            )
+
         }
     }
 }

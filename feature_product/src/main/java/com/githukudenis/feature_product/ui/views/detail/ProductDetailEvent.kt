@@ -4,4 +4,5 @@ sealed class ProductDetailEvent {
     class DismissUserMessage(val messageId: Int) : ProductDetailEvent()
     class AddToCart(val quantity: Int) : ProductDetailEvent()
     object RemoveFromCart : ProductDetailEvent()
+    object ToggleFavourite: ProductDetailEvent()
 }

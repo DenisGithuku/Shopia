@@ -34,11 +34,12 @@ class CartRepositoryImpl @Inject constructor(
                     productsInCart.any { productInCart -> productInCart.productId == productDBO.id }
                 }.map {
                     val quantity =
-                        productsInCart.find { productInCart -> productInCart.productId == it.id }?.quantity
-                    ProductInCart(
-                        quantity = quantity,
-                        productDBO = it
-                    )
+                        productsInCart.first { productInCart -> productInCart.productId == it.id }.quantity
+
+                        ProductInCart(
+                            quantity = quantity,
+                            productDBO = it
+                        )
                 }
             }
             products

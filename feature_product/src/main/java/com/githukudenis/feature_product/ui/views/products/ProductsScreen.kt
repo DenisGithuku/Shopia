@@ -2,9 +2,9 @@ package com.githukudenis.feature_product.ui.views.products
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,29 +13,40 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -54,9 +65,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +77,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.githukudenis.core_data.data.local.db.model.product.ProductDBO
+import com.githukudenis.core_design.theme.DefaultWhite
+import com.githukudenis.core_design.theme.Green200
+import com.githukudenis.core_design.theme.Green500
+import com.githukudenis.core_design.theme.NeutralDark
 import com.githukudenis.feature_product.R
 
 
@@ -74,7 +89,6 @@ import com.githukudenis.feature_product.R
 fun ProductsRoute(
     snackbarHostState: SnackbarHostState,
     onOpenProfile: () -> Unit,
-    onOpenAbout: () -> Unit,
     onOpenProductDetails: (Int) -> Unit,
     onOpenCart: () -> Unit
 ) {
@@ -98,8 +112,8 @@ fun ProductsRoute(
     }
 
 
-    ProductsScreen(onOpenProfile = { onOpenProfile() },
-        onOpenAbout = { onOpenAbout() },
+    ProductsScreen(
+        onOpenProfile = { onOpenProfile() },
         onOpenProductDetails = { onOpenProductDetails(it) },
         onOpenCart = { onOpenCart() },
         menuIsOpen = optionsMenuOpen,
@@ -107,29 +121,34 @@ fun ProductsRoute(
         isRefreshing = isRefreshing,
         onRefresh = { productsViewModel.onEvent(ProductsScreenEvent.RefreshProducts) },
         state = state,
-        onAddToCart = { productsViewModel.onEvent(ProductsScreenEvent.AddToCart(it)) },
+//        onAddToCart = { productsViewModel.onEvent(ProductsScreenEvent.AddToCart(it)) },
         onChangeCategory = { productsViewModel.onEvent(ProductsScreenEvent.ChangeCategory(it)) },
-        context = context
-    )
+        context = context,
+        onSearch = {
+            productsViewModel.onEvent(ProductsScreenEvent.Search)
+        },
+        onQueryChange = {
+            productsViewModel.onEvent(ProductsScreenEvent.OnSearchQueryChange(it))
+        })
 }
 
 @OptIn(
-    ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class
+    ExperimentalMaterialApi::class
 )
 @Composable
 fun ProductsScreen(
     modifier: Modifier = Modifier,
-    onOpenProfile: () -> Unit,
-    onOpenAbout: () -> Unit,
     onOpenProductDetails: (Int) -> Unit,
     onOpenCart: () -> Unit,
     menuIsOpen: Boolean,
     onToggleOptionsMenu: () -> Unit,
+    onOpenProfile: () -> Unit,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     state: ProductsScreenState,
-    onAddToCart: (Int) -> Unit,
     onChangeCategory: (String) -> Unit,
+    onSearch: () -> Unit,
+    onQueryChange: (String) -> Unit,
     context: Context
 ) {
 
@@ -139,28 +158,29 @@ fun ProductsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 12.dp)
             .pullRefresh(pullRefreshState)
     ) {
 
-        LazyColumn(
-            modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
+        LazyVerticalGrid(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item {
+            item(span = {
+                GridItemSpan(2)
+            }) {
                 Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
+                    modifier = modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Shopia", style = TextStyle(
+                        text = "Discover", style = TextStyle(
                             fontSize = 30.sp, fontWeight = FontWeight.Bold
                         )
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
-
                         state.cartState.let { cart ->
                             cart.products.size.let { count ->
                                 CartItem(
@@ -172,114 +192,92 @@ fun ProductsScreen(
                             }
                         }
 
-                        ProfileAvatar(username = "${state.username}", onClick = { onOpenProfile() })
 
-                    }
-
-                    IconButton(onClick = {
-                        onToggleOptionsMenu()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert, contentDescription = "More items"
-                        )
-                    }
-                    DropdownMenu(expanded = menuIsOpen,
-                        onDismissRequest = { onToggleOptionsMenu() }) {
-                        DropdownMenuItem(onClick = {
+                        IconButton(onClick = {
                             onToggleOptionsMenu()
-                            onOpenAbout()
                         }) {
-                            Text(
-                                text = "About app"
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More items"
                             )
                         }
-                    }
-                }
-            }
+                        DropdownMenu(expanded = menuIsOpen,
+                            onDismissRequest = { onToggleOptionsMenu() }) {
 
-            item {
-                LazyRow(
-                    modifier = modifier.padding(horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = state.categories.toList()
-                    ) { category ->
-                        CategoryItem(category = category.value.replaceFirstChar { char -> char.uppercase() },
-                            selected = state.selectedCategory == category.value,
-                            onSelect = {
-                                onChangeCategory(it)
-                            })
-                    }
-                }
-            }
-            items(items = state.products) { productItem ->
-                Row(verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            productItem.product?.id?.let { onOpenProductDetails(it) }
+                            DropdownMenuItem(onClick = {
+                                onToggleOptionsMenu()
+                                onOpenProfile()
+                            }) {
+                                Text(
+                                    text = "Settings"
+                                )
+                            }
                         }
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    }
+                }
+            }
 
-                ) {
+            item(span = {
+                GridItemSpan(2)
+            }) {
+                SearchBar(
+                    state = state.searchState, onQueryChange = onQueryChange, onSearch = onSearch
+                )
+            }
 
-                    GlideImage(
-                        model = productItem.product?.image,
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = modifier.requiredSize(120.dp)
-                    )
+            item(span = {
+                GridItemSpan(2)
+            }) {
+                ItemOnOffer()
+            }
 
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+            item(span = {
+                GridItemSpan(2)
+            }) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        productItem.product?.title?.let {
-                            Text(
-                                text = it, style = TextStyle(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                ), maxLines = 3, overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                        productItem.product?.description?.let {
-                            Text(
-                                text = it, maxLines = 4, overflow = TextOverflow.Ellipsis
-                            )
-                        }
                         Text(
-                            text = "$ ${productItem.product?.price}"
+                            text = "Categories",
+                            style = MaterialTheme.typography.body1,
+                            fontWeight = FontWeight.Bold
                         )
+                        TextButton(onClick = { /*TODO*/ }) {
+                            Text(
+                                text = "See all",
+                                style = MaterialTheme.typography.caption,
+                                color = Green200
+                            )
+                        }
+                    }
 
-                        Row(
-                            modifier = modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedButton(
-                                onClick = {
-                                    productItem.product?.id?.let {
-                                        onAddToCart(it)
-                                    }
-                                },
-                                shape = RoundedCornerShape(32.dp),
-                                enabled = !productItem.productInCart,
-                            ) {
-                                Text(
-                                    text = "Add to cart"
-                                )
-                            }
-                            if (productItem.productInCart) {
-                                Text(
-                                    text = "In cart", style = TextStyle(
-                                        fontStyle = FontStyle.Italic
-                                    )
-                                )
-                            }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow(
+                        modifier = modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = state.categories.toList()
+                        ) { category ->
+                            CategoryItem(category = category.value,
+                                selected = state.selectedCategory == category.value,
+                                onSelect = {
+                                    onChangeCategory(it)
+                                })
                         }
                     }
                 }
+            }
+
+            items(
+                items = state.products
+            ) { productItem ->
+                ProductItem(
+                    product = productItem, onOpenProductDetails = onOpenProductDetails
+                )
             }
         }
 
@@ -296,6 +294,39 @@ fun ProductsScreen(
         )
     }
 }
+
+@Composable
+fun SearchBar(
+    state: SearchState, onQueryChange: (String) -> Unit, onSearch: () -> Unit
+) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        TextField(
+            placeholder = {
+                Text(
+                    text = "Search name or description",
+                    style = MaterialTheme.typography.body1,
+                )
+            },
+            value = state.query,
+            onValueChange = onQueryChange,
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = NeutralDark,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                backgroundColor = MaterialTheme.colors.background,
+            ),
+            trailingIcon = {
+                Icon(imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = NeutralDark,
+                    modifier = Modifier.clickable(enabled = state.isActive) { onSearch() })
+            },
+            modifier = Modifier.weight(0.8f),
+            shape = RoundedCornerShape(12.dp)
+        )
+    }
+}
+
 
 @Composable
 fun CartItem(
@@ -329,6 +360,71 @@ fun CartItem(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProductItem(
+    product: ProductDBO, onOpenProductDetails: (Int) -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp), backgroundColor = DefaultWhite, border = BorderStroke(
+            width = 0.6.dp, color = Color.LightGray
+        ), elevation = 0.dp
+    ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                product.id.let { onOpenProductDetails(it) }
+            }
+            .padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
+
+        ) {
+            GlideImage(
+                model = product.image,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .requiredSize(60.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = product.title,
+                    style = MaterialTheme.typography.body2,
+                    color = NeutralDark.copy(alpha = 0.6f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(2f)
+                )
+
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        tint = Color(0xFFF7980C),
+                        contentDescription = "Product rating",
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Text(
+                        text = "${product.rating.rate}", style = MaterialTheme.typography.caption
+                    )
+                }
+            }
+            Text(
+                style = MaterialTheme.typography.body1,
+                text = "$ ${product.price}",
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
 @Composable
 fun CategoryItem(
     category: String, selected: Boolean, modifier: Modifier = Modifier, onSelect: (String) -> Unit
@@ -349,7 +445,7 @@ fun CategoryItem(
             onSelect(category)
         }) {
         Text(
-            text = category,
+            text = category.replaceFirstChar { char -> char.uppercase() },
             modifier = modifier.padding(8.dp),
             color = if (selected) Color.White else Color.Black
         )
@@ -378,6 +474,48 @@ fun ProfileAvatar(
         Text(
             text = initial, textAlign = TextAlign.Center, color = Color.White
         )
+    }
+}
+
+@Composable
+fun ItemOnOffer() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        backgroundColor = Green500,
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                Text(
+                    text = "Clearance sale",
+                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colors.onPrimary
+                )
+
+                Button(
+                    shape = RoundedCornerShape(32.dp),
+                    elevation = ButtonDefaults.elevation(0.dp),
+                    colors = ButtonDefaults.buttonColors(
+                    backgroundColor = DefaultWhite,
+                ), onClick = {}) {
+                    Text(
+                        text = "Upto 50% off", style = MaterialTheme.typography.body2
+                    )
+                }
+            }
+            Image(
+                painter = painterResource(id = R.drawable.fridge),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
+
+            )
+        }
     }
 }
 
